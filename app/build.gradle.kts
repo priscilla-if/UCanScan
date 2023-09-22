@@ -50,7 +50,7 @@ android {
 }
 
 dependencies {
-    val nav_version = "2.7.3"
+    val nav_version = "2.4.0" // we can't use latest version since it wants newer android api version
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")

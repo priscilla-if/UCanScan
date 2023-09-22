@@ -16,7 +16,7 @@ fun NavGraph (navController: NavHostController) {
         startDestination = Screens.MainMenu.route
     ) {
         composable(
-            route = Screens.Race.route
+            route = Screens.MainMenu.route
         ) { backStackEntry ->
             MainMenuScreen(LocalContext.current, navController)
         }
