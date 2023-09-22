@@ -49,33 +49,6 @@ fun MainMenuScreen(context: Context,
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Greeting("Priscilla")
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Button(
-//                onClick = {
-//                    navController.navigate(Screens.Race.route)
-//                }
-//            ) {
-//                Text("Start Race")
-//            }
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Button(
-//                onClick = {
-//                    // Handle the second button click here
-//                }
-//            ) {
-//                Text("My Times")
-//            }
-//        }
-
         Scaffold(
             content = {
                 Column(
@@ -104,6 +77,7 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
+//                            navController.navigate(Screens.Race.route)
                         }
                     ) {
                         Text("My Times")
@@ -118,6 +92,7 @@ fun MainMenuScreen(context: Context,
 
                     Button(
                         onClick = {
+//                            navController.navigate(Screens.Race.route)
                         },
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,17 +111,6 @@ fun MainMenuScreen(context: Context,
                 }
             }
         )
-//        //TODO: replace the example code
-//        Greeting("Priscilla")
-//
-//        // ROUGH BUTTON TO DEMONSTRATE NAVIGATION: REPLACE ME
-//        Button(
-//            onClick = {
-//                navController.navigate(Screens.Race.route)
-//            }
-//        ) {
-//            // empty content
-//        }
     }
 }
 
