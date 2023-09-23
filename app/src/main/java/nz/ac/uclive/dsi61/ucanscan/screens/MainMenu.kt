@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,11 +48,20 @@ import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
 fun MainMenuScreen(context: Context,
                    navController: NavController) {
     // A surface container using the 'background' color from the theme
-    Surface(
+    Box(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
     ) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(R.drawable.cherry_blossoms), // TODO placeholder cherry blossom
+            // image at the moment, we can change to something else once we decide on a
+            // better design?
+            contentDescription = "background_image",
+            contentScale = ContentScale.Crop,
+            alpha = 0.5F
+        )
         Scaffold(
+            containerColor = Color.Transparent,
             content = {
                 Column(
                     modifier = Modifier
