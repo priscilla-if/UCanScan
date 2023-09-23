@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,22 +66,31 @@ fun MainMenuScreen(context: Context,
                         contentDescription = "Placeholder Logo"
 
                     )
-                    Greeting("Priscilla")
+                    Greeting("Priscilla") // TODO: Name functionality
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
                             navController.navigate(Screens.Race.route)
-                        }
+                        },
+                        modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
-                        Text("Start Race")
+                        Text(
+                            text = stringResource(R.string.start_race),
+                            fontSize = 20.sp
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
+                            //TODO: Navigate to correct page
 //                            navController.navigate(Screens.Race.route)
-                        }
+                        },
+                        modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
-                        Text("My Times")
+                        Text(
+                            text = stringResource(R.string.my_times),
+                            fontSize = 20.sp
+                        )
                     }
                 }
             },
@@ -92,6 +102,7 @@ fun MainMenuScreen(context: Context,
 
                     Button(
                         onClick = {
+                                  //TODO: Navigate to correct page
 //                            navController.navigate(Screens.Race.route)
                         },
                     ) {
@@ -102,7 +113,9 @@ fun MainMenuScreen(context: Context,
                                 contentDescription = ""
                             )
                             Spacer(modifier = Modifier.width(width = 8.dp))
-                            Text(text = "Settings")
+                            Text(
+                                text = stringResource(R.string.settings)
+                            )
                         }
                     }
                     Spacer( // push the button to the left side of the screen
