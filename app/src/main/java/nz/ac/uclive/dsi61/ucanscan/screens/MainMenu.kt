@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,15 +27,26 @@ fun MainMenuScreen(context: Context,
         color = MaterialTheme.colorScheme.background
     ) {
         //TODO: replace the example code
-        Greeting("Priscilla")
+        Greeting("Main Menu")
 
         // ROUGH BUTTON TO DEMONSTRATE NAVIGATION: REPLACE ME
-        Button(
-            onClick = {
-                navController.navigate(Screens.Race.route)
-            }
+        Column (
+
         ) {
-            // empty content
+            Button(
+                onClick = {
+                    navController.navigate(Screens.Race.route)
+                }
+            ) {
+                // empty content
+            }
+            Button(
+                onClick = {
+                    navController.navigate(Screens.Preferences.route)
+                }
+            ) {
+                // empty content
+            }
         }
     }
 }

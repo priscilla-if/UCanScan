@@ -23,7 +23,7 @@ fun RaceScreen(context: Context,
         color = MaterialTheme.colorScheme.background
     ) {
         //TODO: replace the example code
-        Greeting("Nirhjah")
+        Greeting("Race")
 
         // ROUGH BUTTON TO DEMONSTRATE NAVIGATION: REPLACE ME
         Button(

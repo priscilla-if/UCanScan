@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">UCanScan</string>
+    <string name="preferences">Preferences</string>
+    <string name="prefs_notifications">Notifications</string>
+    <string name="prefs_notifications_opt1">Reminders when lorem ipsum</string>
+    <string name="prefs_notifications_opt2">Notify when dolar sit amit</string>
+    <string name="prefs_notifications_opt3">Alert when cogito ergo sum</string>
+    <string name="prefs_theme">Theme</string>
+    <string name="prefs_theme_opt1">Dark mode</string>
+    <string name="prefs_animations">Animations</string>
+    <string name="prefs_animations_opt1">Animations when ABC</string>
+    <string name="prefs_animations_opt2">Animations when XYZ</string>
 </resources>
