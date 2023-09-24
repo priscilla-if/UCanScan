@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">UCanScan</string>
+    <string name="next_landmark">Next Landmark</string>
+    <string name="jack_erskine_landmark">Jack Erskine</string>
 </resources>
