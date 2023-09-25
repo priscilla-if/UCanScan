@@ -71,6 +71,9 @@ fun PreferencesScreen(context: Context,
         color = MaterialTheme.colorScheme.background
     ) {
         Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
