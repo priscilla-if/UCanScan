@@ -113,8 +113,7 @@ fun MainMenuScreen(context: Context,
 
                     Button(
                         onClick = {
-                                  //TODO: Navigate to correct page
-//                            navController.navigate(Screens.Race.route)
+                            navController.navigate(Screens.Preferences.route)
                         },
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -125,7 +124,7 @@ fun MainMenuScreen(context: Context,
                             )
                             Spacer(modifier = Modifier.width(width = 8.dp))
                             Text(
-                                text = stringResource(R.string.settings)
+                                text = stringResource(R.string.preferences)
                             )
                         }
                     }
