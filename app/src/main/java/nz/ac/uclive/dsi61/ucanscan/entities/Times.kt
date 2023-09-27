@@ -9,8 +9,8 @@ import java.util.Date
 @Entity(tableName = "times")
 class Times (
     @ColumnInfo var name: String,
-    @ColumnInfo var startTime: Date,
-    @ColumnInfo var endTime: Date) {
+    @ColumnInfo var startTime: String,
+    @ColumnInfo var endTime: String) {
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
     override fun toString() = name

@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MainMenuScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.RaceScreen
 
@@ -27,6 +28,11 @@ fun NavGraph (navController: NavHostController) {
             RaceScreen(LocalContext.current, navController)
         }
 
+        composable(
+            route = Screens.Landmarks.route
+        ) { backStackEntry ->
+            LandmarksScreen(LocalContext.current, navController)
+        }
         //TODO: put more screens here...
 
 

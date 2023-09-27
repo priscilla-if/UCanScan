@@ -1,6 +1,6 @@
 package nz.ac.uclive.dsi61.ucanscan;
 
-import UCanScanDatabase
+import nz.ac.uclive.dsi61.ucanscan.database.UCanScanDatabase
 import android.app.Application;
 import nz.ac.uclive.dsi61.ucanscan.repository.UCanScanRepository
 
