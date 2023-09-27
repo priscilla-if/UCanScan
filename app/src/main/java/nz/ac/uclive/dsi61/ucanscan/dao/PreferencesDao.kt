@@ -23,8 +23,4 @@ interface PreferencesDao {
     @Query("SELECT * FROM preferences")
     fun getAll(): Flow<List<Preferences>>
 
-    @Query("SELECT COUNT(*) FROM preferences")
-    fun getCount(): Flow<Int>
-
-
 }
