@@ -42,7 +42,7 @@ abstract class UCanScanDatabase : RoomDatabase() {
 
                     // For example:
 
-                    db.execSQL("INSERT INTO LANDMARK (name, description, code) VALUES ('TEST', 'TEST', 'test')")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, code) VALUES ('yayaya', 'yayay', 'yayaya')")
 
                 }
 

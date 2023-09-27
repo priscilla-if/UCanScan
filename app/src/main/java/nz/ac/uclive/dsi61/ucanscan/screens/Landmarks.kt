@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entities.Landmark
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
@@ -30,6 +31,9 @@ fun LandmarksScreen(context: Context,
     val context = LocalContext.current
     val application = context.applicationContext as UCanScanApplication
     val viewModel: LandmarkViewModel = viewModel(factory = LandmarkViewModelFactory(application.repository))
+    val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<Landmark>())
+    println("is this working")
+    println(landmarks)
 
 //    Log.d("ASAAAAA", viewModel.getLandmarks().collect())
     Column(
