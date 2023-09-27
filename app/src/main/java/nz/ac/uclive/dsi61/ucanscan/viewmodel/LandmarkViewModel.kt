@@ -13,6 +13,7 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
     }
 }
 
+// Had to create a viewModelFactory in order to pass the repository through
 class LandmarkViewModelFactory(private val repository: UCanScanRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(LandmarkViewModel::class.java)) {

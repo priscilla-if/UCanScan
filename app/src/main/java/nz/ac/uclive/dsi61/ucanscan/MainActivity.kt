@@ -24,16 +24,5 @@ class MainActivity : ComponentActivity() {
                 }
             })
         }
-//        println(this)
-//        val landmarkDao: LandmarkDao = db.landmarkDao()
-//
-//        val landmarks = landmarkDao.getAll() // Replace with your actual query method
-//
-//        Log.d("Ayo", landmarks.toString());
     }
-
-
 }
-
-// Inside your activity or fragment
-

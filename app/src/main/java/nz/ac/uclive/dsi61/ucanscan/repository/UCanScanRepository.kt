@@ -14,13 +14,10 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
 
 
     // Here we define methods to interact w our entities - so feel free to add more if we need :)
-
+    // I recommend looking at the Ben tutorial + the official android developer documentation for this
     @WorkerThread
     suspend fun insert(landmark: Landmark) {
         landmarkDao.insert(landmark)
     }
-
-
-
 
 }

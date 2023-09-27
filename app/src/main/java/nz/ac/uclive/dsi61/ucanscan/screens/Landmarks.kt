@@ -19,34 +19,28 @@ import nz.ac.uclive.dsi61.ucanscan.entities.Landmark
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
+// This is a temporary Screen, for showcasing how we can query the DB to display things.
+// Could potentially be used in the future for the FoundLandmarksScreen? Otherwise it does not do
+// much at the moment
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LandmarksScreen(context: Context,
                     navController: NavController
 ) {
-//    private val viewModel: LandmarkViewModel by activityViewModels() {
-//        LandmarkViewModelFactory((activity?.application as UCanScanApplication).repository)
-//    }
+
     val context = LocalContext.current
     val application = context.applicationContext as UCanScanApplication
     val viewModel: LandmarkViewModel = viewModel(factory = LandmarkViewModelFactory(application.repository))
     val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<Landmark>())
-    println("is this working")
-    println(landmarks)
-
-//    Log.d("ASAAAAA", viewModel.getLandmarks().collect())
+    // Here is how we can get stuff from our DB to display on a screen - ideally we have
+    // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        // Display the pre-filled landmarks here
-//        println(viewModel.getLandmarks())
-
 
         Button(
             onClick = {
-                // Verify the pre-filled data when the button is clicked
-                // You can add your verification logic here
             },
             modifier = Modifier.padding(top = 16.dp)
         ) {
@@ -55,8 +49,6 @@ fun LandmarksScreen(context: Context,
         }
     }
 
-    // Handle back button press
     BackHandler {
-        // Handle back button press if needed
     }
 }
