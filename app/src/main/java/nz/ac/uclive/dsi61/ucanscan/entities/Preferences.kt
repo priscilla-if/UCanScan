@@ -8,9 +8,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "preferences")
 class Preferences (
     @ColumnInfo var name: String,
-    @ColumnInfo var notifications: Boolean,
-    @ColumnInfo var animations: Boolean,
-    @ColumnInfo var dark_mode: Boolean) {
+    @ColumnInfo var state: Boolean
+    ) {
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 
