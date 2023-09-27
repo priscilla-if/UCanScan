@@ -8,9 +8,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import nz.ac.uclive.dsi61.ucanscan.dao.LandmarkDao
 import nz.ac.uclive.dsi61.ucanscan.dao.PreferencesDao
 import nz.ac.uclive.dsi61.ucanscan.dao.TimesDao
-import nz.ac.uclive.dsi61.ucanscan.entities.Landmark
-import nz.ac.uclive.dsi61.ucanscan.entities.Times
-import nz.ac.uclive.dsi61.ucanscan.entities.Preferences
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
+import nz.ac.uclive.dsi61.ucanscan.entity.Preferences
 
 @Database(entities = [Landmark::class, Preferences::class, Times::class], version = 2)
 abstract class UCanScanDatabase : RoomDatabase() {

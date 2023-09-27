@@ -1,15 +1,14 @@
-package nz.ac.uclive.dsi61.ucanscan.entities
+package nz.ac.uclive.dsi61.ucanscan.entity
 
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "preferences")
-class Preferences (
+@Entity(tableName = "landmark")
+class Landmark (
     @ColumnInfo var name: String,
-    @ColumnInfo var state: Boolean
-    ) {
+    @ColumnInfo var description: String,
+    @ColumnInfo var code: String) {
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 

@@ -2,7 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.repository
 import nz.ac.uclive.dsi61.ucanscan.database.UCanScanDatabase
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
-import nz.ac.uclive.dsi61.ucanscan.entities.Landmark
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 
 class UCanScanRepository(private val database: UCanScanDatabase) {
     private val landmarkDao = database.landmarkDao()

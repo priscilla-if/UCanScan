@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import nz.ac.uclive.dsi61.ucanscan.entities.Times
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 
 @Dao
 interface TimesDao {

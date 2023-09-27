@@ -2,7 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.flow.Flow
-import nz.ac.uclive.dsi61.ucanscan.entities.Landmark
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.repository.UCanScanRepository
 
 class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel() {
