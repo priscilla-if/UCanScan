@@ -1,0 +1,63 @@
+[
+  {
+    "featureType": "landscape.man_made",
+    "stylers": [
+      {
+        "color": "#e4daeb"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#231f20"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "stylers": [
+      {
+        "color": "#cbe4c1"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "color": "#231f20"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.school",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]

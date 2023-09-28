@@ -14,6 +14,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,7 +26,9 @@ import androidx.navigation.NavController
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -58,9 +62,28 @@ fun MapScreen(context: Context,
         }
     }
 
+    /* Apply custom styling to the map.
+     * We use the official Google Maps Styling Wizard at https://mapstyle.withgoogle.com/ to set a
+     * custom style, to for example remove the pointers for the UC buildings and change the colours
+     * of the map to match the green & purple scheme UC uses on their official maps.
+     *
+     * We get the JSON from this wizard, load it here, then apply it via the properties variable in
+     * the GoogleMap component.
+     *
+     * This code from: https://www.kodeco.com/34720426-maps-compose-library-tutorial-for-android-getting-started?page=2
+     */
+    val mapProperties by remember {
+        mutableStateOf(
+            MapProperties(
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.custom_map_style)
+            )
+        )
+    }
+
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        properties = mapProperties
     ) {
         for(landmark in landmarks) {
             if(landmark.isFound) {
