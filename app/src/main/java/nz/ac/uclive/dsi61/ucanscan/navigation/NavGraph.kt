@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MainMenuScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MapScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.PreferencesScreen
@@ -39,6 +40,12 @@ fun NavGraph (navController: NavHostController) {
             route = Screens.Map.route
         ) { backStackEntry ->
             MapScreen(LocalContext.current, navController)
+        }
+
+        composable(
+            route = Screens.Landmarks.route
+        ) { backStackEntry ->
+            LandmarksScreen(LocalContext.current, navController)
         }
 
 

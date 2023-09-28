@@ -24,9 +24,7 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -96,6 +94,7 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
+                            //TODO: Navigate to correct page
                             navController.navigate(Screens.Map.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
