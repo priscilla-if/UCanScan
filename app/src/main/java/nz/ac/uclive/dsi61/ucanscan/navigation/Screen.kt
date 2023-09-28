@@ -5,6 +5,8 @@ sealed class Screens(val route: String) {
 
     object Race: Screens("race")
 
+    object Landmarks: Screens("landmarks")
+
     object Preferences: Screens("preferences")
 
 
