@@ -53,6 +53,6 @@ fun LandmarksScreen(context: Context,
 
     }
 
-    BackHandler {
-    }
+//    BackHandler { // what to do when phone's back button is clicked
+//    }
 }

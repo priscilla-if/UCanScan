@@ -82,8 +82,7 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            //TODO: Navigate to correct page: Race.route
-                            navController.navigate(Screens.Map.route)
+                            navController.navigate(Screens.Race.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
@@ -96,7 +95,7 @@ fun MainMenuScreen(context: Context,
                     Button(
                         onClick = {
                             //TODO: Navigate to correct page when exists
-                            navController.navigate(Screens.Landmarks.route)
+                            navController.navigate(Screens.Map.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {

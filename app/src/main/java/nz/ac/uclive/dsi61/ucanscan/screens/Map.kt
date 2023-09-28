@@ -2,9 +2,11 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -79,19 +82,29 @@ fun MapScreen(context: Context,
 
     }
 
-    Row(
-        horizontalArrangement = Arrangement.Center
+
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Button(
-            onClick = {
-                navController.navigate(Screens.MainMenu.route)
-            },
-            modifier = Modifier.size(width = 200.dp, height = 130.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth() // helps centre the button horizontally
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.back_to_race),
-                fontSize = 20.sp
-            )
+
+            Button(
+                onClick = {
+                    navController.navigate(Screens.Race.route)
+                },
+                modifier = Modifier.size(width = 200.dp, height = 90.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.back_to_race),
+                    fontSize = 20.sp
+                )
+            }
         }
     }
 
