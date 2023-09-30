@@ -41,6 +41,7 @@ import androidx.core.content.ContextCompat
 
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
@@ -96,23 +97,16 @@ fun RaceScreen(context: Context,
              verticalAlignment = Alignment.CenterVertically,
              horizontalArrangement = Arrangement.SpaceEvenly
          ) {
-             val context = LocalContext.current
 
-             val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                 //handle image scanning
-             }
 
              Button(
                  modifier = Modifier
                      .size(100.dp),
                  shape = RoundedCornerShape(16.dp),
                  onClick = {
-                     if (checkCameraPermission(context)) {
-                         val cameraIntent = android.content.Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-                         cameraLauncher.launch(cameraIntent)
-                     } else {
-                         requestCameraPermission(context)
-                     }
+
+                     navController.navigate(Screens.Camera.route)
+
                  },
 
                  ) {
@@ -153,13 +147,4 @@ fun RaceScreen(context: Context,
     }
 }
 
-
-private fun checkCameraPermission(context: Context): Boolean {
-    val result = ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-    return result == PackageManager.PERMISSION_GRANTED
-}
-
-private fun requestCameraPermission(context: Context) {
-    ActivityCompat.requestPermissions(context as ComponentActivity, arrayOf(Manifest.permission.CAMERA), 0)
-}
 
