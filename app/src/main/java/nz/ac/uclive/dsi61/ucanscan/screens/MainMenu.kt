@@ -95,7 +95,7 @@ fun MainMenuScreen(context: Context,
                     Button(
                         onClick = {
                             //TODO: Navigate to correct page when exists
-                            navController.navigate(Screens.Map.route)
+//                            navController.navigate(Screens.xxx.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
