@@ -1,9 +1,29 @@
 [
   {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "weight": 3
+      }
+    ]
+  },
+  {
     "featureType": "landscape.man_made",
+    "elementType": "geometry.fill",
     "stylers": [
       {
         "color": "#e4daeb"
+      },
+      {
+        "visibility": "on"
       }
     ]
   },
@@ -12,13 +32,12 @@
     "elementType": "geometry.stroke",
     "stylers": [
       {
-        "color": "#231f20"
+        "visibility": "on"
       }
     ]
   },
   {
     "featureType": "poi",
-    "elementType": "labels.icon",
     "stylers": [
       {
         "visibility": "off"
@@ -27,36 +46,58 @@
   },
   {
     "featureType": "poi.school",
+    "elementType": "geometry.fill",
     "stylers": [
       {
         "color": "#cbe4c1"
+      },
+      {
+        "visibility": "on"
       }
     ]
   },
   {
-    "featureType": "poi.school",
-    "elementType": "labels",
+    "featureType": "water",
+    "elementType": "geometry.fill",
     "stylers": [
       {
-        "color": "#231f20"
+        "visibility": "on"
       }
     ]
   },
   {
-    "featureType": "poi.school",
-    "elementType": "labels.icon",
+    "featureType": "water",
+    "elementType": "geometry.stroke",
     "stylers": [
       {
-        "visibility": "off"
+        "color": "#4abadc"
+      },
+      {
+        "visibility": "on"
+      },
+      {
+        "weight": 3
       }
     ]
   },
   {
-    "featureType": "poi.school",
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
     "elementType": "labels.text.stroke",
     "stylers": [
       {
-        "visibility": "off"
+        "visibility": "on"
+      },
+      {
+        "weight": 8
       }
     ]
   }
