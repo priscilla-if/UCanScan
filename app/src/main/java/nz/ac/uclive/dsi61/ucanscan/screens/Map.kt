@@ -63,9 +63,9 @@ fun MapScreen(context: Context,
     }
 
     /* Apply custom styling to the map.
-     * We use the official Google Maps Styling Wizard at https://mapstyle.withgoogle.com/ to set a
-     * custom style, to for example remove the pointers for the UC buildings and change the colours
-     * of the map to match the green & purple scheme UC uses on their official maps.
+     * We use the official Google Maps JSON Styling Wizard at https://mapstyle.withgoogle.com/ to
+     * set a custom style, to for example remove the pointers for the UC buildings and change the
+     * colours of the map to match the green & purple scheme UC uses on their official maps.
      *
      * We get the JSON from this wizard, load it here, then apply it via the properties variable in
      * the GoogleMap component.

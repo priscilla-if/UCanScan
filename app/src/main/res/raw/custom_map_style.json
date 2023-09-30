@@ -1,21 +1,5 @@
 [
   {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "visibility": "on"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "weight": 3
-      }
-    ]
-  },
-  {
     "featureType": "landscape.man_made",
     "elementType": "geometry.fill",
     "stylers": [
@@ -32,7 +16,7 @@
     "elementType": "geometry.stroke",
     "stylers": [
       {
-        "visibility": "on"
+        "color": "#23201f"
       }
     ]
   },
@@ -41,6 +25,18 @@
     "stylers": [
       {
         "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#b7daa9"
+      },
+      {
+        "visibility": "on"
       }
     ]
   },
@@ -57,26 +53,44 @@
     ]
   },
   {
-    "featureType": "water",
-    "elementType": "geometry.fill",
+    "featureType": "poi.school",
+    "elementType": "geometry.stroke",
     "stylers": [
+      {
+        "color": "#23201f"
+      },
       {
         "visibility": "on"
       }
     ]
   },
   {
-    "featureType": "water",
+    "featureType": "road",
     "elementType": "geometry.stroke",
     "stylers": [
       {
-        "color": "#4abadc"
+        "color": "#23201f"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#23201f"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry.fill",
+    "stylers": [
+      {
+        "color": "#cae4f0"
       },
       {
         "visibility": "on"
-      },
-      {
-        "weight": 3
       }
     ]
   },
@@ -85,19 +99,7 @@
     "elementType": "labels.text.fill",
     "stylers": [
       {
-        "visibility": "on"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "visibility": "on"
-      },
-      {
-        "weight": 8
+        "color": "#23201f"
       }
     ]
   }
