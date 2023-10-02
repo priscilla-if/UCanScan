@@ -117,7 +117,7 @@ fun RaceScreen(context: Context,
                      .size(100.dp),
                  shape = RoundedCornerShape(16.dp),
                  onClick = {
-                     //TODO handle map btn onclick
+                     navController.navigate(Screens.Map.route)
                  },
              ) {
                  Icon(

@@ -14,9 +14,7 @@
     <string name="prefs_animations_opt1">Animations when ABC</string>
     <string name="prefs_animations_opt2">Animations when XYZ</string>
     <string name="prefs_name_opt1">How should we greet you?</string>
-    <string name="settings">Settings</string>
     <string name="next_landmark">Next Landmark</string>
     <string name="jack_erskine_landmark">Jack Erskine</string>
     <string name="back_to_race">Back to Race</string>
-
 </resources>
