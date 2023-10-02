@@ -21,13 +21,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -41,16 +49,48 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 fun RaceScreen(context: Context,
                navController: NavController) {
     // A surface container using the 'background' color from the theme
+
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
 
+
+
+
      Column(
-         modifier = Modifier.fillMaxSize().padding(top = 100.dp),
+         //modifier = Modifier.fillMaxSize().padding(top = 0.dp),
          verticalArrangement = Arrangement.Center,
          horizontalAlignment = Alignment.CenterHorizontally
      ) {
+
+         TopAppBar(
+             colors = TopAppBarDefaults.smallTopAppBarColors(
+                 containerColor = MaterialTheme.colorScheme.primaryContainer,
+                 titleContentColor = MaterialTheme.colorScheme.primary,
+             ),
+             title = {
+                 Text("TIMER HERE")
+             },
+             actions = {
+
+                 Button(
+                     modifier = Modifier
+                         .size(width = 100.dp, height = 50.dp),
+                     shape = RoundedCornerShape(16.dp),
+                     onClick = {
+                         //TODO
+                     },
+                 ) {
+                     Text(text = "Give Up")
+                 }
+                       
+                       
+             },
+         )
+
+
 
          Text( modifier = Modifier.padding(bottom = 70.dp) ,
              text = stringResource(id = R.string.next_landmark),
