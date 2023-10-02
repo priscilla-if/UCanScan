@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksScreen
+import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MainMenuScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.PreferencesScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.RaceScreen
@@ -38,6 +39,12 @@ fun NavGraph (navController: NavHostController) {
             route = Screens.Preferences.route
         ) {backStackEntry ->
             PreferencesScreen(LocalContext.current, navController)
+        }
+
+        composable(
+            route = Screens.Leaderboard.route
+        ) {backStackEntry ->
+            LeaderboardScreen(LocalContext.current, navController)
         }
 
 
