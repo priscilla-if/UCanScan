@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
@@ -94,6 +95,7 @@ fun RaceScreen(context: Context,
                      .size(100.dp),
                  shape = RoundedCornerShape(16.dp),
                  onClick = {
+                     //TODO
                  },
              ) {
                  Icon(
@@ -111,7 +113,7 @@ fun RaceScreen(context: Context,
                      .size(100.dp),
                  shape = RoundedCornerShape(16.dp),
                  onClick = {
-                     //TODO handle map btn onclick
+                     navController.navigate(Screens.Map.route)
                  },
              ) {
                  Icon(

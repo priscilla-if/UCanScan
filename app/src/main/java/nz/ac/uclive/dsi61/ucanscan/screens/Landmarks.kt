@@ -9,7 +9,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -28,14 +27,15 @@ fun LandmarksScreen(context: Context,
                     navController: NavController
 ) {
 
-    val context = LocalContext.current
     val application = context.applicationContext as UCanScanApplication
     val viewModel: LandmarkViewModel = viewModel(factory = LandmarkViewModelFactory(application.repository))
     val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<Landmark>())
     // Here is how we can get stuff from our DB to display on a screen - ideally we have
     // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
 
         Button(
@@ -46,8 +46,13 @@ fun LandmarksScreen(context: Context,
             Text(text = viewModel.getLandmarks().toString()
             )
         }
+
+        for (landmark in landmarks) {
+            Text(text = landmark.latitude.toString())
+        }
+
     }
 
-    BackHandler {
-    }
+//    BackHandler { // what to do when phone's back button is clicked
+//    }
 }

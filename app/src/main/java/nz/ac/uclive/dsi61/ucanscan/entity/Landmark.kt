@@ -8,6 +8,9 @@ import androidx.room.PrimaryKey
 class Landmark (
     @ColumnInfo var name: String,
     @ColumnInfo var description: String,
+    @ColumnInfo var latitude: Double,
+    @ColumnInfo var longitude: Double,
+    @ColumnInfo var isFound: Boolean,
     @ColumnInfo var code: String) {
 
     @PrimaryKey(autoGenerate = true) var id: Long = 0
