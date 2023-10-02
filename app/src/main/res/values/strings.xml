@@ -2,6 +2,7 @@
     <string name="app_name">UCanScan</string>
     <string name="start_race">Start Race</string>
     <string name="my_times">My Times</string>
+    <string name="landmarks_found">Landmarks Found</string>
     <string name="preferences">Settings</string>
     <string name="prefs_notifications">Notifications</string>
     <string name="prefs_name">Your Name</string>
