@@ -6,14 +6,21 @@ plugins {
 
 android {
     namespace = "nz.ac.uclive.dsi61.ucanscan"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "nz.ac.uclive.dsi61.ucanscan"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+
+        configurations.all {
+            resolutionStrategy {
+                force("androidx.emoji2:emoji2-views-helper:1.3.0")
+                force("androidx.emoji2:emoji2:1.3.0")
+            }
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
