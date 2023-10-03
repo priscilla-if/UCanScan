@@ -13,8 +13,8 @@ sealed class Screens(val route: String, @StringRes val resourceId: Int) {
 
     object Leaderboard: Screens("leaderboard", R.string.leaderboard_screen)
 
-    object Map: Screens("map")
+    object Map: Screens("map", R.string.map_screen)
 
-    object Camera: Screens("camera")
+    object Camera: Screens("camera", R.string.camera_screen)
 
 }

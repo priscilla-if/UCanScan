@@ -56,8 +56,6 @@ fun NavGraph (navController: NavHostController) {
             LeaderboardScreen(LocalContext.current, navController)
         }
 
-
-
         composable(
             route = Screens.Landmarks.route
         ) { backStackEntry ->

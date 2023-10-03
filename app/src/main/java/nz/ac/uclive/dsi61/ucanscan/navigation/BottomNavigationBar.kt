@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
@@ -39,14 +38,9 @@ fun BottomNavigationBar(
                         for (destination in (navBackStackEntry?.destination?.hierarchy)!!) {
                             Log.d("NavigationHistory", "Route back: ${destination.route}")
                         }
+
                     }
                     navController.navigate(screen.route) {
-                        // Pop up to the start destination of the graph to
-                        // avoid building up a large stack of destinations
-                        // on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
                         // Avoid multiple copies of the same destination when
                         // reselecting the same item
                         launchSingleTop = true

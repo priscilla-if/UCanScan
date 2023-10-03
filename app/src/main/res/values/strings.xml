@@ -22,4 +22,6 @@
     <string name="preferences_screen">Preferences</string>
     <string name="landmarks_screen">Landmarks</string>
     <string name="leaderboard_screen">Leaderboard</string>
+    <string name="map_screen">Map</string>
+    <string name="camera_screen">Camera</string>
 </resources>

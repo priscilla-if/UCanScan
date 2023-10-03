@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -53,6 +54,9 @@ fun LandmarksScreen(context: Context,
 
     }
 
-//    BackHandler { // what to do when phone's back button is clicked
-//    }
+    BackHandler {
+        Log.d("TESTING", navController.backQueue.toString())
+
+        navController.popBackStack()
+    }
 }
