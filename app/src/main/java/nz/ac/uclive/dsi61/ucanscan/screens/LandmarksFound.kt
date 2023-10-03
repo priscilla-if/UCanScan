@@ -3,19 +3,27 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,7 +36,6 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LandmarksFoundScreen(context: Context,
@@ -44,11 +51,9 @@ fun LandmarksFoundScreen(context: Context,
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //TODO: sticky the title
         Text(
             text = stringResource(R.string.landmarks_found),
             fontSize = 24.sp
@@ -58,72 +63,12 @@ fun LandmarksFoundScreen(context: Context,
             modifier = Modifier.height(16.dp)
         )
 
-
-        //TODO: get images from roomdb
-        for (landmark in landmarks) {
-            Row(
-                modifier = Modifier.padding(top = 16.dp)      // padding between entries
-                    .fillMaxWidth()
-            ) {
-                Column(     // column 1: image
-                    modifier = Modifier.padding(end = 16.dp),   // padding on right of image
-                ) {
-                    Row(
-                        //
-                    ) {
-                        //                Image(bitmap = landmark.image, contentDescription = "landmark photo")
-                        Image(
-                            painter = painterResource(id = R.drawable.landmark_test_image),
-                            contentDescription = "landmark photo",
-                            modifier = Modifier.size(128.dp)
-                        )
-                    }
-                }
-
-                Column(     // column 2: text
-                    //
-                ) {
-                    Row(
-                        //
-                    ) {
-                        Text(
-//                    modifier = Modifier.padding(top = 16.dp),
-                            text = landmark.name,
-                            fontSize = 24.sp,            //TODO: replace with MaterialTheme styling
-                            fontWeight = FontWeight.Bold // ^
-                        )
-                    }
-                    Row(
-                        //
-                    ) {
-                        Text(
-                            text = landmark.description,
-                            fontSize = 20.sp,             //TODO: replace with MaterialTheme styling
-                            fontWeight = FontWeight.Light // ^
-                        )
-                    }
-                }
-
-            }
-        }
-
-
-
-        // Add 90dp of padding below the landmarks column
-        Spacer(
-            modifier = Modifier
-                .height(90.dp + 16.dp) // height of button + padding amount
-                .fillMaxWidth()
-        )
-
-
+        FoundLandmarksList(landmarks)
 
     }
 
 
-
-
-    //TODO: put into function, for map, camera, landscape
+    // 'back to Race' button
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -150,8 +95,63 @@ fun LandmarksFoundScreen(context: Context,
     }
 
 
-
-
 //    BackHandler { // what to do when phone's back button is clicked
 //    }
+}
+
+
+
+@Composable
+fun FoundLandmarksList(landmarks: List<Landmark>) {
+    LazyColumn( // the lazycolumn is scrollable & allows the "landmarks found" title to stick to the screen
+        contentPadding = PaddingValues(bottom = 16.dp + 90.dp) // Reserve space for the Back button: padding + button height
+    ) {
+        items(landmarks) { landmark ->
+            Row(
+                modifier = Modifier.padding(top = 16.dp)      // padding between entries
+                    .fillMaxWidth()
+            ) {
+                //TODO: get images from roomdb
+                Column(
+                    // column 1: image
+                    modifier = Modifier.padding(end = 16.dp),   // padding on right of image
+                ) {
+                    Row(
+                        //
+                    ) {
+                        //                Image(bitmap = landmark.image, contentDescription = "landmark photo")
+                        Image(
+                            painter = painterResource(id = R.drawable.landmark_test_image),
+                            contentDescription = "landmark photo",
+                            modifier = Modifier.size(128.dp)
+                        )
+                    }
+                }
+
+                Column(     // column 2: text
+                    //
+                ) {
+                    Row(
+                        //
+                    ) {
+                        Text(
+                            //                    modifier = Modifier.padding(top = 16.dp),
+                            text = landmark.name,
+                            fontSize = 24.sp,            //TODO: replace with MaterialTheme styling
+                            fontWeight = FontWeight.Bold // ^
+                        )
+                    }
+                    Row(
+                        //
+                    ) {
+                        Text(
+                            text = landmark.description,
+                            fontSize = 20.sp,             //TODO: replace with MaterialTheme styling
+                            fontWeight = FontWeight.Light // ^
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
