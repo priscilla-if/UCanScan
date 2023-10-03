@@ -24,11 +24,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,6 +67,7 @@ fun RaceScreen(context: Context,
          verticalArrangement = Arrangement.Center,
          horizontalAlignment = Alignment.CenterHorizontally
      ) {
+         val openDialog = remember { mutableStateOf(false)  }
 
          TopAppBar(
              colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -80,14 +84,49 @@ fun RaceScreen(context: Context,
                          .size(width = 100.dp, height = 50.dp),
                      shape = RoundedCornerShape(16.dp),
                      onClick = {
-                         //TODO
+                         openDialog.value = true
                      },
                  ) {
                      Text(text = "Give Up")
                  }
-                       
-                       
-             },
+
+                 if (openDialog.value) {
+
+                     AlertDialog(
+                         onDismissRequest = {
+                             openDialog.value = false
+                         },
+                         title = {
+                             Text(text = "Give Up")
+                         },
+                         text = {
+                             Text("Are you sure you want to give up? Your progress will be lost.")
+                         },
+                         confirmButton = {
+                             Button(
+
+                                 onClick = {
+                                     openDialog.value = false
+                                     navController.navigate(Screens.MainMenu.route)
+                                     //TODO Reset stopwatch here
+                                 }) {
+                                 Text("Give Up")
+                             }
+                         },
+                         dismissButton = {
+                             Button(
+
+                                 onClick = {
+                                     openDialog.value = false
+                                 }) {
+                                 Text("Keep Racing")
+                             }
+                         })
+                 }
+
+
+
+                         },
          )
 
 
