@@ -2,6 +2,8 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,7 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
+import java.net.URLEncoder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
@@ -91,8 +94,8 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            //TODO: Navigate to correct page
-                            navController.navigate(Screens.Landmarks.route)
+                            //TODO: Navigate to correct page when exists
+//                            navController.navigate(Screens.xxx.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
@@ -152,4 +155,3 @@ fun GreetingPreview() {
         Greeting("Android")
     }
 }
-

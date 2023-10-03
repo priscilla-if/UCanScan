@@ -34,13 +34,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
@@ -107,6 +109,8 @@ fun RaceScreen(context: Context,
                             .size(100.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
+                            navController.navigate(Screens.Camera.route)
+
                         },
                     ) {
                         Icon(
@@ -124,7 +128,7 @@ fun RaceScreen(context: Context,
                             .size(100.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
-                            //TODO handle map btn onclick
+                            navController.navigate(Screens.Map.route)
                         },
                     ) {
                         Icon(
