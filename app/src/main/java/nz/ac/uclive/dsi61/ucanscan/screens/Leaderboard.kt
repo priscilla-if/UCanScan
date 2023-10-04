@@ -39,7 +39,7 @@ fun LeaderboardScreen(context: Context,
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
-        }, content = {
+        }, content = { innerPadding ->
             Column(
                 modifier = Modifier.fillMaxSize().padding(16.dp)
             ) {
@@ -54,6 +54,8 @@ fun LeaderboardScreen(context: Context,
                     )
                 }
             }
+
+            BackToRaceButtonContainer(navController, innerPadding)
 
         }
     )

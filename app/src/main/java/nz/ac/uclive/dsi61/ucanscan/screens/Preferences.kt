@@ -58,7 +58,7 @@ fun PreferencesScreen(context: Context,
 
 
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
-        content={Surface(
+        content={ innerPadding -> Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
@@ -271,7 +271,8 @@ fun PreferencesScreen(context: Context,
                     }
                 }
             }
-
+            // TODO: Add a conditional so that this only displays if a race is in progress.
+            BackToRaceButtonContainer(navController, innerPadding)
 
         }
 

@@ -39,8 +39,7 @@ fun LandmarksScreen(context: Context,
         bottomBar = {
             BottomNavigationBar(navController)
         },
-        content = {
-
+        content = {innerPadding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -60,8 +59,9 @@ fun LandmarksScreen(context: Context,
                 for (landmark in landmarks) {
                     Text(text = landmark.latitude.toString())
                 }
-
             }
+
+            BackToRaceButtonContainer(navController, innerPadding)
 
             BackHandler {
                 navController.popBackStack()
