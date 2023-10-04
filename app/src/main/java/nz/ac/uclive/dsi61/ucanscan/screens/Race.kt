@@ -134,3 +134,20 @@ fun RaceScreen(context: Context,
 
     }
 }
+
+
+
+@Composable
+fun BackToRaceButton(navController: NavController) {
+    Button(
+        onClick = {
+            navController.navigate(Screens.Race.route)
+        },
+        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.back_to_race),
+            fontSize = 20.sp //TODO: replace with MaterialTheme styling
+        )
+    }
+}
