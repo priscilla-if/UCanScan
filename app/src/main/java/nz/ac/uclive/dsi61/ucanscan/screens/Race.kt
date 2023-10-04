@@ -42,11 +42,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
@@ -169,14 +169,18 @@ fun RaceScreen(context: Context,
              horizontalArrangement = Arrangement.SpaceEvenly
          ) {
 
+
              Button(
                  modifier = Modifier
                      .size(100.dp),
                  shape = RoundedCornerShape(16.dp),
                  onClick = {
-                     //TODO
+
+                     navController.navigate(Screens.Camera.route)
+
                  },
-             ) {
+
+                 ) {
                  Icon(
                      painter = painterResource(id = R.drawable.camera),
                      contentDescription = "Camera",
@@ -213,3 +217,5 @@ fun RaceScreen(context: Context,
 
     }
 }
+
+
