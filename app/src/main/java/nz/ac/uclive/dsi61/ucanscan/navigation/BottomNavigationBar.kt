@@ -1,11 +1,13 @@
 package nz.ac.uclive.dsi61.ucanscan.navigation
 
 import android.util.Log
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,12 +27,19 @@ fun BottomNavigationBar(
         Screens.Leaderboard
     )
 
-    BottomNavigation {
+    val icons = listOf(
+        Icons.Outlined.Settings,
+        Icons.Outlined.List,
+        Icons.Outlined.Star,
+        )
+
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
+        var index = 0
         items.forEach { screen ->
-            BottomNavigationItem(
-                icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
+            NavigationBarItem(
+                icon = { Icon(icons[index], contentDescription = null) },
                 label = { Text(stringResource(screen.resourceId)) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
@@ -49,6 +58,7 @@ fun BottomNavigationBar(
                     }
                 }
             )
+            index += 1
         }
     }
 }

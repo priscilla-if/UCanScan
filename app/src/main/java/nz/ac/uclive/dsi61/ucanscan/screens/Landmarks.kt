@@ -7,6 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
+import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
@@ -33,30 +35,39 @@ fun LandmarksScreen(context: Context,
     val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<Landmark>())
     // Here is how we can get stuff from our DB to display on a screen - ideally we have
     // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
 
-        Button(
-            onClick = {
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = viewModel.getLandmarks().toString()
-            )
-        }
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController)
+        },
+        content = {
 
-        for (landmark in landmarks) {
-            Text(text = landmark.latitude.toString())
-        }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
 
-    }
+                Button(
+                    onClick = {
+                    },
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text(
+                        text = viewModel.getLandmarks().toString()
+                    )
+                }
 
-    BackHandler {
-        Log.d("TESTING", navController.backQueue.toString())
+                for (landmark in landmarks) {
+                    Text(text = landmark.latitude.toString())
+                }
 
-        navController.popBackStack()
-    }
+            }
+
+            BackHandler {
+                Log.d("TESTING", navController.backQueue.toString())
+
+                navController.popBackStack()
+            }
+        })
 }
