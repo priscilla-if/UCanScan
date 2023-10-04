@@ -46,15 +46,6 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 fun RaceScreen(context: Context,
                navController: NavController) {
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-
-    if ((navBackStackEntry?.destination?.hierarchy) != null) {
-        for (destination in (navBackStackEntry?.destination?.hierarchy)!!) {
-            Log.d("NavigationHistory", "Route race: ${destination.route}")
-        }
-    }
-
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
