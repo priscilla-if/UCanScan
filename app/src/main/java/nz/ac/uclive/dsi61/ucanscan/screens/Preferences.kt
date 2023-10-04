@@ -4,11 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
-import android.util.Log
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -281,9 +278,7 @@ fun PreferencesScreen(context: Context,
     })
 
     BackHandler {
-        Log.d("TESTING", navController.backQueue.toString())
         navController.popBackStack()
-
     }
 
 }

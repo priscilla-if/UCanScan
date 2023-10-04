@@ -1,6 +1,4 @@
 package nz.ac.uclive.dsi61.ucanscan.navigation
-
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.Settings
@@ -43,12 +41,6 @@ fun BottomNavigationBar(
                 label = { Text(stringResource(screen.resourceId)) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    if ((navBackStackEntry?.destination?.hierarchy) != null) {
-                        for (destination in (navBackStackEntry?.destination?.hierarchy)!!) {
-                            Log.d("NavigationHistory", "Route back: ${destination.route}")
-                        }
-
-                    }
                     navController.navigate(screen.route) {
                         // Avoid multiple copies of the same destination when
                         // reselecting the same item

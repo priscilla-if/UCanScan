@@ -2,7 +2,6 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -60,8 +59,6 @@ fun LeaderboardScreen(context: Context,
     )
 
     BackHandler {
-        Log.d("TESTING", navController.backQueue.toString())
-
         navController.popBackStack()
     }
 
