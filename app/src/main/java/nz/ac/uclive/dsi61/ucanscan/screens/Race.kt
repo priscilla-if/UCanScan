@@ -23,12 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -48,96 +44,97 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController) {
-        val openDialog = remember { mutableStateOf(false)  }
+               navController: NavController, stopwatchViewModel : StopwatchViewModel) {
 
-        TopAppBar(
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stopwatch),
-                        contentDescription = "Stopwatch",
-                        modifier = Modifier.size(50.dp)
-                    )
-
-                    val seconds = stopwatchViewModel.time / 1000
-                    val minutes = seconds / 60
-                    val actualSeconds = seconds % 60
-                    val hours = minutes / 60
-                    val actualMinutes = minutes % 60
-
-                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
-                }
-            },
-            actions = {
-
-                Button(
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 50.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    onClick = {
-                        openDialog.value = true
-                    },
-                ) {
-                    Text(text = "Give Up")
-                }
-
-                if (openDialog.value) {
-
-                    AlertDialog(
-                        onDismissRequest = {
-                            openDialog.value = false
-                        },
-                        title = {
-                            Text(text = "Give Up")
-                        },
-                        text = {
-                            Text("Are you sure you want to give up? Your progress will be lost.")
-                        },
-                        confirmButton = {
-                            Button(
-
-                                onClick = {
-                                    openDialog.value = false
-                                    navController.navigate(Screens.MainMenu.route)
-                                    //reset stopwatch
-                                    stopwatchViewModel.isRunning = false
-                                    stopwatchViewModel.time = 0L
-                                    stopwatchViewModel.startTime = 0L
-                                }) {
-                                Text("Give Up")
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-
-                                onClick = {
-                                    openDialog.value = false
-                                }) {
-                                Text("Keep Racing")
-                            }
-                        })
-                }
-            },
-        )
     Scaffold(
-
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
+
+            val openDialog = remember { mutableStateOf(false)  }
+
+            TopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stopwatch),
+                            contentDescription = "Stopwatch",
+                            modifier = Modifier.size(50.dp)
+                        )
+
+                        val seconds = stopwatchViewModel.time / 1000
+                        val minutes = seconds / 60
+                        val actualSeconds = seconds % 60
+                        val hours = minutes / 60
+                        val actualMinutes = minutes % 60
+
+                        Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
+                    }
+                },
+                actions = {
+
+                    Button(
+                        modifier = Modifier
+                            .size(width = 100.dp, height = 50.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        onClick = {
+                            openDialog.value = true
+                        },
+                    ) {
+                        Text(text = stringResource(id = R.string.give_up))
+                    }
+
+                    if (openDialog.value) {
+
+                        AlertDialog(
+                            onDismissRequest = {
+                                openDialog.value = false
+                            },
+                            title = {
+                                Text(text = stringResource(id = R.string.give_up))
+                            },
+                            text = {
+                                Text(text = stringResource(id = R.string.give_up_desc))
+                            },
+                            confirmButton = {
+                                Button(
+
+                                    onClick = {
+                                        openDialog.value = false
+                                        navController.navigate(Screens.MainMenu.route)
+                                        //reset stopwatch
+                                        stopwatchViewModel.isRunning = false
+                                        stopwatchViewModel.time = 0L
+                                        stopwatchViewModel.startTime = 0L
+                                    }) {
+                                    Text(text = stringResource(id = R.string.give_up))
+                                }
+                            },
+                            dismissButton = {
+                                Button(
+
+                                    onClick = {
+                                        openDialog.value = false
+                                    }) {
+                                    Text(text = stringResource(id = R.string.keep_racing))
+                                }
+                            })
+                    }
+                },
+            )
+
             Column(
                 modifier = Modifier.fillMaxSize().padding(top = 100.dp),
                 verticalArrangement = Arrangement.Center,
@@ -152,8 +149,6 @@ fun RaceScreen(context: Context,
                         fontWeight = FontWeight.Bold
                     )
                 )
-
-
 
                 Box(
                     modifier = Modifier
@@ -209,9 +204,7 @@ fun RaceScreen(context: Context,
                                 .size(100.dp)
                         )
                     }
-
-
-
+                    
                     Button(
                         modifier = Modifier
                             .size(100.dp),
