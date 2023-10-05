@@ -2,8 +2,6 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,13 +39,14 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
-import java.net.URLEncoder
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MainMenuScreen(context: Context,
-                   navController: NavController) {
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel
+) {
     // A surface container using the 'background' color from the theme
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -83,6 +82,8 @@ fun MainMenuScreen(context: Context,
                     Button(
                         onClick = {
                             navController.navigate(Screens.Race.route)
+                            stopwatchViewModel.isRunning = true
+
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {

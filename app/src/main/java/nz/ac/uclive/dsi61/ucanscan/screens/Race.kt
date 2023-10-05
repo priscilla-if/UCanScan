@@ -21,24 +21,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -46,11 +42,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController) {
+               navController: NavController, stopwatchViewModel: StopwatchViewModel
+) {
     // A surface container using the 'background' color from the theme
 
 
@@ -63,7 +62,6 @@ fun RaceScreen(context: Context,
 
 
      Column(
-         //modifier = Modifier.fillMaxSize().padding(top = 0.dp),
          verticalArrangement = Arrangement.Center,
          horizontalAlignment = Alignment.CenterHorizontally
      ) {
@@ -75,7 +73,24 @@ fun RaceScreen(context: Context,
                  titleContentColor = MaterialTheme.colorScheme.primary,
              ),
              title = {
-                 Text("TIMER HERE")
+                 Row(
+                     verticalAlignment = Alignment.CenterVertically,
+                     horizontalArrangement = Arrangement.spacedBy(8.dp)
+                 ) {
+                     Icon(
+                         painter = painterResource(id = R.drawable.stopwatch),
+                         contentDescription = "Stopwatch",
+                         modifier = Modifier.size(50.dp)
+                     )
+                     
+                     val seconds = stopwatchViewModel.time / 1000
+                     val minutes = seconds / 60
+                     val actualSeconds = seconds % 60
+                     val hours = minutes / 60
+                     val actualMinutes = minutes % 60
+
+                     Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
+                 }
              },
              actions = {
 
@@ -108,7 +123,10 @@ fun RaceScreen(context: Context,
                                  onClick = {
                                      openDialog.value = false
                                      navController.navigate(Screens.MainMenu.route)
-                                     //TODO Reset stopwatch here
+                                     //reset stopwatch
+                                     stopwatchViewModel.isRunning = false
+                                     stopwatchViewModel.time = 0L
+                                     stopwatchViewModel.startTime = 0L
                                  }) {
                                  Text("Give Up")
                              }
@@ -123,13 +141,8 @@ fun RaceScreen(context: Context,
                              }
                          })
                  }
-
-
-
                          },
          )
-
-
 
          Text( modifier = Modifier.padding(bottom = 70.dp) ,
              text = stringResource(id = R.string.next_landmark),
@@ -138,8 +151,6 @@ fun RaceScreen(context: Context,
                  fontWeight = FontWeight.Bold
              )
          )
-
-
 
          Box(
              modifier = Modifier
@@ -161,14 +172,23 @@ fun RaceScreen(context: Context,
              )
          }
 
-
+         //increments stopwatch if it is running
+         LaunchedEffect(stopwatchViewModel.isRunning) {
+             while (stopwatchViewModel.isRunning) {
+                 withFrameMillis { frameTime ->
+                     if (stopwatchViewModel.startTime == 0L) {
+                         stopwatchViewModel.startTime = frameTime
+                     }
+                     stopwatchViewModel.time = frameTime - stopwatchViewModel.startTime
+                 }
+             }
+         }
 
          Row(
              modifier = Modifier.fillMaxSize(),
              verticalAlignment = Alignment.CenterVertically,
              horizontalArrangement = Arrangement.SpaceEvenly
          ) {
-
 
              Button(
                  modifier = Modifier
@@ -189,8 +209,6 @@ fun RaceScreen(context: Context,
                  )
              }
 
-
-
              Button(
                  modifier = Modifier
                      .size(100.dp),
@@ -206,16 +224,7 @@ fun RaceScreen(context: Context,
                          .size(100.dp)
                  )
              }
-
-
          }
-
-
      }
-
-
-
     }
 }
-
-
