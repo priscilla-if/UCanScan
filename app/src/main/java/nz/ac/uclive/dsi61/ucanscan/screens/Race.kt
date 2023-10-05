@@ -136,13 +136,13 @@ fun RaceScreen(context: Context,
             )
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 100.dp),
+                modifier = Modifier.fillMaxSize().padding(top = 90.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
-                    modifier = Modifier.padding(bottom = 70.dp),
+                    modifier = Modifier.padding(bottom = 30.dp),
                     text = stringResource(id = R.string.next_landmark),
                     style = TextStyle(
                         fontSize = 28.sp,
@@ -204,7 +204,7 @@ fun RaceScreen(context: Context,
                                 .size(100.dp)
                         )
                     }
-                    
+
                     Button(
                         modifier = Modifier
                             .size(100.dp),
