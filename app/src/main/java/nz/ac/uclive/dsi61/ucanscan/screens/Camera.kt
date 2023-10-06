@@ -3,10 +3,12 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -31,13 +33,25 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import java.util.concurrent.Executors
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun CameraScreen(context: Context, navController: NavController) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    val cameraExecutor = Executors.newSingleThreadExecutor()
+
+    // create BarcodeScanner object
+    val options = BarcodeScannerOptions.Builder()
+        .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+        .build()
+    val barcodeScanner = BarcodeScanning.getClient(options)
+
 
     val requestPermissionLauncher =
         //Gets camera permissions
@@ -59,6 +73,14 @@ fun CameraScreen(context: Context, navController: NavController) {
                     preview.setSurfaceProvider(newPreviewView.surfaceProvider)
 
                     previewView = newPreviewView
+
+                    val imageAnalyzer = ImageAnalysis.Builder()
+                        .build()
+                        .also {
+                            it.setAnalyzer(cameraExecutor, BarcodeAnalyser{
+                                Toast.makeText(context, "Barcode found", Toast.LENGTH_SHORT).show()
+                            })
+                        }
                 }, ContextCompat.getMainExecutor(context))
             } else {
                 //Goes back to race screen if user didn't accept camera permissions
@@ -118,6 +140,34 @@ fun CameraPreview(previewView: PreviewView, navController: NavController) {
         }
 
 
+    }
+
+    class BarcodeAnalyser(
+        val callback: () -> Unit
+    ) : ImageAnalysis.Analyzer {
+        override fun analyze(imageProxy: ImageProxy) {
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build()
+
+            val scanner = BarcodeScanning.getClient(options)
+            val mediaImage = imageProxy.image
+            mediaImage?.let {
+                val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
+                scanner.process(image)
+                    .addOnSuccessListener { barcodes ->
+                        if (barcodes.size > 0) {
+                            callback()
+                        }
+                    }
+                    .addOnFailureListener {
+                        // Task failed with an exception
+                        // ...
+                    }
+            }
+            imageProxy.close()
+        }
     }
 
 
