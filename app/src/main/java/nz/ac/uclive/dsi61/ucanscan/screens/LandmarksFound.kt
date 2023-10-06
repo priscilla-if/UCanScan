@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,7 +31,6 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
-import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
@@ -63,8 +61,7 @@ fun LandmarksFoundScreen(context: Context,
             modifier = Modifier.height(16.dp)
         )
 
-        FoundLandmarksList(landmarks)
-
+        FoundLandmarksList(context, landmarks)
     }
 
 
@@ -91,41 +88,56 @@ fun LandmarksFoundScreen(context: Context,
 
 
 
+@SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
-fun FoundLandmarksList(landmarks: List<Landmark>) {
+fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
     LazyColumn( // the lazycolumn is scrollable & allows the "landmarks found" title to stick to the screen
         contentPadding = PaddingValues(bottom = 16.dp + 90.dp) // Reserve space for the Back button: padding + button height
     ) {
         items(landmarks) { landmark ->
             Row(
-                modifier = Modifier.padding(top = 16.dp)      // padding between entries
+                modifier = Modifier
+                    .padding(top = 16.dp)                       // padding between entries
                     .fillMaxWidth()
             ) {
-                //TODO: get images from roomdb
-                Column(
-                    // column 1: image
+                Column(    // column 1: landmark image
                     modifier = Modifier.padding(end = 16.dp),   // padding on right of image
                 ) {
                     Row(
                         //
                     ) {
-                        //                Image(bitmap = landmark.image, contentDescription = "landmark photo")
+                        // The image filename is derived from the landmark's name:
+                        // eg "Puaka-James Hight" becomes "landmark_puaka_james_hight.jpg"
+                        val fileNameParts = landmark.name.split(" ", "-")
+                        val fileName = fileNameParts.joinToString("_").lowercase()
+                        // create a resource ID for a named image in the "drawable" directory
+                        val resourceId = context.resources.getIdentifier(
+                            "landmark_$fileName",
+                            "drawable",
+                            context.packageName
+                        )
+                        // use a default image if the image wasn't found (invalid resource ID)
+                        val drawableId = if (resourceId != 0) {
+                            resourceId
+                        } else {
+                            R.drawable.landmark_no_image
+                        }
+
                         Image(
-                            painter = painterResource(id = R.drawable.landmark_test_image),
-                            contentDescription = "landmark photo",
+                            painter = painterResource(id = drawableId),
+                            contentDescription = null,
                             modifier = Modifier.size(128.dp)
                         )
                     }
                 }
 
-                Column(     // column 2: text
+                Column(    // column 2: landmark text
                     //
                 ) {
                     Row(
                         //
                     ) {
                         Text(
-                            //                    modifier = Modifier.padding(top = 16.dp),
                             text = landmark.name,
                             fontSize = 24.sp,            //TODO: replace with MaterialTheme styling
                             fontWeight = FontWeight.Bold // ^
