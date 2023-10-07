@@ -9,6 +9,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import java.util.concurrent.Executors
@@ -142,34 +144,33 @@ fun CameraPreview(previewView: PreviewView, navController: NavController) {
 
     }
 
-    class BarcodeAnalyser(
-        val callback: () -> Unit
-    ) : ImageAnalysis.Analyzer {
-        override fun analyze(imageProxy: ImageProxy) {
-            val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                .build()
+}
 
-            val scanner = BarcodeScanning.getClient(options)
-            val mediaImage = imageProxy.image
-            mediaImage?.let {
-                val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+@androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
+class BarcodeAnalyser(
+    val callback: () -> Unit
+) : ImageAnalysis.Analyzer {
+    override fun analyze(imageProxy: ImageProxy) {
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+            .build()
 
-                scanner.process(image)
-                    .addOnSuccessListener { barcodes ->
-                        if (barcodes.size > 0) {
-                            callback()
-                        }
+        val scanner = BarcodeScanning.getClient(options)
+        val mediaImage = imageProxy.image
+        mediaImage?.let {
+            val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
+            scanner.process(image)
+                .addOnSuccessListener { barcodes ->
+                    if (barcodes.size > 0) {
+                        callback()
                     }
-                    .addOnFailureListener {
-                        // Task failed with an exception
-                        // ...
-                    }
-            }
-            imageProxy.close()
+                }
+                .addOnFailureListener {
+                    // Task failed with an exception
+                    // ...
+                }
         }
+        imageProxy.close()
     }
-
-
-
 }
