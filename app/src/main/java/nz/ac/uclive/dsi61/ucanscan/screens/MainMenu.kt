@@ -39,13 +39,14 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MainMenuScreen(context: Context,
-                   navController: NavController, stopwatchViewModel: StopwatchViewModel
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel
 ) {
     // A surface container using the 'background' color from the theme
     Box(
@@ -83,6 +84,8 @@ fun MainMenuScreen(context: Context,
                         onClick = {
                             navController.navigate(Screens.Race.route)
                             stopwatchViewModel.isRunning = true
+                            isRaceStartedModel.setRaceStarted(true)
+
 
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)

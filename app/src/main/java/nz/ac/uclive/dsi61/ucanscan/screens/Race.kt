@@ -44,13 +44,15 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController, stopwatchViewModel : StopwatchViewModel) {
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
 
     Scaffold(
         bottomBar = {
@@ -59,81 +61,13 @@ fun RaceScreen(context: Context,
 
             val openDialog = remember { mutableStateOf(false)  }
 
-            TopAppBar(
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                ),
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stopwatch),
-                            contentDescription = "Stopwatch",
-                            modifier = Modifier.size(50.dp)
-                        )
-
-                        val seconds = stopwatchViewModel.time / 1000
-                        val minutes = seconds / 60
-                        val actualSeconds = seconds % 60
-                        val hours = minutes / 60
-                        val actualMinutes = minutes % 60
-
-                        Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
-                    }
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
                 },
-                actions = {
-
-                    Button(
-                        modifier = Modifier
-                            .size(width = 100.dp, height = 50.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            openDialog.value = true
-                        },
-                    ) {
-                        Text(text = stringResource(id = R.string.give_up))
-                    }
-
-                    if (openDialog.value) {
-
-                        AlertDialog(
-                            onDismissRequest = {
-                                openDialog.value = false
-                            },
-                            title = {
-                                Text(text = stringResource(id = R.string.give_up))
-                            },
-                            text = {
-                                Text(text = stringResource(id = R.string.give_up_desc))
-                            },
-                            confirmButton = {
-                                Button(
-
-                                    onClick = {
-                                        openDialog.value = false
-                                        navController.navigate(Screens.MainMenu.route)
-                                        //reset stopwatch
-                                        stopwatchViewModel.isRunning = false
-                                        stopwatchViewModel.time = 0L
-                                        stopwatchViewModel.startTime = 0L
-                                    }) {
-                                    Text(text = stringResource(id = R.string.give_up))
-                                }
-                            },
-                            dismissButton = {
-                                Button(
-
-                                    onClick = {
-                                        openDialog.value = false
-                                    }) {
-                                    Text(text = stringResource(id = R.string.keep_racing))
-                                }
-                            })
-                    }
-                },
+                isRaceStartedModel = isRaceStartedModel
             )
 
             Column(
@@ -172,16 +106,8 @@ fun RaceScreen(context: Context,
                 }
 
          //increments stopwatch if it is running
-         LaunchedEffect(stopwatchViewModel.isRunning) {
-             while (stopwatchViewModel.isRunning) {
-                 withFrameMillis { frameTime ->
-                     if (stopwatchViewModel.startTime == 0L) {
-                         stopwatchViewModel.startTime = frameTime
-                     }
-                     stopwatchViewModel.time = frameTime - stopwatchViewModel.startTime
-                 }
-             }
-         }
+                StopwatchIncrementFunctionality(stopwatchViewModel)
+
 
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -261,5 +187,20 @@ fun BackToRaceButtonContainer(navController: NavController, innerPadding: Paddin
             }
         }
 
+    }
+}
+
+
+@Composable
+fun StopwatchIncrementFunctionality(stopwatchViewModel: StopwatchViewModel) {
+    LaunchedEffect(stopwatchViewModel.isRunning) {
+        while (stopwatchViewModel.isRunning) {
+            withFrameMillis { frameTime ->
+                if (stopwatchViewModel.startTime == 0L) {
+                    stopwatchViewModel.startTime = frameTime
+                }
+                stopwatchViewModel.time = frameTime - stopwatchViewModel.startTime
+            }
+        }
     }
 }

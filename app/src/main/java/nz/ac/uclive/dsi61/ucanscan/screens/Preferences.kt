@@ -39,12 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun PreferencesScreen(context: Context,
-               navController: NavController) {
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
+) {
 
     val toner = ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME)
 
@@ -58,16 +62,38 @@ fun PreferencesScreen(context: Context,
 
 
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
-        content={ innerPadding -> Surface(
+        content={ innerPadding ->
+
+            Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            Column(
+
+                val openDialog = remember { mutableStateOf(false)  }
+
+                TopNavigationBar(
+                    navController = navController,
+                    stopwatchViewModel = stopwatchViewModel,
+                    onGiveUpClick = {
+                        openDialog.value = true
+                    },
+                    isRaceStartedModel = isRaceStartedModel
+                )
+
+                StopwatchIncrementFunctionality(stopwatchViewModel)
+
+
+
+                Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+
+
+
                 Text(
                     text = stringResource(R.string.preferences)
                 )
