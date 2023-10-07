@@ -91,7 +91,8 @@ fun LandmarksFoundScreen(context: Context,
 @SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
 fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
-    LazyColumn( // the lazycolumn is scrollable & allows the "landmarks found" title to stick to the screen
+    // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
+    LazyColumn(
         contentPadding = PaddingValues(bottom = 16.dp + 90.dp) // Reserve space for the Back button: padding + button height
     ) {
         items(landmarks) { landmark ->
@@ -104,19 +105,18 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
                     modifier = Modifier.padding(end = 16.dp),   // padding on right of image
                 ) {
                     Row(
-                        //
                     ) {
                         // The image filename is derived from the landmark's name:
                         // eg "Puaka-James Hight" becomes "landmark_puaka_james_hight.jpg"
                         val fileNameParts = landmark.name.split(" ", "-")
                         val fileName = fileNameParts.joinToString("_").lowercase()
-                        // create a resource ID for a named image in the "drawable" directory
+                        // Create a resource ID for a named image in the "drawable" directory
                         val resourceId = context.resources.getIdentifier(
                             "landmark_$fileName",
                             "drawable",
                             context.packageName
                         )
-                        // use a default image if the image wasn't found (invalid resource ID)
+                        // Use a default image if the image wasn't found (has invalid resource ID)
                         val drawableId = if (resourceId != 0) {
                             resourceId
                         } else {
@@ -132,10 +132,8 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
                 }
 
                 Column(    // column 2: landmark text
-                    //
                 ) {
                     Row(
-                        //
                     ) {
                         Text(
                             text = landmark.name,
@@ -144,7 +142,6 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
                         )
                     }
                     Row(
-                        //
                     ) {
                         Text(
                             text = landmark.description,
@@ -157,5 +154,3 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
         }
     }
 }
-
-
