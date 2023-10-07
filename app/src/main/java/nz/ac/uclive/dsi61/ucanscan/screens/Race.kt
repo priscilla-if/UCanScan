@@ -3,6 +3,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -223,7 +224,13 @@ fun RaceScreen(context: Context,
 
 
                 }
-        }}
+        }
+
+            BackHandler {
+            }
+
+
+        }
     )}
 
 @Composable
