@@ -39,16 +39,22 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 fun CameraScreen(context: Context, navController: NavController) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
 
+    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
+
     val requestPermissionLauncher =
         //Gets camera permissions
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 val lifecycleOwner = (context as ComponentActivity)
-                val cameraProvider = ProcessCameraProvider.getInstance(context)
-                cameraProvider.addListener({
+
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
+                cameraProviderFuture.addListener({
+
+                    cameraProvider = cameraProviderFuture.get()
                     val preview = Preview.Builder().build()
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                    val camera = cameraProvider.get().bindToLifecycle(
+                    val camera = cameraProvider?.bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,
                         preview
@@ -70,8 +76,17 @@ fun CameraScreen(context: Context, navController: NavController) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+
+            cameraProvider?.unbindAll()
+            cameraProvider = null
+        }
+    }
+
     previewView?.let { CameraPreview(it, navController) }
 }
+
 
 @Composable
 fun CameraPreview(previewView: PreviewView, navController: NavController) {
@@ -108,6 +123,7 @@ fun CameraPreview(previewView: PreviewView, navController: NavController) {
         Button(
             onClick = {
                 navController.navigate(Screens.Race.route)
+
             },
             modifier = Modifier.size(width = 200.dp, height = 90.dp)
         ) {
