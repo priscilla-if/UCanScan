@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -136,6 +137,9 @@ fun MainMenuScreen(context: Context,
                 }
             }
         )
+    }
+    BackHandler {
+        // Stop user from going back to Race screen
     }
 }
 
