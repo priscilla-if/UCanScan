@@ -17,15 +17,18 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 // This is a temporary Screen for a Leaderboard (for navigation purposes)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LeaderboardScreen(context: Context,
-                    navController: NavController
+                    navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
 
     val context = LocalContext.current
@@ -39,7 +42,25 @@ fun LeaderboardScreen(context: Context,
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
-        }, content = { innerPadding ->
+        }, content = {
+
+
+
+                innerPadding ->
+
+            val openDialog = remember { mutableStateOf(false)  }
+
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
+                },
+                isRaceStartedModel = isRaceStartedModel
+            )
+
+            StopwatchIncrementFunctionality(stopwatchViewModel)
+
             Column(
                 modifier = Modifier.fillMaxSize().padding(16.dp)
             ) {
@@ -55,7 +76,7 @@ fun LeaderboardScreen(context: Context,
                 }
             }
 
-            BackToRaceButtonContainer(navController, innerPadding)
+            BackToRaceButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
         }
     )

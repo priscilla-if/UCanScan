@@ -23,4 +23,8 @@
     <string name="leaderboard_screen">Leaderboard</string>
     <string name="map_screen">Map</string>
     <string name="camera_screen">Camera</string>
+    <string name="give_up">Give Up</string>
+    <string name="keep_racing">Keep Racing</string>
+    <string name="give_up_desc">Are you sure you want to give up? Your progress will be lost.</string>
+    <string name="back_to_home">Back to Home</string>
 </resources>
