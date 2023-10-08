@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,7 +22,6 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -63,36 +61,29 @@ fun PreferencesScreen(context: Context,
 
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
         content={ innerPadding ->
+            val openDialog = remember { mutableStateOf(false)  }
 
-            Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
+                },
+                isRaceStartedModel = isRaceStartedModel
+            )
 
-                val openDialog = remember { mutableStateOf(false)  }
-
-                TopNavigationBar(
-                    navController = navController,
-                    stopwatchViewModel = stopwatchViewModel,
-                    onGiveUpClick = {
-                        openDialog.value = true
-                    },
-                    isRaceStartedModel = isRaceStartedModel
-                )
-
-                StopwatchIncrementFunctionality(stopwatchViewModel)
-
+            StopwatchIncrementFunctionality(stopwatchViewModel)
 
 
                 Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
+                    .fillMaxWidth().padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-
-
+                    if (isRaceStartedModel.isRaceStarted.value) {
+                        Spacer(modifier = Modifier.height(50.dp))
+                    }
 
                 Text(
                     text = stringResource(R.string.preferences)
@@ -297,10 +288,9 @@ fun PreferencesScreen(context: Context,
                     }
                 }
             }
-            // TODO: Add a conditional so that this only displays if a race is in progress.
-            BackToRaceButtonContainer(navController, innerPadding)
+            BackToRaceButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
-        }
+
 
     })
 

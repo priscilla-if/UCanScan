@@ -24,11 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameMillis
@@ -160,7 +157,7 @@ fun RaceScreen(context: Context,
     )}
 
 @Composable
-fun BackToRaceButtonContainer(navController: NavController, innerPadding: PaddingValues) {
+fun BackToRaceButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -174,14 +171,18 @@ fun BackToRaceButtonContainer(navController: NavController, innerPadding: Paddin
 
             Button(
                 onClick = {
-                    navController.navigate(Screens.Race.route)
+                    if (isRaceStarted.value) {
+                        navController.navigate(Screens.Race.route)
+                    } else {
+                        navController.navigate(Screens.MainMenu.route)
+                    }
                 },
                 modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                     .size(width = 200.dp, height = 90.dp)
 
             ) {
                 Text(
-                    text = stringResource(R.string.back_to_race),
+                    text = stringResource( if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
