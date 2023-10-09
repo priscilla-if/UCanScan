@@ -32,11 +32,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
@@ -56,6 +60,18 @@ fun FinishedRaceScreen(context: Context,
     val actualSeconds = seconds % 60
     val hours = minutes / 60
     val actualMinutes = minutes % 60
+
+    val timeToSave = Times(
+        endTime = stopwatchViewModel.time
+    )
+
+    val application = context.applicationContext as UCanScanApplication
+
+    val finishedRaceViewModel: FinishedRaceViewModel = remember {
+        FinishedRaceViewModel(repository = application.repository)
+    }
+
+    finishedRaceViewModel.addTime(timeToSave)
 
     stopwatchViewModel.startTime = 0L
 

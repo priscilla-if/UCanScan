@@ -3,6 +3,7 @@ import nz.ac.uclive.dsi61.ucanscan.database.UCanScanDatabase
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 
 class UCanScanRepository(private val database: UCanScanDatabase) {
     private val landmarkDao = database.landmarkDao()
@@ -19,5 +20,12 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
     suspend fun insert(landmark: Landmark) {
         landmarkDao.insert(landmark)
     }
+
+
+    @WorkerThread
+    suspend fun addTime(time: Times) {
+        timesDao.insert(time)
+    }
+
 
 }

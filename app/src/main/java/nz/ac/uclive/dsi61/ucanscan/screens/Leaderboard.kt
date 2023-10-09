@@ -65,15 +65,11 @@ fun LeaderboardScreen(context: Context,
                 modifier = Modifier.fillMaxSize().padding(16.dp)
             ) {
 
-                Button(
-                    onClick = {
-                    },
-                    modifier = Modifier.padding(top = 16.dp)
-                ) {
-                    Text(
-                        text = viewModel.getLandmarks().toString()
-                    )
-                }
+
+
+                Text(text = "Personal Bests")
+
+
             }
 
             BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
