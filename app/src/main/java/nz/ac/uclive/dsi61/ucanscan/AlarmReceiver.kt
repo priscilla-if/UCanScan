@@ -17,9 +17,9 @@ class AlarmReceiver : BroadcastReceiver() {
         "Many of our buildings are named after New Zealanders who studied at UC!",
         "Our central library has 11 floors but you can only get a seat if you arrive before 9am!",
         "UC has over 180 student-run clubs: find out about them on Clubs Day at the start of the semester!",
-        "UC is ranked in the top 250 universities worldwide for Engineering and Technology!",
+        "UC is ranked in the top 250 universities worldwide for Engineering & Technology!",
         "Jack Erskine is the coolest building on campus, because the rooms are lined with bare concrete!",
-        "Behind Jack Erskine is a garden that embodies different math problems: mainly the famous \"Königsberg bridges\" problem!",
+        "Behind Jack Erskine is a garden representing different math concepts: mainly the famous \"Königsberg bridges\" problem!",
         "UC has 2 community gardens, on the Ilam & Dovedale campuses: you can grow your own food here!",
         "K1 lecture theatre is so far away, that walking over there gives you as much exercise as a session in the Rec Centre!",
         "The UCSA has an event at least once a week: check out ucsa.org.nz/whatson!",
@@ -41,30 +41,8 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("FOO", "AlarmReceiver onReceive!")
 
-
-
-
-//        val calendar = Calendar.getInstance().apply {
-//            timeInMillis = System.currentTimeMillis()
-//            set(Calendar.HOUR_OF_DAY, 0)
-//            set(Calendar.MINUTE, 0)
-//            set(Calendar.SECOND, 0)
-//            add(Calendar.DAY_OF_YEAR, 1) // Add 1 day to get the next day
-//        }
-
-//        val intent = Intent(context, AlarmReceiver::class.java).let {
-//            PendingIntent.getBroadcast(context, 0, it, 0)
-//        }
-//
-//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, intent)
-
-
-
-
-
         // Open the app when the notification is tapped
-        val intent = Intent(context, MainActivity::class.java).let {
+        val activityIntent = Intent(context, MainActivity::class.java).let {
             PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
         }
 
@@ -76,38 +54,40 @@ class AlarmReceiver : BroadcastReceiver() {
             setContentText(factText)    // this is the text when the notif is minimised
                 .style = Notification.BigTextStyle() // make the notification take up multiple lines
                 .bigText(factText)      // this is the text when the notif is expanded
-            setContentIntent(intent)
+            setContentIntent(activityIntent)
             setAutoCancel(true)
             build()
         }
 
-
-
-//
-//
-//        // Schedule the next alarm for the next day at midnight
-//        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-//        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//        alarmManager.setExactAndAllowWhileIdle(
-//            AlarmManager.RTC_WAKEUP,
-//            calendar.timeInMillis,
-//            pendingIntent
-//        )
-//
-//
-//
-
-
+        scheduleReminder(context)
 
         // Send the notification
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(0, notification)
-//
-//        //TODO: daily notifications
-//        //TODO: why do the notifs change like every 3 seconds
-//
+    }
 
 
+    /**
+     * Schedules a notification for the next day at noon.
+     * This method is almost the same as the one in the SENG440 Backlog tutorial.
+     */
+    private fun scheduleReminder(context: Context) {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 12)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            add(Calendar.DAY_OF_YEAR, 1) // Add 1 day to get the next day
+        }
+
+        val broadcastIntent = Intent(context, AlarmReceiver::class.java).let {
+            PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        // Schedule the next alarm for the next day
+        // Exact repeating requires a permission, and we won't need it just for sending daily notifications
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, broadcastIntent)
     }
 
 
