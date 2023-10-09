@@ -26,5 +26,7 @@ interface LandmarkDao {
     @Query("SELECT COUNT(*) FROM landmark")
     fun getCount(): Flow<Int>
 
+    @Query("SELECT * FROM landmark WHERE name = :landmarkName")
+    fun getLandmarkByName(landmarkName: String): Landmark
 
 }

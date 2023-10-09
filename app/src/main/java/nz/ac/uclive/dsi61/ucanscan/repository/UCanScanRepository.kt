@@ -20,4 +20,14 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
         landmarkDao.insert(landmark)
     }
 
+    @WorkerThread
+    suspend fun getLandmarkByName(name: String): Landmark {
+        return landmarkDao.getLandmarkByName(name)
+    }
+
+    @WorkerThread
+    suspend fun updateLandmark(landmark: Landmark) {
+        landmarkDao.update(landmark)
+    }
+
 }
