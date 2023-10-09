@@ -21,7 +21,7 @@ fun BottomNavigationBar(
 
     val items = listOf(
         Screens.Preferences,
-        Screens.Landmarks,
+        Screens.LandmarksFound,
         Screens.Leaderboard
     )
 
