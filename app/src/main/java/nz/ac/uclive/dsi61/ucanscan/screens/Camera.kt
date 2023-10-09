@@ -23,14 +23,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -67,16 +70,22 @@ fun CameraScreen(context: Context, navController: NavController) {
     val barcodeScanner = BarcodeScanning.getClient(options)
 
 
+    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
+
     val requestPermissionLauncher =
         //Gets camera permissions
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 val lifecycleOwner = (context as ComponentActivity)
-                val cameraProvider = ProcessCameraProvider.getInstance(context)
-                cameraProvider.addListener({
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
+                cameraProviderFuture.addListener({
+
+                    cameraProvider = cameraProviderFuture.get()
                     val previewUseCase = Preview.Builder().build()
                     val analysisUseCase = ImageAnalysis.Builder().build()
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                     // define the actual functionality of our analysis use case
                     analysisUseCase.setAnalyzer(
@@ -86,7 +95,7 @@ fun CameraScreen(context: Context, navController: NavController) {
                         processImageProxy(barcodeScanner, imageProxy)
                     }
 
-                    val camera = cameraProvider.get().bindToLifecycle(
+                    val camera = cameraProvider?.bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,
                         previewUseCase,
@@ -110,8 +119,17 @@ fun CameraScreen(context: Context, navController: NavController) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
+    DisposableEffect(Unit) {
+        onDispose {
+
+            cameraProvider?.unbindAll()
+            cameraProvider = null
+        }
+    }
+
     previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
 }
+
 
 @Composable
 fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?) {
@@ -169,17 +187,7 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                navController.navigate(Screens.Race.route)
-            },
-            modifier = Modifier.size(width = 200.dp, height = 90.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.back_to_race),
-                fontSize = 20.sp
-            )
-        }
+        BackToRaceButton(navController)
 
     }
 

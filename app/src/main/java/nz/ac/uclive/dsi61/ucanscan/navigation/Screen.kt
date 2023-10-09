@@ -7,7 +7,7 @@ sealed class Screens(val route: String, @StringRes val resourceId: Int) {
 
     object Race: Screens("race", R.string.race_screen)
 
-    object Landmarks: Screens("landmarks", R.string.landmarks_screen)
+    object LandmarksFound: Screens("landmarks_found", R.string.landmarks_found_screen)
 
     object Preferences: Screens("preferences", R.string.preferences)
 
@@ -16,5 +16,8 @@ sealed class Screens(val route: String, @StringRes val resourceId: Int) {
     object Map: Screens("map", R.string.map_screen)
 
     object Camera: Screens("camera", R.string.camera_screen)
+
+    object FinishedRace: Screens("finished_race", R.string.finished_race_screen)
+
 
 }
