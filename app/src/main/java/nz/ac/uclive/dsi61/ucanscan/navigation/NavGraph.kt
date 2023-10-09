@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nz.ac.uclive.dsi61.ucanscan.screens.CameraScreen
+import nz.ac.uclive.dsi61.ucanscan.screens.FinishedRaceScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MainMenuScreen
@@ -63,6 +64,12 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
             route = Screens.Landmarks.route
         ) { backStackEntry ->
             LandmarksScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+        }
+
+        composable(
+            route = Screens.FinishedRace.route
+        ) {backStackEntry ->
+            FinishedRaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
         }
     }
 }

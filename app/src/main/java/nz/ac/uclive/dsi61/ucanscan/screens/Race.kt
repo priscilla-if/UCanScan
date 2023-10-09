@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -85,7 +86,7 @@ fun RaceScreen(context: Context,
                 Box(
                     modifier = Modifier
                         .size(300.dp)
-                        .background(Color.Gray, shape = CircleShape)
+                        .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
                     Text(
                         text = stringResource(id = R.string.jack_erskine_landmark),
@@ -146,6 +147,18 @@ fun RaceScreen(context: Context,
                     }
 
 
+                    //TODO REMOVE THIS I AM JUST USING THIS TO ACCESS THE FINISHED RACE SCREEN!
+                    Button(
+                        modifier = Modifier
+                            .size(100.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        onClick = {
+                            navController.navigate(Screens.FinishedRace.route)
+
+                        },
+                    ) {}
+
+
                 }
         }
 
@@ -157,7 +170,7 @@ fun RaceScreen(context: Context,
     )}
 
 @Composable
-fun BackToRaceButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {

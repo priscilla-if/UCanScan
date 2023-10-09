@@ -76,7 +76,7 @@ fun LeaderboardScreen(context: Context,
                 }
             }
 
-            BackToRaceButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
         }
     )
