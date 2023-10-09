@@ -4,8 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -16,8 +19,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
@@ -33,11 +38,13 @@ fun LeaderboardScreen(context: Context,
 
     val context = LocalContext.current
     val application = context.applicationContext as UCanScanApplication
-    val viewModel: LandmarkViewModel =
-        viewModel(factory = LandmarkViewModelFactory(application.repository))
-    val landmarks by viewModel.getLandmarks().collectAsState(initial = emptyList<Landmark>())
-    // Here is how we can get stuff from our DB to display on a screen - ideally we have
-    // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
+    val finishedRaceViewModel: FinishedRaceViewModel = remember {
+        FinishedRaceViewModel(repository = application.repository)
+    }
+
+
+
+
 
     Scaffold(
         bottomBar = {
@@ -70,6 +77,9 @@ fun LeaderboardScreen(context: Context,
                 Text(text = "Personal Bests")
 
 
+             //   TimesDisplay(allTimes = allTimes)
+
+
             }
 
             BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
@@ -82,3 +92,15 @@ fun LeaderboardScreen(context: Context,
     }
 
 }
+
+
+@Composable
+fun TimesDisplay(allTimes: List<Times>) {
+    LazyColumn {
+        items(allTimes) { time ->
+            Text(text = "Date: ${time.dateAchieved}, End Time: ${time.endTime}")
+
+        }
+    }
+}
+

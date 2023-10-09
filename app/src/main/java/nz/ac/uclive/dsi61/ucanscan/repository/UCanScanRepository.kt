@@ -14,6 +14,9 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
     val numLandmarks: Flow<Int> = landmarkDao.getCount()
 
 
+    val allTimes: Flow<List<Times>> = timesDao.getAll()
+
+
     // Here we define methods to interact w our entities - so feel free to add more if we need :)
     // I recommend looking at the Ben tutorial + the official android developer documentation for this
     @WorkerThread
@@ -26,6 +29,7 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
     suspend fun addTime(time: Times) {
         timesDao.insert(time)
     }
+
 
 
 }
