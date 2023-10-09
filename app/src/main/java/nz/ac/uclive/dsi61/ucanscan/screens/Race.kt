@@ -163,6 +163,7 @@ fun RaceScreen(context: Context,
             }
 
             BackHandler {
+                //TODO once everything is linked up don't allow user to go back
             }
 
         }
