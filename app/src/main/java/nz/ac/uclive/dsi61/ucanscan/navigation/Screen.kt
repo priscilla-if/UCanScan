@@ -17,4 +17,7 @@ sealed class Screens(val route: String, @StringRes val resourceId: Int) {
 
     object Camera: Screens("camera", R.string.camera_screen)
 
+    object FinishedRace: Screens("finished_race", R.string.finished_race_screen)
+
+
 }

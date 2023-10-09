@@ -83,7 +83,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                 FoundLandmarksList(context, landmarks)
             }
 
-            BackToRaceButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
             BackHandler {
                 navController.popBackStack()
