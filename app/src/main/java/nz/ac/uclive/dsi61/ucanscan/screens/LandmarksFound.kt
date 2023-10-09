@@ -67,9 +67,8 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 90.dp)           // for the top app bar
-                    .padding(bottom = 16.dp)        // for padding all around the content: bottom
-                    .padding(horizontal = 16.dp),   // for padding all around the content: left & right
+                    .padding(top = 90.dp)           // provide space for the top app bar
+                    .padding(horizontal = 16.dp),   // provide padding all around the content: left & right
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -77,7 +76,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                     fontSize = 24.sp
                 )
 
-                Spacer(
+                Spacer( // spacing between "Found Landmarks" title and the lazycolumn
                     modifier = Modifier.height(16.dp)
                 )
 
@@ -97,9 +96,16 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 @SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
 fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
+    val PADDING_BETWEEN_ROWS = 16.dp
+    val BACK_TO_RACE_BTN_HEIGHT = 90.dp
+    val BOTTOM_NAVBAR_HEIGHT = 97.dp    // hard-coded value gotten from trial&error: would change if you change the sizes of content in the navbar
+
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
     LazyColumn(
-        contentPadding = PaddingValues(bottom = 16.dp + 90.dp) // Reserve space for the Back button: padding + button height
+        modifier = Modifier
+            // Reserve space for the Back To Race button, in its own section below the lazycolumn,
+            // so that the button doesn't overlap the last image.
+            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + BOTTOM_NAVBAR_HEIGHT)
     ) {
         items(landmarks) { landmark ->
             Row(
