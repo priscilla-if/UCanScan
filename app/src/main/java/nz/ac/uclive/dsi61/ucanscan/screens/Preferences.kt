@@ -10,17 +10,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,6 +22,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
@@ -48,7 +47,31 @@ fun PreferencesScreen(context: Context,
 
     val toner = ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME)
 
-    val notificationOption1State = remember { mutableStateOf(true) }
+    val application = context.applicationContext as UCanScanApplication
+   // val preferencesViewModel : PreferencesViewModel = viewModel(factory = PreferencesViewModelFactory(application.repository))
+
+    val preferencesViewModel: PreferencesViewModel = viewModel(
+        factory = PreferencesViewModelFactory(application.repository)
+    )
+
+
+/*    var notificationOption1State by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        preferencesViewModel.getPreferenceStateByName("notifications1").collect { state ->
+            notificationOption1State = state
+        }
+    }*/
+
+    var notificationOption1State by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        preferencesViewModel.getPreferenceStateByName("notifications1").collect { state ->
+            notificationOption1State = state
+        }
+    }
+
+   // var notificationOption1State by remember { mutableStateOf(preferencesViewModel.getPreferenceStateByName("notifications1")) }
     val notificationOption2State = remember { mutableStateOf(true) }
     val notificationOption3State = remember { mutableStateOf(true) }
     val themeOption1State = remember { mutableStateOf(true) }
@@ -103,12 +126,32 @@ fun PreferencesScreen(context: Context,
                             modifier = Modifier.weight(1f)
                         )
                         // https://betterprogramming.pub/create-an-android-switch-using-jetpack-compose-351eddbf5828
+
+
+
+/*
+
                         Switch(
-                            checked = notificationOption1State.value,
-                            onCheckedChange = { notificationOption1State.value = it
-                                saveSetting(context, "Notification Option 1", notificationOption1State.value.toString()) } //TODO: name
+                            checked = notificationOption1State,
+                            onCheckedChange = { isChecked ->
+                                saveSetting(context, "notifications1", isChecked, preferencesViewModel)
+                                notificationOption1State = isChecked
+                            }
                         )
-                    }
+
+*/
+
+                        Switch(
+                            checked = notificationOption1State,
+                            onCheckedChange = {    saveSetting(context, "notifications1", it, preferencesViewModel)
+                                notificationOption1State = it
+                            }
+                        )
+
+
+                }
+
+                    //TODO fix the other options once first one works
 
                     // option 2
                     Row(
@@ -127,7 +170,7 @@ fun PreferencesScreen(context: Context,
                         Switch(
                             checked = notificationOption2State.value,
                             onCheckedChange = { notificationOption2State.value = it
-                                saveSetting(context, "Notification Option 2", notificationOption2State.value.toString()) } //TODO: name
+                                saveSetting(context, "notifications2",  it, preferencesViewModel) } //TODO: name
                         )
                     }
 
@@ -148,7 +191,7 @@ fun PreferencesScreen(context: Context,
                         Switch(
                             checked = notificationOption3State.value,
                             onCheckedChange = { notificationOption3State.value = it
-                                saveSetting(context, "Notification Option 3", notificationOption3State.value.toString()) } //TODO: name
+                                saveSetting(context, "Notification Option 3", it, preferencesViewModel) } //TODO: name
                         )
                     }
 
@@ -179,7 +222,7 @@ fun PreferencesScreen(context: Context,
                         Switch(
                             checked = themeOption1State.value,
                             onCheckedChange = { themeOption1State.value = it
-                                saveSetting(context, "Theme", themeOption1State.value.toString()) }
+                                saveSetting(context, "Theme",  it, preferencesViewModel) }
                         )
                     }
 
@@ -210,7 +253,7 @@ fun PreferencesScreen(context: Context,
                         Switch(
                             checked = animationOption1State.value,
                             onCheckedChange = { animationOption1State.value = it
-                                saveSetting(context, "Animation Option 1", animationOption1State.value.toString()) } //TODO: name
+                                saveSetting(context, "Animation Option 1",  it, preferencesViewModel) } //TODO: name
                         )
                     }
 
@@ -231,7 +274,7 @@ fun PreferencesScreen(context: Context,
                         Switch(
                             checked = animationOption2State.value,
                             onCheckedChange = { animationOption2State.value = it
-                                saveSetting(context, "Animation Option 2", animationOption2State.value.toString()) } //TODO: name
+                                saveSetting(context, "Animation Option 2", it, preferencesViewModel) } //TODO: name
                         )
                     }
 
@@ -267,7 +310,7 @@ fun PreferencesScreen(context: Context,
                             modifier = Modifier.weight(1f)
                         )
 
-                        SaveUserNameButton(context, selectedUserName)
+                      //  SaveUserNameButton(context, selectedUserName)
                     }
                 }
             }
@@ -284,13 +327,18 @@ fun PreferencesScreen(context: Context,
 
 }
 
-fun saveSetting(context: Context, settingName: String, settingValue: String) {
+fun saveSetting(context: Context, settingName: String, settingValue: Boolean, preferencesViewModel: PreferencesViewModel) {
     Toast.makeText(context, "$settingName saved!", Toast.LENGTH_SHORT).show()
-    //TODO: save value to db
+    println("Setting val before: " + preferencesViewModel.getPreferenceStateByName(settingName) )
+
+    preferencesViewModel.updatePreferenceState(settingName, settingValue)
+    println("Setting val after: " + preferencesViewModel.getPreferenceStateByName(settingName))
 }
 
 
-@Composable
+
+
+/*@Composable
 fun SaveUserNameButton(context: Context, selectedUserName: String) {
     FilledIconButton( // https://semicolonspace.com/jetpack-compose-material3-icon-buttons/#filled
         modifier = Modifier
@@ -310,4 +358,4 @@ fun SaveUserNameButton(context: Context, selectedUserName: String) {
 
 
 
-}
+}*/

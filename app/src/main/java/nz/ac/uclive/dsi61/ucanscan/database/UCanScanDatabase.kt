@@ -1,6 +1,7 @@
 package nz.ac.uclive.dsi61.ucanscan.database
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -51,6 +52,17 @@ abstract class UCanScanDatabase : RoomDatabase() {
 
                     // Preferences
                     // TODO: List of preferences
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notifications1', false)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notifications2', true)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notifications3', true)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('darkmode', true)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('animations1', true)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('animations2', true)")
+                    Log.d("ADDED PREFERENCES TO DB", "ADDED PREFERENCES TO DB")
+
+
+
+
                 }
 
             }).build()

@@ -23,4 +23,10 @@ interface PreferencesDao {
     @Query("SELECT * FROM preferences")
     fun getAll(): Flow<List<Preferences>>
 
+   /* @Query("SELECT * FROM preferences WHERE name = :name")
+    fun getPreferenceByName(name: String): Boolean*/
+
+    @Query("SELECT state FROM preferences WHERE name = :name")
+    fun getPreferenceByName(name: String): Flow<Boolean>
+
 }
