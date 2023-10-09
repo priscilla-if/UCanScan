@@ -99,8 +99,7 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            //TODO: Navigate to correct page when exists
-//                            navController.navigate(Screens.xxx.route)
+//                            navController.navigate(Screens.Leaderboard.route) //TODO
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
