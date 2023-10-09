@@ -103,7 +103,7 @@ fun RaceScreen(context: Context,
                     )
                 }
 
-         //increments stopwatch if it is running
+                //increments stopwatch if it is running
                 StopwatchIncrementFunctionality(stopwatchViewModel)
 
 
@@ -160,15 +160,20 @@ fun RaceScreen(context: Context,
 
 
                 }
-        }
-
-            BackHandler {
             }
 
+            BackHandler {
+                //TODO once everything is linked up don't allow user to go back
+            }
 
         }
     )}
 
+
+
+/**
+ * Create a button at the bottom of a screen that has a bottom navbar.
+ */
 @Composable
 fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
     Box(
@@ -195,14 +200,32 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             ) {
                 Text(
-                    text = stringResource( if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
         }
-
     }
 }
+
+/**
+ * Create a button at the bottom of a screen that doesn't have a bottom navbar.
+ */
+@Composable
+fun BackToRaceButton(navController: NavController) {
+    Button(
+        onClick = {
+            navController.navigate(Screens.Race.route)
+        },
+        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.back_to_race),
+            fontSize = 20.sp //TODO: replace with MaterialTheme styling
+        )
+    }
+}
+
 
 
 @Composable

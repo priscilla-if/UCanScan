@@ -20,7 +20,7 @@
     <string name="back_to_race">Back to Race</string>
     <string name="main_screen">Main</string>
     <string name="race_screen">Race</string>
-    <string name="landmarks_screen">Landmarks</string>
+    <string name="landmarks_found_screen">Landmarks Found</string>
     <string name="leaderboard_screen">Leaderboard</string>
     <string name="map_screen">Map</string>
     <string name="camera_screen">Camera</string>

@@ -2,8 +2,6 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.media.AudioManager
-import android.media.ToneGenerator
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -48,8 +46,6 @@ fun PreferencesScreen(context: Context,
                navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
 
-    val toner = ToneGenerator(AudioManager.STREAM_ALARM, ToneGenerator.MAX_VOLUME)
-
     val notificationOption1State = remember { mutableStateOf(true) }
     val notificationOption2State = remember { mutableStateOf(true) }
     val notificationOption3State = remember { mutableStateOf(true) }
@@ -77,7 +73,7 @@ fun PreferencesScreen(context: Context,
 
                 Column(
                 modifier = Modifier
-                    .fillMaxWidth().padding(20.dp),
+                    .fillMaxWidth().padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
