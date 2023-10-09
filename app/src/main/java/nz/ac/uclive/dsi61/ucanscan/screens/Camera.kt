@@ -3,12 +3,13 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.widget.Toast
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -33,18 +34,31 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import java.util.concurrent.Executors
+
+
+var qrCodeValue by mutableStateOf<String?>(null)
+
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun CameraScreen(context: Context, navController: NavController) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
+    val application = context.applicationContext as UCanScanApplication
+
 
     // create BarcodeScanner object
     val options = BarcodeScannerOptions.Builder()
@@ -60,27 +74,31 @@ fun CameraScreen(context: Context, navController: NavController) {
                 val lifecycleOwner = (context as ComponentActivity)
                 val cameraProvider = ProcessCameraProvider.getInstance(context)
                 cameraProvider.addListener({
-                    val preview = Preview.Builder().build()
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                    val previewUseCase = Preview.Builder().build()
+                    val analysisUseCase = ImageAnalysis.Builder().build()
+
+                    // define the actual functionality of our analysis use case
+                    analysisUseCase.setAnalyzer(
+                        // newSingleThreadExecutor() will let us perform analysis on a single worker thread
+                        Executors.newSingleThreadExecutor()
+                    ) { imageProxy ->
+                        processImageProxy(barcodeScanner, imageProxy)
+                    }
+
                     val camera = cameraProvider.get().bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,
-                        preview
+                        previewUseCase,
+                        analysisUseCase
                     )
 
                     val newPreviewView = PreviewView(context)
                     newPreviewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                    preview.setSurfaceProvider(newPreviewView.surfaceProvider)
+                    previewUseCase.setSurfaceProvider(newPreviewView.surfaceProvider)
 
                     previewView = newPreviewView
 
-                    val imageAnalyzer = ImageAnalysis.Builder()
-                        .build()
-                        .also {
-                            it.setAnalyzer(cameraExecutor, BarcodeAnalyser{
-                                Toast.makeText(context, "Barcode found", Toast.LENGTH_SHORT).show()
-                            })
-                        }
                 }, ContextCompat.getMainExecutor(context))
             } else {
                 //Goes back to race screen if user didn't accept camera permissions
@@ -92,11 +110,13 @@ fun CameraScreen(context: Context, navController: NavController) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
     }
 
-    previewView?.let { CameraPreview(it, navController) }
+    previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
 }
 
 @Composable
-fun CameraPreview(previewView: PreviewView, navController: NavController) {
+fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?) {
+    val scope = rememberCoroutineScope()
+
     AndroidView(
         factory = { previewView },
         modifier = Modifier.fillMaxSize()
@@ -114,7 +134,29 @@ fun CameraPreview(previewView: PreviewView, navController: NavController) {
                 .size(height = 90.dp, width = 90.dp),
             shape = RoundedCornerShape(16.dp),
             onClick = {
-                //TODO add image analysis functionality for the code
+                CoroutineScope(Dispatchers.IO).launch {
+                    val landmark: Landmark? = qrCodeValue?.let {
+                            application.repository.getLandmarkByName(it)
+                        }
+
+                    if (landmark != null) {
+                        if(landmark.isFound) {
+                            //duplicate
+                            Log.d("FOO", ":O landmark already scanned!")
+                        } else {
+                            Log.d("FOO", ":D adding landmark to DB!")
+
+                            scope.launch {
+                                landmark.isFound = true
+                                application.repository.updateLandmark(landmark)
+                            }
+                        }
+                    }
+                }
+
+
+
+
             },
             ) {
             Icon(
@@ -139,37 +181,45 @@ fun CameraPreview(previewView: PreviewView, navController: NavController) {
             )
         }
 
-
     }
 
-    class BarcodeAnalyser(
-        val callback: () -> Unit
-    ) : ImageAnalysis.Analyzer {
-        override fun analyze(imageProxy: ImageProxy) {
-            val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
-                .build()
+}
 
-            val scanner = BarcodeScanning.getClient(options)
-            val mediaImage = imageProxy.image
-            mediaImage?.let {
-                val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
-                scanner.process(image)
-                    .addOnSuccessListener { barcodes ->
-                        if (barcodes.size > 0) {
-                            callback()
-                        }
-                    }
-                    .addOnFailureListener {
-                        // Task failed with an exception
-                        // ...
-                    }
+
+@androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
+// https://beakutis.medium.com/using-googles-mlkit-and-camerax-for-lightweight-barcode-scanning-bb2038164cdc
+private fun processImageProxy(
+    barcodeScanner: BarcodeScanner,
+    imageProxy: ImageProxy
+) {
+
+    imageProxy.image?.let { image ->
+        val inputImage =
+            InputImage.fromMediaImage(
+                image,
+                imageProxy.imageInfo.rotationDegrees
+            )
+
+        barcodeScanner.process(inputImage)
+            .addOnSuccessListener { barcodeList ->
+                val barcode = barcodeList.getOrNull(0)
+                // `rawValue` is the decoded value of the barcode
+                barcode?.rawValue?.let { value ->
+                    Log.d("FOO", value)
+                    qrCodeValue = value
+                }
             }
-            imageProxy.close()
-        }
+            .addOnFailureListener {
+                // This failure will happen if the barcode scanning model
+                // fails to download from Google Play Services
+            }.addOnCompleteListener {
+                // When the image is from CameraX analysis use case, must
+                // call image.close() on received images when finished
+                // using them. Otherwise, new images may not be received
+                // or the camera may stall.
+                imageProxy.image?.close()
+                imageProxy.close()
+            }
     }
-
-
-
 }
