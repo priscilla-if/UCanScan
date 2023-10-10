@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -51,7 +52,7 @@ fun LeaderboardScreen(context: Context,
 
     val isRaceStarted by isRaceStartedModel.isRaceStarted
     val allTimes by finishedRaceViewModel.allTimes.collectAsState(emptyList())
-    
+
 
     Scaffold(
         bottomBar = {
@@ -133,24 +134,16 @@ fun TimesDisplay(allTimes: List<Times>) {
                         .size(50.dp)
                 )
 
-                Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}")
+                Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}",
+                    modifier = Modifier.padding(top = 14.dp))
 
-
-              /*  Button(
-                    modifier = Modifier
-                        .size(80.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    onClick = {
-                        //TODO sharing functionality
-                    },
-                ) {
+                IconButton(onClick = { //TODO: SHARING FUNCTIONALITY
+                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.share),
-                        contentDescription = "Share",
-                        modifier = Modifier
-                            .size(40.dp)
+                        contentDescription = "Share"
                     )
-                }*/
+                }
 
             }
         }
