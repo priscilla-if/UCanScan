@@ -49,12 +49,9 @@ fun LeaderboardScreen(context: Context,
         FinishedRaceViewModel(repository = application.repository)
     }
 
-
-
+    val isRaceStarted by isRaceStartedModel.isRaceStarted
     val allTimes by finishedRaceViewModel.allTimes.collectAsState(emptyList())
-
-
-
+    
 
     Scaffold(
         bottomBar = {
@@ -78,10 +75,14 @@ fun LeaderboardScreen(context: Context,
 
             StopwatchIncrementFunctionality(stopwatchViewModel)
 
-
             Column(
+
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize().padding(16.dp)
+                modifier = Modifier.fillMaxSize().padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = if (isRaceStarted) 70.dp else 30.dp,
+                    bottom = 16.dp)
             ) {
 
 
@@ -111,7 +112,8 @@ fun LeaderboardScreen(context: Context,
 fun TimesDisplay(allTimes: List<Times>) {
 
 
-    LazyColumn {
+
+    LazyColumn (modifier = Modifier.padding(bottom = 180.dp, top = 19.dp)) {
         itemsIndexed(allTimes) { index, time ->
 
             val medalImage = when (index) {
@@ -121,7 +123,7 @@ fun TimesDisplay(allTimes: List<Times>) {
                 else -> R.drawable.all_medal
             }
 
-            Row(
+            Row(modifier = Modifier.padding(top =10.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Icon(
