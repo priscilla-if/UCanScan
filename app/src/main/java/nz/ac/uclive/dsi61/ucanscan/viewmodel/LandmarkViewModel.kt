@@ -30,7 +30,10 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
     private val _landmarks = MutableStateFlow<List<Landmark>>(emptyList())
     val landmarks: StateFlow<List<Landmark>> = _landmarks
 
-    // Current landmark (whatever
+    // The past landmark - used for rendering in the FoundLandmark screen so we can update landmarks there
+    var pastLandmark by mutableStateOf<Landmark?>(null)
+
+    // Current landmark (whatever is being currently searched for)
     var currentLandmark by mutableStateOf<Landmark?>(null)
 
     // MutableState for the next landmark
@@ -62,6 +65,7 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
     fun updateLandmarks() {
         val landmarkList = landmarks.value
         Log.d("LANDMARK LIST", landmarkList.toString())
+        pastLandmark = landmarkList.getOrNull(currentIndex - 1)
         currentLandmark = landmarkList.getOrNull(currentIndex)
         nextLandmark = landmarkList.getOrNull(currentIndex + 1)
     }
@@ -76,6 +80,7 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
             repository.updateLandmark(landmark)
             }
         }
+        pastLandmark = null
         currentLandmark = landmarkList.getOrNull(currentIndex)
         nextLandmark = landmarkList.getOrNull(currentIndex + 1)
         foundLandmarks = emptyList()

@@ -80,7 +80,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
             BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
             BackHandler {
-                navController.popBackStack()
+                // user has a back to race button so doesn't need going back with system
             }
         })
 }

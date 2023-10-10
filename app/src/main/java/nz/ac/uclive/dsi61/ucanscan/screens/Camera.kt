@@ -3,7 +3,9 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.VibrationEffect
 import android.util.Log
+import android.os.Vibrator
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -64,6 +66,7 @@ fun CameraScreen(context: Context, navController: NavController, landmarkViewMod
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
+    val vibrator = context.getSystemService(Vibrator::class.java)
 
 
     // create BarcodeScanner object
@@ -130,14 +133,15 @@ fun CameraScreen(context: Context, navController: NavController, landmarkViewMod
         }
     }
 
-    previewView?.let { CameraPreview(application, it, navController, qrCodeValue, landmarkViewModel) }
+    previewView?.let { CameraPreview(application, it, navController, qrCodeValue, landmarkViewModel, vibrator) }
 }
 
 
 @Composable
 fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?,
-landmarkViewModel: LandmarkViewModel) {
+landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
     val scope = rememberCoroutineScope()
+
 
     AndroidView(
         factory = { previewView },
@@ -162,10 +166,15 @@ landmarkViewModel: LandmarkViewModel) {
                         }
 
                     if (landmark != null) {
-                        // Checking if we are scanning in order. TODO: Add a toast speecifying this
+                        // Checking if we are scanning in order. TODO: Add a toast specifying this
                         if(landmark.isFound || landmarkViewModel.currentLandmark?.name != landmark.name) {
                             //duplicate
                             Log.d("FOO", ":O landmark already scanned or scanning out of ORDER!")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(application, "You have already scanned this!", Toast.LENGTH_SHORT).show()
+                                // light vibrating
+                                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                            }
                         } else {
                             Log.d("FOO", ":D adding landmark to DB!")
 
@@ -173,6 +182,10 @@ landmarkViewModel: LandmarkViewModel) {
                                 landmark.isFound = true
                                 application.repository.updateLandmark(landmark)
                             }
+
+                            // Updating index + past, current and next landmarks
+                            landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
+                            landmarkViewModel.updateLandmarks()
                             // Show the Toast message on the main thread
                             CoroutineScope(Dispatchers.Main).launch {
                                 Toast.makeText(application, "${landmark.name} found!", Toast.LENGTH_SHORT).show()

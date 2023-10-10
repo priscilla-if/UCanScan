@@ -46,6 +46,7 @@ fun FoundLandmarkScreen(context: Context,
                         navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
                         landmarkViewModel: LandmarkViewModel
 ) {
+
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(navController)
@@ -82,7 +83,7 @@ fun FoundLandmarkScreen(context: Context,
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    landmarkViewModel.currentLandmark?.let {
+                    landmarkViewModel.pastLandmark?.let {
                         Text(
                             text = it.name,
                             fontSize = 28.sp,
@@ -96,7 +97,7 @@ fun FoundLandmarkScreen(context: Context,
                             .size(300.dp)
                             .background(colorResource(R.color.light_grey), shape = CircleShape)
                     ) {
-                        val fileNameParts = landmarkViewModel.currentLandmark?.name?.split(" ", "-")
+                        val fileNameParts = landmarkViewModel.pastLandmark?.name?.split(" ", "-")
                         val fileName = fileNameParts?.joinToString("_")?.lowercase()
                         // Create a resource ID for a named image in the "drawable" directory
                         val resourceId = context.resources.getIdentifier(
@@ -119,8 +120,6 @@ fun FoundLandmarkScreen(context: Context,
                                 .clip(CircleShape))
                     }
 
-
-
                     Row(
                         modifier = Modifier.fillMaxSize()
                             .padding(bottom = innerPadding.calculateBottomPadding()),
@@ -130,10 +129,6 @@ fun FoundLandmarkScreen(context: Context,
 
                         Button(
                             onClick = {
-                                // When we go back to the race screen, we have now updated the next landmark
-                                // and the current index we are on
-                                landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
-                                landmarkViewModel.updateLandmarks()
                                 navController.navigate(Screens.Race.route)
                             },
                             modifier = Modifier.size(width = 200.dp, height = 90.dp)

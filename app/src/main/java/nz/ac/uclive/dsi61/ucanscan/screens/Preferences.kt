@@ -294,7 +294,7 @@ fun PreferencesScreen(context: Context,
     })
 
     BackHandler {
-        navController.popBackStack()
+        // user has a back to race button so doesn't need going back with system
     }
 
 }
