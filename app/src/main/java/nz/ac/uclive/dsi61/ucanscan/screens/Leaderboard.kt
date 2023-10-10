@@ -5,38 +5,29 @@ import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
-import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
-// This is a temporary Screen for a Leaderboard (for navigation purposes)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
@@ -44,7 +35,6 @@ fun LeaderboardScreen(context: Context,
                     navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
 
-    val context = LocalContext.current
     val application = context.applicationContext as UCanScanApplication
     val finishedRaceViewModel: FinishedRaceViewModel = remember {
         FinishedRaceViewModel(repository = application.repository)
@@ -58,8 +48,6 @@ fun LeaderboardScreen(context: Context,
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
-
-
 
                 innerPadding ->
 
@@ -88,7 +76,7 @@ fun LeaderboardScreen(context: Context,
 
 
 
-                Text(text = "Personal Bests",
+                Text(text = stringResource(id = R.string.personal_bests),
                     fontSize = 24.sp)
 
 

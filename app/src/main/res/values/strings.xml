@@ -30,4 +30,6 @@
     <string name="back_to_home">Back to Home</string>
     <string name="finished_the_race">You finished the race!</string>
     <string name="final_time">Final Time:</string>
+    <string name="personal_bests">Personal Bests</string>
+
 </resources>

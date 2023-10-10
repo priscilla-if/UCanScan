@@ -2,7 +2,6 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +42,7 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
@@ -52,7 +53,6 @@ fun FinishedRaceScreen(context: Context,
                       navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
 
-    Log.d("FinishedRaceScreen", "finished race screen!")
 
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
@@ -64,11 +64,13 @@ fun FinishedRaceScreen(context: Context,
 
     val application = context.applicationContext as UCanScanApplication
 
-    val finishedRaceViewModel: FinishedRaceViewModel = remember {
-        FinishedRaceViewModel(repository = application.repository)
-    }
+    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
 
-    finishedRaceViewModel.addTimeToDb(timeToSave)
+
+    DisposableEffect(Unit) {
+        finishedRaceViewModel.addTimeToDb(timeToSave)
+        onDispose {}
+    }
 
     stopwatchViewModel.startTime = 0L
 

@@ -1,6 +1,7 @@
 package nz.ac.uclive.dsi61.ucanscan.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,4 +30,14 @@ class FinishedRaceViewModel(private val repository: UCanScanRepository) : ViewMo
         }
     }
 
+}
+
+class FinishedRaceViewModelFactory(private val repository: UCanScanRepository) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(FinishedRaceViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return FinishedRaceViewModel(repository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }
