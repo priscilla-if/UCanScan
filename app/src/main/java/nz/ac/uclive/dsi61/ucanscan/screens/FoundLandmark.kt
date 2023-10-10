@@ -1,6 +1,7 @@
 package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,8 +46,6 @@ fun FoundLandmarkScreen(context: Context,
                         navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
                         landmarkViewModel: LandmarkViewModel
 ) {
-
-    landmarkViewModel.updateLandmarks()
         Scaffold(
             bottomBar = {
                 BottomNavigationBar(navController)
@@ -61,7 +61,8 @@ fun FoundLandmarkScreen(context: Context,
                     onGiveUpClick = {
                         openDialog.value = true
                     },
-                    isRaceStartedModel = isRaceStartedModel
+                    isRaceStartedModel = isRaceStartedModel,
+                    landmarkViewModel = landmarkViewModel
                 )
 
                 StopwatchIncrementFunctionality(stopwatchViewModel)
@@ -95,8 +96,27 @@ fun FoundLandmarkScreen(context: Context,
                             .size(300.dp)
                             .background(colorResource(R.color.light_grey), shape = CircleShape)
                     ) {
-                        // TODO  insert image here
+                        val fileNameParts = landmarkViewModel.currentLandmark?.name?.split(" ", "-")
+                        val fileName = fileNameParts?.joinToString("_")?.lowercase()
+                        // Create a resource ID for a named image in the "drawable" directory
+                        val resourceId = context.resources.getIdentifier(
+                            "landmark_$fileName",
+                            "drawable",
+                            context.packageName
+                        )
 
+                        val drawableId = if (resourceId != 0) {
+                            resourceId
+                        } else {
+                            R.drawable.landmark_no_image
+                        }
+
+                        Image(
+                            painter = painterResource(id = drawableId),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(300.dp)
+                                .clip(CircleShape))
                     }
 
 
@@ -110,13 +130,17 @@ fun FoundLandmarkScreen(context: Context,
 
                         Button(
                             onClick = {
-                                navController.navigate(Screens.MainMenu.route)
+                                // When we go back to the race screen, we have now updated the next landmark
+                                // and the current index we are on
+                                landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
+                                landmarkViewModel.updateLandmarks()
+                                navController.navigate(Screens.Race.route)
                             },
                             modifier = Modifier.size(width = 200.dp, height = 90.dp)
 
                         ) {
                             Text(
-                                text = stringResource(R.string.back_to_home),
+                                text = stringResource(R.string.back_to_race),
                                 fontSize = 20.sp
                             )
                         }

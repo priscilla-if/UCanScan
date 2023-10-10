@@ -49,7 +49,8 @@ fun LeaderboardScreen(context: Context,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             StopwatchIncrementFunctionality(stopwatchViewModel)

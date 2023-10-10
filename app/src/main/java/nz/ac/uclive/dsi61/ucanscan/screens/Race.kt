@@ -44,14 +44,17 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+landmarkViewModel: LandmarkViewModel) {
 
+    landmarkViewModel.updateLandmarks()
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
@@ -65,7 +68,8 @@ fun RaceScreen(context: Context,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             Column(
@@ -89,7 +93,8 @@ fun RaceScreen(context: Context,
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.jack_erskine_landmark),
+
+                        text = landmarkViewModel.currentLandmark?.name.toString(),
                         color = Color.Black,
                         fontSize = 28.sp,
                         textAlign = TextAlign.Center,

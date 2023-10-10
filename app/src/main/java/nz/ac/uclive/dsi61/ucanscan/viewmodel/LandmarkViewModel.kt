@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -62,6 +64,21 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
         Log.d("LANDMARK LIST", landmarkList.toString())
         currentLandmark = landmarkList.getOrNull(currentIndex)
         nextLandmark = landmarkList.getOrNull(currentIndex + 1)
+    }
+
+    // If the user gives up or for some reason return to the main menu, indices and landmarks reset
+    fun resetLandmarks() {
+        currentIndex = 0
+        val landmarkList = landmarks.value
+        for (landmark in landmarkList) {
+            landmark.isFound = false
+            CoroutineScope(Dispatchers.IO).launch {
+            repository.updateLandmark(landmark)
+            }
+        }
+        currentLandmark = landmarkList.getOrNull(currentIndex)
+        nextLandmark = landmarkList.getOrNull(currentIndex + 1)
+        foundLandmarks = emptyList()
     }
 
 }

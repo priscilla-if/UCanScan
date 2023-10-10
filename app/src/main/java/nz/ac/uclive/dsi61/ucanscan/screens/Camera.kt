@@ -51,6 +51,7 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import java.util.concurrent.Executors
 
 
@@ -59,7 +60,7 @@ var qrCodeValue by mutableStateOf<String?>(null)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun CameraScreen(context: Context, navController: NavController) {
+fun CameraScreen(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
@@ -129,12 +130,13 @@ fun CameraScreen(context: Context, navController: NavController) {
         }
     }
 
-    previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
+    previewView?.let { CameraPreview(application, it, navController, qrCodeValue, landmarkViewModel) }
 }
 
 
 @Composable
-fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?) {
+fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?,
+landmarkViewModel: LandmarkViewModel) {
     val scope = rememberCoroutineScope()
 
     AndroidView(
@@ -160,10 +162,10 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
                         }
 
                     if (landmark != null) {
-                        // TODO: Need to add the case in which we scan the landmark out of order
-                        if(landmark.isFound) {
+                        // Checking if we are scanning in order. TODO: Add a toast speecifying this
+                        if(landmark.isFound || landmarkViewModel.currentLandmark?.name != landmark.name) {
                             //duplicate
-                            Log.d("FOO", ":O landmark already scanned!")
+                            Log.d("FOO", ":O landmark already scanned or scanning out of ORDER!")
                         } else {
                             Log.d("FOO", ":D adding landmark to DB!")
 

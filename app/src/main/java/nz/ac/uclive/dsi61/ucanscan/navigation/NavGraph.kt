@@ -37,13 +37,13 @@ landmarkViewModel: LandmarkViewModel
         composable(
             route = Screens.Preferences.route
         ) {backStackEntry ->
-            PreferencesScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            PreferencesScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
         }
 
         composable(
             route = Screens.Race.route
         ) { backStackEntry ->
-            RaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            RaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
         }
 
         composable(
@@ -55,7 +55,7 @@ landmarkViewModel: LandmarkViewModel
         composable(
             route = Screens.Camera.route
         ) { backStackEntry ->
-            CameraScreen(LocalContext.current, navController)
+            CameraScreen(LocalContext.current, navController, landmarkViewModel)
         }
 
         composable(
@@ -73,7 +73,7 @@ landmarkViewModel: LandmarkViewModel
         composable(
             route = Screens.FinishedRace.route
         ) {backStackEntry ->
-            FinishedRaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            FinishedRaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
         }
 
         composable(

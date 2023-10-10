@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +30,7 @@ fun TopNavigationBar(
     onGiveUpClick: () -> Unit,
     modifier: Modifier = Modifier,
     isRaceStartedModel: IsRaceStartedModel,
+    landmarkViewModel: LandmarkViewModel
 ) {
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -96,6 +98,7 @@ fun TopNavigationBar(
                                     stopwatchViewModel.time = 0L
                                     stopwatchViewModel.startTime = 0L
                                     isRaceStartedModel.setRaceStarted(false)
+                                    landmarkViewModel.resetLandmarks()
 
                                 }
                             ) {
