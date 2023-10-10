@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -159,6 +160,7 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
                         }
 
                     if (landmark != null) {
+                        // TODO: Need to add the case in which we scan the landmark out of order
                         if(landmark.isFound) {
                             //duplicate
                             Log.d("FOO", ":O landmark already scanned!")
@@ -169,6 +171,12 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
                                 landmark.isFound = true
                                 application.repository.updateLandmark(landmark)
                             }
+                            // Show the Toast message on the main thread
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(application, "${landmark.name} found!", Toast.LENGTH_SHORT).show()
+                                navController.navigate(Screens.FoundLandmark.route)
+                            }
+
                         }
                     }
                 }

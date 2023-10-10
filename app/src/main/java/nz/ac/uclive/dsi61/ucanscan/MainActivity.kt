@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import nz.ac.uclive.dsi61.ucanscan.navigation.NavGraph
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 class MainActivity : ComponentActivity() {
@@ -19,6 +20,9 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val application = applicationContext as UCanScanApplication
+        val repository = application.repository
+
         setContent {
             UCanScanTheme(content = {
                 Scaffold(
@@ -26,9 +30,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val stopwatchViewModel = remember { StopwatchViewModel() }
                     val isRaceStartedModel: IsRaceStartedModel = viewModel()
-
-                    NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel
-                    )
+                    val landmarkViewModel: LandmarkViewModel = remember { LandmarkViewModel(repository) }
+                    NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, landmarkViewModel)
                 }
             })
         }

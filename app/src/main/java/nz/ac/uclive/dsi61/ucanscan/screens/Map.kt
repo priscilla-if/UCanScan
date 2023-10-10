@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,10 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -34,19 +28,16 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
-import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MapScreen(context: Context,
-               navController: NavController) {
+               navController: NavController, landmarkViewModel: LandmarkViewModel) {
 
     val application = context.applicationContext as UCanScanApplication
-    val viewModel: LandmarkViewModel = viewModel(factory = LandmarkViewModelFactory(application.repository))
-    val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<nz.ac.uclive.dsi61.ucanscan.entity.Landmark>())
+    val landmarks by landmarkViewModel.landmarks.collectAsState(initial= emptyList<nz.ac.uclive.dsi61.ucanscan.entity.Landmark>())
 
 
     var cameraPositionState = rememberCameraPositionState {

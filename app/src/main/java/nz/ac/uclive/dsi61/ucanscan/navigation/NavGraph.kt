@@ -7,19 +7,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nz.ac.uclive.dsi61.ucanscan.screens.CameraScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.FinishedRaceScreen
-import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksScreen
-import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen
+import nz.ac.uclive.dsi61.ucanscan.screens.FoundLandmarkScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksFoundScreen
+import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MainMenuScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.MapScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.PreferencesScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.RaceScreen
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 // https://dev.to/jbc7ag/jetpack-compose-navigation-tutorial-9en
 @Composable
-fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
+fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+landmarkViewModel: LandmarkViewModel
+) {
 
     NavHost(
         navController = navController,
@@ -46,7 +49,7 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         composable(
             route = Screens.Map.route
         ) { backStackEntry ->
-            MapScreen(LocalContext.current, navController)
+            MapScreen(LocalContext.current, navController, landmarkViewModel)
         }
 
         composable(
@@ -58,13 +61,13 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         composable(
             route = Screens.Leaderboard.route
         ) {backStackEntry ->
-            LeaderboardScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            LeaderboardScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
         }
 
         composable(
             route = Screens.LandmarksFound.route
         ) { backStackEntry ->
-            LandmarksFoundScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            LandmarksFoundScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
         }
 
         composable(
@@ -72,5 +75,12 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         ) {backStackEntry ->
             FinishedRaceScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
         }
+
+        composable(
+            route = Screens.FoundLandmark.route
+        ) {backStackEntry ->
+            FoundLandmarkScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
+        }
+
     }
 }
