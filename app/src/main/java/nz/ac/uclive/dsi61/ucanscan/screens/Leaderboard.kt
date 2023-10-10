@@ -44,6 +44,9 @@ fun LeaderboardScreen(context: Context,
 
 
 
+    val allTimes by finishedRaceViewModel.allTimes.collectAsState(emptyList())
+
+
 
 
     Scaffold(
@@ -77,7 +80,7 @@ fun LeaderboardScreen(context: Context,
                 Text(text = "Personal Bests")
 
 
-             //   TimesDisplay(allTimes = allTimes)
+                TimesDisplay(allTimes = allTimes)
 
 
             }
