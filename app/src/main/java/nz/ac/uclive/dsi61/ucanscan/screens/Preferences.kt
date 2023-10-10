@@ -54,9 +54,9 @@ fun PreferencesScreen(context: Context,
     val animationOption2State by preferencesViewModel.getPreferenceState("animationOption2")
 
 
-    var selectedUserName by remember { mutableStateOf("we have no DB yet") } //TODO: get value from db
+    var selectedUserName by remember { mutableStateOf("") }
 
-
+   // val selectedUserName by preferencesViewModel.getUserName("userName")
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
         content={ innerPadding ->
             val openDialog = remember { mutableStateOf(false)  }
@@ -289,7 +289,7 @@ fun PreferencesScreen(context: Context,
                             modifier = Modifier.weight(1f)
                         )
 
-                            // SaveUserNameButton(context, selectedUserName)
+                             SaveUserNameButton(context, selectedUserName, preferencesViewModel)
                     }
                 }
             }
@@ -311,15 +311,17 @@ fun saveSetting(context: Context, settingName: String, settingValue: Boolean, pr
 }
 
 
-/*@Composable
-fun SaveUserNameButton(context: Context, selectedUserName: String) {
+@Composable
+fun SaveUserNameButton(context: Context, selectedUserName: String, preferencesViewModel: PreferencesViewModel) {
     FilledIconButton( // https://semicolonspace.com/jetpack-compose-material3-icon-buttons/#filled
         modifier = Modifier
             .width(50.dp)
             .height(50.dp)
             .aspectRatio(1f), // 1:1 aspect ratio: square button
         onClick = {
-            saveSetting(context, "Name", selectedUserName)
+            Toast.makeText(context, "Username saved!", Toast.LENGTH_SHORT).show()
+
+            preferencesViewModel.updateUserName("userName", selectedUserName)
         }
     ) {
         Icon(
@@ -331,4 +333,4 @@ fun SaveUserNameButton(context: Context, selectedUserName: String) {
 
 
 
-}*/
+}

@@ -2,8 +2,8 @@ package nz.ac.uclive.dsi61.ucanscan.repository
 import nz.ac.uclive.dsi61.ucanscan.database.UCanScanDatabase
 import androidx.annotation.WorkerThread
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
-import nz.ac.uclive.dsi61.ucanscan.entity.Preferences
 
 class UCanScanRepository(private val database: UCanScanDatabase) {
     private val landmarkDao = database.landmarkDao()
@@ -28,6 +28,17 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
     @WorkerThread
     suspend fun updatePreference(preferenceName: String, newState: Boolean) {
         preferencesDao.updatePreference(preferenceName, newState)
+    }
+
+    fun getUserName(preferenceName: String): Flow<String> =
+        preferencesDao.getPreference(preferenceName).map { preferences ->
+            preferences.userName
+        }
+
+
+    @WorkerThread
+    suspend fun updateUserName(preferenceName: String, newUserName: String) {
+        preferencesDao.updateUserName(preferenceName, newUserName)
     }
 
 }

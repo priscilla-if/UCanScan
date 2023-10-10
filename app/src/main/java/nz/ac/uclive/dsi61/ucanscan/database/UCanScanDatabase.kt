@@ -50,13 +50,14 @@ abstract class UCanScanDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Rehua', 'Centre for Education, Health and more', -43.52323, 172.58450, false, 'code')")
 
                     // Preferences
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notificationOption1', true)")
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notificationOption2', true)")
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('notificationOption3', true)")
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('themeOption1', true)")
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('animationOption1', true)")
-                    db.execSQL("INSERT INTO PREFERENCES (name, state) VALUES ('animationOption2', true)")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption2', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption3', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('themeOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption2', true, '')")
 
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('userName', true, 'default')")
 
                 }
 

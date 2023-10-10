@@ -7,7 +7,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.launch
-import nz.ac.uclive.dsi61.ucanscan.entity.Preferences
 import nz.ac.uclive.dsi61.ucanscan.repository.UCanScanRepository
 
 
@@ -22,6 +21,17 @@ class PreferencesViewModel(private val repository: UCanScanRepository) : ViewMod
             repository.updatePreference(preferenceName, newValue)
         }
     }
+
+    fun updateUserName(preferenceName: String, newUserName: String) {
+        viewModelScope.launch {
+            repository.updateUserName(preferenceName, newUserName)
+        }
+    }
+
+    @Composable
+    fun getUserName(preferenceName: String): State<String> =
+        repository.getUserName(preferenceName).collectAsState(initial = "Default Name")
+
 }
 
 
