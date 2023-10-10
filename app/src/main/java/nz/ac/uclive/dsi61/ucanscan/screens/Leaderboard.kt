@@ -6,17 +6,24 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
@@ -71,13 +78,16 @@ fun LeaderboardScreen(context: Context,
 
             StopwatchIncrementFunctionality(stopwatchViewModel)
 
+
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize().padding(16.dp)
             ) {
 
 
 
-                Text(text = "Personal Bests")
+                Text(text = "Personal Bests",
+                    fontSize = 24.sp)
 
 
                 TimesDisplay(allTimes = allTimes)
@@ -99,12 +109,55 @@ fun LeaderboardScreen(context: Context,
 
 @Composable
 fun TimesDisplay(allTimes: List<Times>) {
-    LazyColumn {
-        items(allTimes) { time ->
-            Text(text = "${time.dateAchieved}       ${convertTimeLongToMinutes(time.endTime)}")
 
+
+    LazyColumn {
+        itemsIndexed(allTimes) { index, time ->
+
+            val medalImage = when (index) {
+                0 -> R.drawable.first_medal
+                1 -> R.drawable.second_medal
+                2 -> R.drawable.third_medal
+                else -> R.drawable.all_medal
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    painter = painterResource(id = medalImage),
+                    contentDescription = "Camera",
+                    modifier = Modifier
+                        .size(50.dp)
+                )
+
+                Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}")
+
+
+              /*  Button(
+                    modifier = Modifier
+                        .size(80.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = {
+                        //TODO sharing functionality
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = "Share",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }*/
+
+            }
         }
     }
+
+
+
+
+
 }
 
 fun convertTimeLongToMinutes(time: Long): String {
