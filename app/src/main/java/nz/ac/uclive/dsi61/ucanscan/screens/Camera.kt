@@ -9,6 +9,9 @@ import android.graphics.Path
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.unit.sp
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -60,11 +63,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.NativePaint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
-//import androidx.compose.ui.graphics.drawscope.drawRect
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.toSize
 
 
 var qrCodeValue by mutableStateOf<String?>(null)
@@ -85,7 +98,7 @@ fun CameraScreen(context: Context, navController: NavController) {
 
     // Barcode corner points: mutable state to store them, & callback function to update them
     var barcodeCornerPoints by remember { mutableStateOf<List<PointF>?>(null) }
-    val updateCornerPoints: (List<PointF>) -> Unit = { points ->
+    val updateCornerPoints: (List<PointF>?) -> Unit = { points ->
         barcodeCornerPoints = points
     }
 
@@ -109,23 +122,7 @@ fun CameraScreen(context: Context, navController: NavController) {
                         previewView?.let {
                             processImageProxy(barcodeScanner, imageProxy,
                                 updateCornerPoints = { points ->
-                                    // Update UI or perform actions with cornerPoints here
-                                    // For example, you can draw rectangles or perform other visualizations
-
-                                    // You can use the Canvas composable to draw rectangles based on corner points
-//                                    Canvas(modifier = Modifier.fillMaxSize()) {
-//                                        points.forEach { point ->
-//                                            drawRect(
-//                                                color = Color.Red,
-//                                                topLeft = Offset(point.x.toFloat(), point.y.toFloat()),
-//                                                size = Size(50f, 50f) // Adjust the size as needed
-//                                            )
-//                                        }
-//                                    }
-                                    updateCornerPoints(points)
-
-                                    //TODO: do i need stuff here?????
-
+                                    updateCornerPoints(points) // if points is null, the canvas will get cleared of the red dots
                                 }
                             )
                         }
@@ -159,45 +156,95 @@ fun CameraScreen(context: Context, navController: NavController) {
 
 
 
-    // Use the barcodeCornerPoints in a Canvas composable
-//    Canvas(modifier = Modifier.fillMaxSize()) {
-//        barcodeCornerPoints?.let { points ->
-//            for (point in points) {
-//                val radius = 10f // Adjust the radius as needed
-//                drawCircle(
-//                    color = Color.Red,
-//                    center = Offset(point.x.toFloat(), point.y.toFloat()),
-//                    radius = radius
-//                )
-//            }
-//        }
-//    }
-
-    // Use a Box with a Canvas composable to draw circles
-    Box(
+    Canvas(
         modifier = Modifier.fillMaxSize()
     ) {
-        Canvas(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Draw circles based on barcodeCornerPoints
-            println("size: " + (barcodeCornerPoints?.size))
-            barcodeCornerPoints?.let { points ->
-                for (point in points) {
-                    println("point!")
-                    val radius = 16f // Adjust the radius as needed
-                    drawCircle(
-                        color = Color(204, 0, 17), // UC red (#ucopenday!)
-                        center = Offset(point.x, point.y),
-                        radius = radius
-                    )
-                }
+        // Draw circles based on barcodeCornerPoints
+        println("size points: " + (barcodeCornerPoints?.size))
+        if (barcodeCornerPoints != null && barcodeCornerPoints!!.isNotEmpty()) {
+            for (point in barcodeCornerPoints!!) {
+                println("point!")
+                val radius = 16f
+                drawCircle(
+                    color = Color(204, 0, 17), // UC red (#ucopenday!)
+                    center = Offset(point.x, point.y),
+                    radius = radius
+                )
             }
         }
     }
 
+
+    //TODO: add comments; remove print statements
+    //TODO: make text & rect not show when qrCodeValue = null
+
+    val textMeasurer = rememberTextMeasurer()
+    val qrCodeText = qrCodeValue ?: ""
+
+    Spacer(
+        modifier = Modifier
+            .drawWithCache {
+                val textPadding = 16.dp
+
+//                    val qrCodeText = qrCodeValue ?: ""
+                val measuredText =
+                    textMeasurer.measure(
+                        AnnotatedString(qrCodeText),
+                        style = TextStyle(fontSize = 32.sp)
+                    )
+
+//                    if (qrCodeValue != null) {
+//
+//                    }
+
+                val rectSizeWithPadding = Size(
+                    measuredText.size.width + 2 * textPadding.toPx(),
+                    measuredText.size.height + 2 * textPadding.toPx()
+                )
+
+
+                onDrawBehind {
+                    val cornerRadius = 16.dp.toPx()
+                    val rectX = (size.width - rectSizeWithPadding.width) / 4 // position the rect 25% of the way down the screen
+                    val rectY = (size.height - rectSizeWithPadding.height) / 4
+//                        val rectX = (barcodeCornerPoints?.get(0)?.x) ?: ((size.width - rectSizeWithPadding.width) / 4)
+//                        val rectY = (barcodeCornerPoints?.get(0)?.y) ?: ((size.height - rectSizeWithPadding.height) / 4)
+                    drawRoundRect(Color(255, 255, 255), size = rectSizeWithPadding, topLeft = Offset(rectX, rectY),
+                        cornerRadius = CornerRadius(cornerRadius, cornerRadius)
+                    )
+
+
+                    drawIntoCanvas { canvas ->
+                        val textColor = Color(0, 128, 255).toArgb()
+                        val textPaint = androidx.compose.ui.graphics.Paint().asFrameworkPaint().apply {
+                            color = textColor
+                            textSize = 32.sp.toPx()
+                        }
+
+
+                        val textX = (size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx()
+                        val textY = (size.height + measuredText.size.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2
+//                            val textX = (barcodeCornerPoints?.get(0)?.x?.plus(textPadding.toPx())) ?: ((size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx())
+//                            val textY = (barcodeCornerPoints?.get(0)?.y) ?: ((size.height - rectSizeWithPadding.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2)
+//                            val textY = (barcodeCornerPoints?.get(0)?.y?.plus((- textPaint.fontMetrics.descent + textPadding.toPx() * 2))) ?: ((size.height - rectSizeWithPadding.height) / 4 + textPadding.toPx())
+                        canvas.nativeCanvas.drawText(qrCodeText, textX, textY, textPaint)
+                    }
+
+
+
+                }
+            }
+            .fillMaxSize()
+    )
+
 }
 
+
+//fun createTextPaint(color: Color): NativePaint {
+//    val paint = androidx.compose.ui.graphics.Paint().asFrameworkPaint()
+//    paint.color = color.toArgb()
+//    return paint
+//}
 
 
 @Composable
@@ -273,7 +320,7 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
 // https://beakutis.medium.com/using-googles-mlkit-and-camerax-for-lightweight-barcode-scanning-bb2038164cdc
 private fun processImageProxy(
     barcodeScanner: BarcodeScanner, imageProxy: ImageProxy,
-    updateCornerPoints: (List<PointF>) -> Unit // Pass in the callback function
+    updateCornerPoints: (List<PointF>?) -> Unit // Pass in the callback function
 ) {
 
     imageProxy.image?.let { image ->
@@ -291,7 +338,8 @@ private fun processImageProxy(
                     qrCodeValue = value
                 }
 
-                processBarcodeCornerPoints(barcode, updateCornerPoints)
+                val cornerPoints = processBarcodeCornerPoints(barcode)
+                updateCornerPoints(cornerPoints)
             }
             .addOnFailureListener {
                 // This failure will happen if the barcode scanning model
@@ -309,9 +357,9 @@ private fun processImageProxy(
 
 /**
  * Helper function for processImageProxy() that gets the barcode's corner points
- * and then calls a callback function to update them.
+ * and returns them as a list of PointF. Returns null if there are no corner points found.
  */
-private fun processBarcodeCornerPoints(barcode: Barcode?, updateCornerPoints: (List<PointF>) -> Unit) {
+private fun processBarcodeCornerPoints(barcode: Barcode?): List<PointF>? {
     val cornerPoints = barcode?.cornerPoints?.map { PointF(it.x.toFloat(), it.y.toFloat()) }
     if (cornerPoints != null) {
         for (p in cornerPoints) {
@@ -321,5 +369,5 @@ private fun processBarcodeCornerPoints(barcode: Barcode?, updateCornerPoints: (L
         println("No corner points detected.")
     }
 
-    cornerPoints?.let { updateCornerPoints(it) }
+    return cornerPoints
 }
