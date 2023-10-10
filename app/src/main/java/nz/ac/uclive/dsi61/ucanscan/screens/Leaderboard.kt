@@ -101,9 +101,18 @@ fun LeaderboardScreen(context: Context,
 fun TimesDisplay(allTimes: List<Times>) {
     LazyColumn {
         items(allTimes) { time ->
-            Text(text = "Date: ${time.dateAchieved}, End Time: ${time.endTime}")
+            Text(text = "${time.dateAchieved}       ${convertTimeLongToMinutes(time.endTime)}")
 
         }
     }
 }
 
+fun convertTimeLongToMinutes(time: Long): String {
+    val seconds = time / 1000
+    val minutes = seconds / 60
+    val actualSeconds = seconds % 60
+    val hours = minutes / 60
+    val actualMinutes = minutes % 60
+
+    return "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds)
+}

@@ -11,7 +11,7 @@ import nz.ac.uclive.dsi61.ucanscan.repository.UCanScanRepository
 class FinishedRaceViewModel(private val repository: UCanScanRepository) : ViewModel() {
 
 
-    fun addTime(time: Times) {
+    fun addTimeToDb(time: Times) {
         viewModelScope.launch {
             repository.addTime(time)
         }

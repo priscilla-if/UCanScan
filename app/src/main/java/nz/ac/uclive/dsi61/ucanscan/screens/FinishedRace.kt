@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,15 +52,11 @@ fun FinishedRaceScreen(context: Context,
                       navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
 
+    Log.d("FinishedRaceScreen", "finished race screen!")
 
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
 
-    val seconds = stopwatchViewModel.time / 1000
-    val minutes = seconds / 60
-    val actualSeconds = seconds % 60
-    val hours = minutes / 60
-    val actualMinutes = minutes % 60
 
     val timeToSave = Times(
         endTime = stopwatchViewModel.time
@@ -71,7 +68,7 @@ fun FinishedRaceScreen(context: Context,
         FinishedRaceViewModel(repository = application.repository)
     }
 
-    finishedRaceViewModel.addTime(timeToSave)
+    finishedRaceViewModel.addTimeToDb(timeToSave)
 
     stopwatchViewModel.startTime = 0L
 
@@ -121,7 +118,7 @@ fun FinishedRaceScreen(context: Context,
                         .size(300.dp)
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
-                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds),
+                    Text(text = convertTimeLongToMinutes(stopwatchViewModel.time),
                         fontSize = 48.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
