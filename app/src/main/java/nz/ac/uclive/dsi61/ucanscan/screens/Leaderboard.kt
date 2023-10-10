@@ -109,7 +109,7 @@ fun TimesDisplay(allTimes: List<Times>) {
                 0 -> R.drawable.first_medal
                 1 -> R.drawable.second_medal
                 2 -> R.drawable.third_medal
-                else -> R.drawable.all_medal
+                else -> R.drawable.all_medals
             }
 
             Row(modifier = Modifier.padding(top =10.dp),
