@@ -96,20 +96,22 @@ fun FinishedRaceScreen(context: Context,
             )
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 90.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 90.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
 
 
-                Text(text = "You finished the race!",
+                Text(text = stringResource(R.string.finished_the_race),
                     fontSize = 28.sp,
                 modifier = Modifier.padding(top = 0.dp))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(text = "Final Time:",
+                Text(text = stringResource(R.string.final_time),
                     fontSize = 28.sp,
                     modifier = Modifier.padding(bottom = 30.dp))
 
@@ -134,7 +136,9 @@ fun FinishedRaceScreen(context: Context,
 
 
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding()),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
