@@ -3,6 +3,12 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.Point
+import android.graphics.PointF
+import android.graphics.Rect
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,7 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,6 +53,18 @@ import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import java.util.concurrent.Executors
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+//import androidx.compose.ui.graphics.drawscope.drawRect
 
 
 var qrCodeValue by mutableStateOf<String?>(null)
@@ -59,12 +77,17 @@ fun CameraScreen(context: Context, navController: NavController) {
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
 
-
     // create BarcodeScanner object
     val options = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         .build()
     val barcodeScanner = BarcodeScanning.getClient(options)
+
+    // Barcode corner points: mutable state to store them, & callback function to update them
+    var barcodeCornerPoints by remember { mutableStateOf<List<PointF>?>(null) }
+    val updateCornerPoints: (List<PointF>) -> Unit = { points ->
+        barcodeCornerPoints = points
+    }
 
 
     val requestPermissionLauncher =
@@ -83,7 +106,29 @@ fun CameraScreen(context: Context, navController: NavController) {
                         // newSingleThreadExecutor() will let us perform analysis on a single worker thread
                         Executors.newSingleThreadExecutor()
                     ) { imageProxy ->
-                        processImageProxy(barcodeScanner, imageProxy)
+                        previewView?.let {
+                            processImageProxy(barcodeScanner, imageProxy,
+                                updateCornerPoints = { points ->
+                                    // Update UI or perform actions with cornerPoints here
+                                    // For example, you can draw rectangles or perform other visualizations
+
+                                    // You can use the Canvas composable to draw rectangles based on corner points
+//                                    Canvas(modifier = Modifier.fillMaxSize()) {
+//                                        points.forEach { point ->
+//                                            drawRect(
+//                                                color = Color.Red,
+//                                                topLeft = Offset(point.x.toFloat(), point.y.toFloat()),
+//                                                size = Size(50f, 50f) // Adjust the size as needed
+//                                            )
+//                                        }
+//                                    }
+                                    updateCornerPoints(points)
+
+                                    //TODO: do i need stuff here?????
+
+                                }
+                            )
+                        }
                     }
 
                     val camera = cameraProvider.get().bindToLifecycle(
@@ -111,10 +156,53 @@ fun CameraScreen(context: Context, navController: NavController) {
     }
 
     previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
+
+
+
+    // Use the barcodeCornerPoints in a Canvas composable
+//    Canvas(modifier = Modifier.fillMaxSize()) {
+//        barcodeCornerPoints?.let { points ->
+//            for (point in points) {
+//                val radius = 10f // Adjust the radius as needed
+//                drawCircle(
+//                    color = Color.Red,
+//                    center = Offset(point.x.toFloat(), point.y.toFloat()),
+//                    radius = radius
+//                )
+//            }
+//        }
+//    }
+
+    // Use a Box with a Canvas composable to draw circles
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Draw circles based on barcodeCornerPoints
+            println("size: " + (barcodeCornerPoints?.size))
+            barcodeCornerPoints?.let { points ->
+                for (point in points) {
+                    println("point!")
+                    val radius = 16f // Adjust the radius as needed
+                    drawCircle(
+                        color = Color(204, 0, 17), // UC red (#ucopenday!)
+                        center = Offset(point.x, point.y),
+                        radius = radius
+                    )
+                }
+            }
+        }
+    }
+
 }
 
+
+
 @Composable
-fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?) {
+fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
+                  navController: NavController, qrCodeValue: String?) {
     val scope = rememberCoroutineScope()
 
     AndroidView(
@@ -128,7 +216,6 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Button(
             modifier = Modifier
                 .size(height = 90.dp, width = 90.dp),
@@ -153,10 +240,6 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
                         }
                     }
                 }
-
-
-
-
             },
             ) {
             Icon(
@@ -180,7 +263,6 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
                 fontSize = 20.sp
             )
         }
-
     }
 
 }
@@ -190,16 +272,15 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, na
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
 // https://beakutis.medium.com/using-googles-mlkit-and-camerax-for-lightweight-barcode-scanning-bb2038164cdc
 private fun processImageProxy(
-    barcodeScanner: BarcodeScanner,
-    imageProxy: ImageProxy
+    barcodeScanner: BarcodeScanner, imageProxy: ImageProxy,
+    updateCornerPoints: (List<PointF>) -> Unit // Pass in the callback function
 ) {
 
     imageProxy.image?.let { image ->
-        val inputImage =
-            InputImage.fromMediaImage(
-                image,
-                imageProxy.imageInfo.rotationDegrees
-            )
+        val inputImage = InputImage.fromMediaImage(
+            image,
+            imageProxy.imageInfo.rotationDegrees
+        )
 
         barcodeScanner.process(inputImage)
             .addOnSuccessListener { barcodeList ->
@@ -209,6 +290,8 @@ private fun processImageProxy(
                     Log.d("FOO", value)
                     qrCodeValue = value
                 }
+
+                processBarcodeCornerPoints(barcode, updateCornerPoints)
             }
             .addOnFailureListener {
                 // This failure will happen if the barcode scanning model
@@ -222,4 +305,21 @@ private fun processImageProxy(
                 imageProxy.close()
             }
     }
+}
+
+/**
+ * Helper function for processImageProxy() that gets the barcode's corner points
+ * and then calls a callback function to update them.
+ */
+private fun processBarcodeCornerPoints(barcode: Barcode?, updateCornerPoints: (List<PointF>) -> Unit) {
+    val cornerPoints = barcode?.cornerPoints?.map { PointF(it.x.toFloat(), it.y.toFloat()) }
+    if (cornerPoints != null) {
+        for (p in cornerPoints) {
+            println(p)
+        }
+    } else {
+        println("No corner points detected.")
+    }
+
+    cornerPoints?.let { updateCornerPoints(it) }
 }
