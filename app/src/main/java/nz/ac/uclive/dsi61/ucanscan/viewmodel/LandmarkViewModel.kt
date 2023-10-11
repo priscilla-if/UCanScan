@@ -58,7 +58,7 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
         currentIndex = newIndex
     }
 
-    // Updates current and next landmarks
+    // Updates past and current landmarks
     fun updateLandmarks() {
         val landmarkList = landmarks.value
         Log.d("LANDMARK LIST", landmarkList.toString())
@@ -66,7 +66,7 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
         currentLandmark = landmarkList.getOrNull(currentIndex)
     }
 
-    // If the user gives up or for some reason return to the main menu, indices and landmarks reset
+    // If the user gives up or for some reason returns to the main menu, indices and landmarks reset
     fun resetLandmarks() {
         currentIndex = 0
         val landmarkList = landmarks.value

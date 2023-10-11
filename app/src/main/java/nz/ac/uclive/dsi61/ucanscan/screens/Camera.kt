@@ -164,49 +164,54 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                     val landmark: Landmark? = qrCodeValue?.let {
                             application.repository.getLandmarkByName(it)
                         }
-
+                    // If what's scanned matches one of the landmarks in our DB
                     if (landmark != null) {
-                        // Checking if we are scanning in order. TODO: Add a toast specifying this
                         if(landmark.isFound) {
-                            //duplicate
-                            Log.d("FOO", "Landmark already scanned.")
+                            // Previously scanned landmark
+                            Log.d("Scanning Feedback:", "Landmark already scanned.")
                             CoroutineScope(Dispatchers.Main).launch {
-                                Toast.makeText(application, "You have already scanned this!", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(application, "You have already scanned this! You " +
+                                        "are looking for ${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_SHORT).show()
                                 // light vibrating
                                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                             }
                         } else if (landmarkViewModel.currentLandmark?.name != landmark.name)  {
-                            Log.d("FOO", "Scanning out of race course order.")
+                            // Scanning a valid landmark in the wrong order
+                            Log.d("Scanning Feedback:", "Scanning out of race course order.")
                             CoroutineScope(Dispatchers.Main).launch {
                                 Toast.makeText(application, "This is not the landmark you are looking for! You are looking for " +
-                                        "${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_LONG).show()
+                                        "${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_LONG).show()
                                 // light vibrating
                                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                             }
                         }
                         else {
-                            Log.d("FOO", ":D adding landmark to DB!")
+                            // Scanning the correct landmark
+                            Log.d("Scanning Feedback:", "Correct landmark - adding to DB.")
 
+                            // Update the viewmodel and the DB
                             scope.launch {
                                 landmark.isFound = true
                                 application.repository.updateLandmark(landmark)
                                 landmarkViewModel.markLandmarkAsFound(landmark)
                             }
 
-                            // Updating index + past, current and next landmarks
+                            // Updating index + past, current landmarks
                             landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
                             landmarkViewModel.updateLandmarks()
 
+                            // Navigate to the found landmark screen
                             CoroutineScope(Dispatchers.Main).launch {
                                 navController.navigate(Screens.FoundLandmark.route)
                             }
 
                         }
                     } else {
-                        Log.d("FOO", "Invalid QR code scanned.")
+                        // Scanning a random QR code that is not one of our landmarks
+                        Log.d("Scanning Feedback:", "Invalid QR code scanned.")
                         CoroutineScope(Dispatchers.Main).launch {
-                            Toast.makeText(application, "This is not one of our QR codes!" +
-                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(application, "This is not one of our QR codes! " +
+                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_LONG).show()
                             // light vibrating
                             vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                     }

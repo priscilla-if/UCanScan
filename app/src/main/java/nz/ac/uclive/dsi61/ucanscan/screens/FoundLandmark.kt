@@ -129,7 +129,9 @@ fun FoundLandmarkScreen(context: Context,
 
                         Button(
                             onClick = {
-
+                                // If the current landmark we are searching for is now null
+                                // (gets updated when we scan a landmark in Camera.kt),
+                                // we should go to the finished race screen.
                                 if (landmarkViewModel.currentLandmark == null) {
                                     navController.navigate(Screens.FinishedRace.route)
                                 } else {
@@ -140,6 +142,7 @@ fun FoundLandmarkScreen(context: Context,
 
                         ) {
                             Text(
+                                // TODO: Add finish race button instead
                                 text = stringResource(R.string.back_to_race),
                                 fontSize = 20.sp
                             )
