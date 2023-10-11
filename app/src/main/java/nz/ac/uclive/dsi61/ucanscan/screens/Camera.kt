@@ -190,6 +190,7 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                             scope.launch {
                                 landmark.isFound = true
                                 application.repository.updateLandmark(landmark)
+                                landmarkViewModel.markLandmarkAsFound(landmark)
                             }
 
                             // Updating index + past, current and next landmarks

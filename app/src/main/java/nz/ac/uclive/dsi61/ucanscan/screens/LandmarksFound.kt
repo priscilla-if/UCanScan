@@ -74,7 +74,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                     modifier = Modifier.height(16.dp)
                 )
 
-                FoundLandmarksList(context, landmarks)
+                FoundLandmarksList(context, landmarkViewModel.foundLandmarks)
             }
 
             BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
