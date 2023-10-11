@@ -57,7 +57,7 @@ abstract class UCanScanDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption1', true, '')")
                     db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption2', true, '')")
 
-                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('userName', true, 'default')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('userName', true, '')")
 
                 }
 
