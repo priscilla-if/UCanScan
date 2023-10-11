@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,12 +40,15 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MainMenuScreen(context: Context,
-                   navController: NavController) {
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel
+) {
     // A surface container using the 'background' color from the theme
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -80,6 +84,10 @@ fun MainMenuScreen(context: Context,
                     Button(
                         onClick = {
                             navController.navigate(Screens.Race.route)
+                            stopwatchViewModel.isRunning = true
+                            isRaceStartedModel.setRaceStarted(true)
+
+
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
@@ -91,8 +99,7 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-                            //TODO: Navigate to correct page when exists
-                            navController.navigate(Screens.LandmarksFound.route)
+//                            navController.navigate(Screens.Leaderboard.route) //TODO
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
@@ -132,6 +139,9 @@ fun MainMenuScreen(context: Context,
                 }
             }
         )
+    }
+    BackHandler {
+        // Stop user from going back to Race screen
     }
 }
 

@@ -16,6 +16,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        configurations.all {
+            resolutionStrategy {
+                force("androidx.emoji2:emoji2-views-helper:1.3.0")
+                force("androidx.emoji2:emoji2:1.3.0")
+            }
+        }
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -75,9 +82,19 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("androidx.navigation:navigation-runtime-ktx:$nav_version")
 
+    //camera
+
+    implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+    implementation("androidx.camera:camera-view:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation ("androidx.camera:camera-core:1.2.3")
+    implementation ("androidx.camera:camera-camera2:1.2.3")
+
     // maps
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.maps.android:maps-compose:2.14.0")
+
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -2,23 +2,15 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,59 +23,72 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
+import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun LandmarksFoundScreen(context: Context,
-                         navController: NavController
+fun LandmarksFoundScreen(context: Context, navController: NavController,
+                         stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
     // Here is how we can get stuff from our DB to display on a screen - ideally we have
     // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
     val application = context.applicationContext as UCanScanApplication
-    val viewModel: LandmarkViewModel = viewModel(factory = LandmarkViewModelFactory(application.repository))
-    val landmarks by viewModel.getLandmarks().collectAsState(initial= emptyList<Landmark>())
+    val viewModel: LandmarkViewModel =
+        viewModel(factory = LandmarkViewModelFactory(application.repository))
+    val landmarks by viewModel.getLandmarks().collectAsState(initial = emptyList<Landmark>())
+
+    Scaffold(
+        bottomBar = {
+            BottomNavigationBar(navController)
+        },
+        content = { innerPadding ->
+
+            val openDialog = remember { mutableStateOf(false) }
+
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
+                },
+                isRaceStartedModel = isRaceStartedModel
+
+            )
+
+            StopwatchIncrementFunctionality(stopwatchViewModel)
 
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = stringResource(R.string.landmarks_found),
-            fontSize = 24.sp
-        )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 90.dp)           // provide space for the top app bar
+                    .padding(horizontal = 16.dp),   // provide padding all around the content: left & right
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = stringResource(R.string.landmarks_found_screen),
+                    fontSize = 24.sp
+                )
 
-        Spacer(
-            modifier = Modifier.height(16.dp)
-        )
+                Spacer( // spacing between "Found Landmarks" title and the lazycolumn
+                    modifier = Modifier.height(16.dp)
+                )
 
-        FoundLandmarksList(context, landmarks)
-    }
+                FoundLandmarksList(context, landmarks)
+            }
 
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
-    // 'back to Race' button
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth() // helps centre the button horizontally
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            BackToRaceButton(navController)
-        }
-    }
-
-
-//    BackHandler { // what to do when phone's back button is clicked
-//    }
+            BackHandler {
+                navController.popBackStack()
+            }
+        })
 }
 
 
@@ -91,9 +96,16 @@ fun LandmarksFoundScreen(context: Context,
 @SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
 fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
+    val PADDING_BETWEEN_ROWS = 16.dp
+    val BACK_TO_RACE_BTN_HEIGHT = 90.dp
+    val BOTTOM_NAVBAR_HEIGHT = 97.dp    // hard-coded value gotten from trial&error: would change if you change the sizes of content in the navbar
+
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
     LazyColumn(
-        contentPadding = PaddingValues(bottom = 16.dp + 90.dp) // Reserve space for the Back button: padding + button height
+        modifier = Modifier
+            // Reserve space for the Back To Race button, in its own section below the lazycolumn,
+            // so that the button doesn't overlap the last image.
+            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + BOTTOM_NAVBAR_HEIGHT)
     ) {
         items(landmarks) { landmark ->
             Row(

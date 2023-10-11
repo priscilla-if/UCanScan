@@ -2,7 +2,7 @@
     <string name="app_name">UCanScan</string>
     <string name="start_race">Start Race</string>
     <string name="my_times">My Times</string>
-    <string name="landmarks_found">Landmarks Found</string>
+    <string name="finished_race_screen">Finished Race</string>
     <string name="preferences">Settings</string>
     <string name="prefs_notifications">Notifications</string>
     <string name="prefs_name">Your Name</string>
@@ -18,4 +18,14 @@
     <string name="next_landmark">Next Landmark</string>
     <string name="jack_erskine_landmark">Jack Erskine</string>
     <string name="back_to_race">Back to Race</string>
+    <string name="main_screen">Main</string>
+    <string name="race_screen">Race</string>
+    <string name="landmarks_found_screen">Landmarks Found</string>
+    <string name="leaderboard_screen">Leaderboard</string>
+    <string name="map_screen">Map</string>
+    <string name="camera_screen">Camera</string>
+    <string name="give_up">Give Up</string>
+    <string name="keep_racing">Keep Racing</string>
+    <string name="give_up_desc">Are you sure you want to give up? Your progress will be lost.</string>
+    <string name="back_to_home">Back to Home</string>
 </resources>
