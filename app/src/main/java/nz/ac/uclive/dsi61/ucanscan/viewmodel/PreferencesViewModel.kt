@@ -28,9 +28,10 @@ class PreferencesViewModel(private val repository: UCanScanRepository) : ViewMod
         }
     }
 
+
     @Composable
-    fun getUserName(preferenceName: String): State<String> =
-        repository.getUserName(preferenceName).collectAsState(initial = "Default Name")
+    fun getUserNameState(preferenceName: String, initialValue: String): State<String> =
+        repository.getUserName(preferenceName).collectAsState(initial = initialValue)
 
 }
 

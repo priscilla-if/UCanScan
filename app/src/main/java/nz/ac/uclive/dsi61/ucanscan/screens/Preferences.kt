@@ -24,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,10 +54,12 @@ fun PreferencesScreen(context: Context,
     val animationOption1State by preferencesViewModel.getPreferenceState("animationOption1")
     val animationOption2State by preferencesViewModel.getPreferenceState("animationOption2")
 
-
     var selectedUserName by remember { mutableStateOf("") }
+    val userNameState by preferencesViewModel.getUserNameState("userName", initialValue = "")
 
-   // val selectedUserName by preferencesViewModel.getUserName("userName")
+    LaunchedEffect(userNameState) {
+        selectedUserName = userNameState
+    }
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
         content={ innerPadding ->
             val openDialog = remember { mutableStateOf(false)  }
