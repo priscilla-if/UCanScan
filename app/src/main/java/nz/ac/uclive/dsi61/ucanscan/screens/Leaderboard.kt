@@ -106,10 +106,10 @@ fun TimesDisplay(allTimes: List<Times>) {
         itemsIndexed(allTimes) { index, time ->
 
             val medalImage = when (index) {
-                0 -> R.drawable.first_medal
-                1 -> R.drawable.second_medal
-                2 -> R.drawable.third_medal
-                else -> R.drawable.all_medals
+                0 -> R.drawable.medal_first
+                1 -> R.drawable.medal_second
+                2 -> R.drawable.medal_third
+                else -> R.drawable.medal_all
             }
 
             Row(modifier = Modifier.padding(top =10.dp),
