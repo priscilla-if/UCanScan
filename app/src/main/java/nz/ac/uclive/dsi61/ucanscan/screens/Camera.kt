@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +44,6 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -192,7 +192,6 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
 
                     if (landmark != null) {
                         if(landmark.isFound) {
-                            //duplicate
                             Log.d("FOO", ":O landmark already scanned!")
                         } else {
                             Log.d("FOO", ":D adding landmark to DB!")
@@ -271,7 +270,7 @@ private fun processImageProxy(
 private fun processBarcodeCornerPoints(barcode: Barcode?): List<PointF>? {
     val cornerPoints = barcode?.cornerPoints?.map { PointF(it.x.toFloat(), it.y.toFloat()) }
     if (cornerPoints == null) {
-//        Log.d("FOO", "No barcode corner points detected.")
+        Log.d("FOO", "No barcode corner points detected.")
     }
     return cornerPoints
 }
