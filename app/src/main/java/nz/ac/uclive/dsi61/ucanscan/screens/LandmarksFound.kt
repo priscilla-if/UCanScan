@@ -77,7 +77,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                 FoundLandmarksList(context, landmarkViewModel.foundLandmarks)
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel)
 
             BackHandler {
                 // user has a back to race button so doesn't need going back with system

@@ -180,7 +180,7 @@ landmarkViewModel: LandmarkViewModel) {
  * Create a button at the bottom of a screen that has a bottom navbar.
  */
 @Composable
-fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -194,7 +194,12 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             Button(
                 onClick = {
-                    if (isRaceStarted.value) {
+
+                    // If the race has ended
+                    if (landmarkViewModel.currentLandmark == null) {
+                        navController.navigate(Screens.FinishedRace.route)
+                    }
+                    else if (isRaceStarted.value) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -205,7 +210,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             ) {
                 Text(
-                    text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (landmarkViewModel.currentLandmark == null) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
