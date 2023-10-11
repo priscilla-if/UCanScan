@@ -27,6 +27,16 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
         landmarkDao.insert(landmark)
     }
 
+    @WorkerThread
+    suspend fun getLandmarkByName(name: String): Landmark {
+        return landmarkDao.getLandmarkByName(name)
+    }
+
+    @WorkerThread
+    suspend fun updateLandmark(landmark: Landmark) {
+        landmarkDao.update(landmark)
+    }
+
 
     fun getPreferenceState(preferenceName: String): Flow<Boolean> =
         preferencesDao.getPreferenceState(preferenceName)
@@ -40,7 +50,6 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
         preferencesDao.getPreference(preferenceName).map { preferences ->
             preferences.userName
         }
-
 
     @WorkerThread
     suspend fun updateUserName(preferenceName: String, newUserName: String) {
