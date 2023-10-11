@@ -167,15 +167,24 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
 
                     if (landmark != null) {
                         // Checking if we are scanning in order. TODO: Add a toast specifying this
-                        if(landmark.isFound || landmarkViewModel.currentLandmark?.name != landmark.name) {
+                        if(landmark.isFound) {
                             //duplicate
-                            Log.d("FOO", ":O landmark already scanned or scanning out of ORDER!")
+                            Log.d("FOO", "Landmark already scanned.")
                             CoroutineScope(Dispatchers.Main).launch {
                                 Toast.makeText(application, "You have already scanned this!", Toast.LENGTH_SHORT).show()
                                 // light vibrating
                                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                             }
-                        } else {
+                        } else if (landmarkViewModel.currentLandmark?.name != landmark.name)  {
+                            Log.d("FOO", "Scanning out of race course order.")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(application, "This is not the landmark you are looking for! You are looking for " +
+                                        "${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_SHORT).show()
+                                // light vibrating
+                                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                            }
+                        }
+                        else {
                             Log.d("FOO", ":D adding landmark to DB!")
 
                             scope.launch {
@@ -193,11 +202,16 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                             }
 
                         }
+                    } else {
+                        Log.d("FOO", "Invalid QR code scanned.")
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(application, "This is not one of our QR codes!" +
+                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_SHORT).show()
+                            // light vibrating
+                            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                     }
                 }
-
-
-
+                }
 
             },
             ) {
