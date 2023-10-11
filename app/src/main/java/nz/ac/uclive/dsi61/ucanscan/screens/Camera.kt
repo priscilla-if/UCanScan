@@ -179,7 +179,7 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                             Log.d("FOO", "Scanning out of race course order.")
                             CoroutineScope(Dispatchers.Main).launch {
                                 Toast.makeText(application, "This is not the landmark you are looking for! You are looking for " +
-                                        "${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_SHORT).show()
+                                        "${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_LONG).show()
                                 // light vibrating
                                 vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                             }
@@ -197,7 +197,6 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                             landmarkViewModel.updateLandmarks()
                             // Show the Toast message on the main thread
                             CoroutineScope(Dispatchers.Main).launch {
-                                Toast.makeText(application, "${landmark.name} found!", Toast.LENGTH_SHORT).show()
                                 navController.navigate(Screens.FoundLandmark.route)
                             }
 
@@ -206,7 +205,7 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                         Log.d("FOO", "Invalid QR code scanned.")
                         CoroutineScope(Dispatchers.Main).launch {
                             Toast.makeText(application, "This is not one of our QR codes!" +
-                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_SHORT).show()
+                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}", Toast.LENGTH_LONG).show()
                             // light vibrating
                             vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                     }
