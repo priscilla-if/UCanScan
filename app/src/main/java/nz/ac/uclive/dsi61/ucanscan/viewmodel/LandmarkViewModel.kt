@@ -36,9 +36,6 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
     // Current landmark (whatever is being currently searched for)
     var currentLandmark by mutableStateOf<Landmark?>(null)
 
-    // MutableState for the next landmark
-    var nextLandmark by mutableStateOf<Landmark?>(null)
-
     init {
         // Update list
         viewModelScope.launch {
@@ -67,7 +64,6 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
         Log.d("LANDMARK LIST", landmarkList.toString())
         pastLandmark = landmarkList.getOrNull(currentIndex - 1)
         currentLandmark = landmarkList.getOrNull(currentIndex)
-        nextLandmark = landmarkList.getOrNull(currentIndex + 1)
     }
 
     // If the user gives up or for some reason return to the main menu, indices and landmarks reset
@@ -82,7 +78,6 @@ class LandmarkViewModel(private val repository: UCanScanRepository) : ViewModel(
         }
         pastLandmark = null
         currentLandmark = landmarkList.getOrNull(currentIndex)
-        nextLandmark = landmarkList.getOrNull(currentIndex + 1)
         foundLandmarks = emptyList()
     }
 
