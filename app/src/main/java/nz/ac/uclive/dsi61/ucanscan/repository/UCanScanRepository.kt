@@ -28,6 +28,26 @@ class UCanScanRepository(private val database: UCanScanDatabase) {
     }
 
 
+    fun getPreferenceState(preferenceName: String): Flow<Boolean> =
+        preferencesDao.getPreferenceState(preferenceName)
+
+    @WorkerThread
+    suspend fun updatePreference(preferenceName: String, newState: Boolean) {
+        preferencesDao.updatePreference(preferenceName, newState)
+    }
+
+    fun getUserName(preferenceName: String): Flow<String> =
+        preferencesDao.getPreference(preferenceName).map { preferences ->
+            preferences.userName
+        }
+
+
+    @WorkerThread
+    suspend fun updateUserName(preferenceName: String, newUserName: String) {
+        preferencesDao.updateUserName(preferenceName, newUserName)
+    }
+
+
     @WorkerThread
     suspend fun addTime(time: Times) {
         timesDao.insert(time)
