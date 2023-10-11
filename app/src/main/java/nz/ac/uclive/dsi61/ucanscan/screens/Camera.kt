@@ -3,15 +3,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.Point
 import android.graphics.PointF
-import android.graphics.Rect
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.unit.sp
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -22,6 +14,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,9 +28,20 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -56,29 +60,8 @@ import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import java.util.concurrent.Executors
-import androidx.compose.foundation.Canvas
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.NativePaint
-import androidx.compose.ui.graphics.PaintingStyle
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.toSize
 
+//TODO: replace all 'barcode' with 'qrcode' before merging
 
 var qrCodeValue by mutableStateOf<String?>(null)
 
@@ -155,96 +138,13 @@ fun CameraScreen(context: Context, navController: NavController) {
     previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
 
 
-
-    Canvas(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        // Draw circles based on barcodeCornerPoints
-        println("size points: " + (barcodeCornerPoints?.size))
-        if (barcodeCornerPoints != null && barcodeCornerPoints!!.isNotEmpty()) {
-            for (point in barcodeCornerPoints!!) {
-                println("point!")
-                val radius = 16f
-                drawCircle(
-                    color = Color(204, 0, 17), // UC red (#ucopenday!)
-                    center = Offset(point.x, point.y),
-                    radius = radius
-                )
-            }
-        }
-    }
-
-
-    //TODO: add comments; remove print statements
-    //TODO: make text & rect not show when qrCodeValue = null
-
-    val textMeasurer = rememberTextMeasurer()
-    val qrCodeText = qrCodeValue ?: ""
-
-    Spacer(
-        modifier = Modifier
-            .drawWithCache {
-                val textPadding = 16.dp
-
-//                    val qrCodeText = qrCodeValue ?: ""
-                val measuredText =
-                    textMeasurer.measure(
-                        AnnotatedString(qrCodeText),
-                        style = TextStyle(fontSize = 32.sp)
-                    )
-
-//                    if (qrCodeValue != null) {
-//
-//                    }
-
-                val rectSizeWithPadding = Size(
-                    measuredText.size.width + 2 * textPadding.toPx(),
-                    measuredText.size.height + 2 * textPadding.toPx()
-                )
-
-
-                onDrawBehind {
-                    val cornerRadius = 16.dp.toPx()
-                    val rectX = (size.width - rectSizeWithPadding.width) / 4 // position the rect 25% of the way down the screen
-                    val rectY = (size.height - rectSizeWithPadding.height) / 4
-//                        val rectX = (barcodeCornerPoints?.get(0)?.x) ?: ((size.width - rectSizeWithPadding.width) / 4)
-//                        val rectY = (barcodeCornerPoints?.get(0)?.y) ?: ((size.height - rectSizeWithPadding.height) / 4)
-                    drawRoundRect(Color(255, 255, 255), size = rectSizeWithPadding, topLeft = Offset(rectX, rectY),
-                        cornerRadius = CornerRadius(cornerRadius, cornerRadius)
-                    )
-
-
-                    drawIntoCanvas { canvas ->
-                        val textColor = Color(0, 128, 255).toArgb()
-                        val textPaint = androidx.compose.ui.graphics.Paint().asFrameworkPaint().apply {
-                            color = textColor
-                            textSize = 32.sp.toPx()
-                        }
-
-
-                        val textX = (size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx()
-                        val textY = (size.height + measuredText.size.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2
-//                            val textX = (barcodeCornerPoints?.get(0)?.x?.plus(textPadding.toPx())) ?: ((size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx())
-//                            val textY = (barcodeCornerPoints?.get(0)?.y) ?: ((size.height - rectSizeWithPadding.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2)
-//                            val textY = (barcodeCornerPoints?.get(0)?.y?.plus((- textPaint.fontMetrics.descent + textPadding.toPx() * 2))) ?: ((size.height - rectSizeWithPadding.height) / 4 + textPadding.toPx())
-                        canvas.nativeCanvas.drawText(qrCodeText, textX, textY, textPaint)
-                    }
-
-
-
-                }
-            }
-            .fillMaxSize()
-    )
+    // Draw on the screen to give feedback to user
+    // points don't get transformed, so they don't display in the correct place over the qr code - commenting this out :')
+//    DrawBarcodePoints(barcodeCornerPoints)
+    DrawBarcodeTextBox()
 
 }
 
-
-//fun createTextPaint(color: Color): NativePaint {
-//    val paint = androidx.compose.ui.graphics.Paint().asFrameworkPaint()
-//    paint.color = color.toArgb()
-//    return paint
-//}
 
 
 @Composable
@@ -333,9 +233,11 @@ private fun processImageProxy(
             .addOnSuccessListener { barcodeList ->
                 val barcode = barcodeList.getOrNull(0)
                 // `rawValue` is the decoded value of the barcode
-                barcode?.rawValue?.let { value ->
-                    Log.d("FOO", value)
-                    qrCodeValue = value
+                if (barcode != null && barcode.rawValue?.isNotEmpty() == true) {
+                    qrCodeValue = barcode.rawValue
+                } else {
+                    // when qrCodeValue is null, nothing will get drawn on the canvas when we are not hovering over a qr code
+                    qrCodeValue = null
                 }
 
                 val cornerPoints = processBarcodeCornerPoints(barcode)
@@ -361,13 +263,97 @@ private fun processImageProxy(
  */
 private fun processBarcodeCornerPoints(barcode: Barcode?): List<PointF>? {
     val cornerPoints = barcode?.cornerPoints?.map { PointF(it.x.toFloat(), it.y.toFloat()) }
-    if (cornerPoints != null) {
-        for (p in cornerPoints) {
-            println(p)
-        }
-    } else {
-        println("No corner points detected.")
+    if (cornerPoints == null) {
+//        Log.d("FOO", "No barcode corner points detected.")
     }
-
     return cornerPoints
+}
+
+
+/**
+ * Draws a QR code's corner points, when the camera is hovering over a QR code.
+ */
+@Composable
+fun DrawBarcodePoints(barcodeCornerPoints: List<PointF>?) {
+    Canvas(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Draw circles based on barcodeCornerPoints
+        if (!barcodeCornerPoints.isNullOrEmpty()) {
+            for (point in barcodeCornerPoints) {
+                val radius = 16f
+                drawCircle(
+                    color = Color(204, 0, 17), // UC red (#ucopenday!)
+                    center = Offset(point.x, point.y),
+                    radius = radius
+                )
+            }
+        }
+    }
+}
+
+/**
+ *  Draws a rectangle with text saying the value of the QR code,
+ *  when the camera is hovering over a QR code.
+ *
+ *  Code initially based on: https://developer.android.com/jetpack/compose/graphics/draw/overview#draw-text
+ */
+@Composable
+fun DrawBarcodeTextBox() {
+    val textMeasurer = rememberTextMeasurer()
+    val qrCodeText = qrCodeValue ?: ""
+
+    if(qrCodeText != "") {
+        Spacer(
+            modifier = Modifier
+                .drawWithCache {
+                    val textPadding = 16.dp
+
+                    // Set up the text, and measure it so we can base the rect's dimensions off of it.
+                    val measuredText =
+                        textMeasurer.measure(
+                            AnnotatedString(qrCodeText),
+                            style = TextStyle(fontSize = 32.sp)
+                        )
+
+                    // Set up the rect's size, which is the text's size plus the padding all around.
+                    val rectSizeWithPadding = Size(
+                        measuredText.size.width + 2 * textPadding.toPx(),
+                        measuredText.size.height + 2 * textPadding.toPx()
+                    )
+
+                    // Draw the rect.
+                    onDrawBehind {
+                        val cornerRadius = 16.dp.toPx()
+                        // position the rect 25% of the way down the screen
+                        val rectX = (size.width - rectSizeWithPadding.width) / 4    // size is the screen size
+                        val rectY = (size.height - rectSizeWithPadding.height) / 4
+                        drawRoundRect(
+                            Color(255, 255, 255),
+                            size = rectSizeWithPadding,
+                            topLeft = Offset(rectX, rectY),
+                            cornerRadius = CornerRadius(cornerRadius, cornerRadius)
+                        )
+
+                        // Set up the text. In order to give it a colour we must use textPaint.
+                        drawIntoCanvas { canvas ->
+                            val textColor = Color(0, 128, 255).toArgb()
+                            val textPaint = androidx.compose.ui.graphics
+                                .Paint()
+                                .asFrameworkPaint()
+                                .apply {
+                                    color = textColor
+                                    textSize = 32.sp.toPx()
+                                }
+
+                            // Draw the text, based on the sizes of the text and the rect.
+                            val textX = (size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx()
+                            val textY = (size.height + measuredText.size.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2
+                            canvas.nativeCanvas.drawText(qrCodeText, textX, textY, textPaint)
+                        }
+                    }
+                }
+                .fillMaxSize()
+        )
+    }
 }
