@@ -98,6 +98,8 @@ dependencies {
     implementation("com.google.maps.android:maps-compose:2.14.0")
 
 
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

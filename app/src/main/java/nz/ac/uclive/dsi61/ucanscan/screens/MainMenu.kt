@@ -26,6 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,14 +46,22 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MainMenuScreen(context: Context,
-                   navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel, preferencesViewModel : PreferencesViewModel
 ) {
+    var selectedUserName by remember { mutableStateOf("") }
+    val userNameState by preferencesViewModel.getUserNameState("userName", initialValue = "")
+
+    LaunchedEffect(userNameState) {
+        selectedUserName = userNameState
+    }
+
     // A surface container using the 'background' color from the theme
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -79,7 +92,7 @@ fun MainMenuScreen(context: Context,
                         contentDescription = "Placeholder Logo"
 
                     )
-                    Greeting("Priscilla") // TODO: Name functionality
+                    Greeting(selectedUserName)
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
@@ -99,7 +112,8 @@ fun MainMenuScreen(context: Context,
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(
                         onClick = {
-//                            navController.navigate(Screens.Leaderboard.route) //TODO
+                            navController.navigate(Screens.Leaderboard.route)
+
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {
@@ -147,8 +161,15 @@ fun MainMenuScreen(context: Context,
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
+
+    val welcomeText = if (name.isEmpty()) {
+        "Welcome!"
+    } else {
+        "Welcome, $name!"
+    }
+
     Text(
-        text = "Welcome, $name!",
+        text = welcomeText,
         modifier = modifier,
         fontSize = 30.sp
 
