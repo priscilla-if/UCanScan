@@ -16,8 +16,11 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 // This is a temporary Screen, for showcasing how we can query the DB to display things.
 // Could potentially be used in the future for the FoundLandmarksScreen? Otherwise it does not do
@@ -26,7 +29,7 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LandmarksScreen(context: Context,
-                    navController: NavController
+                    navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
 ) {
 
     val application = context.applicationContext as UCanScanApplication
@@ -40,6 +43,23 @@ fun LandmarksScreen(context: Context,
             BottomNavigationBar(navController)
         },
         content = {innerPadding ->
+
+            val openDialog = remember { mutableStateOf(false)  }
+
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
+                },
+                isRaceStartedModel = isRaceStartedModel
+
+            )
+
+            StopwatchIncrementFunctionality(stopwatchViewModel)
+
+
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -61,7 +81,7 @@ fun LandmarksScreen(context: Context,
                 }
             }
 
-            BackToRaceButtonContainer(navController, innerPadding)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
 
             BackHandler {
                 navController.popBackStack()

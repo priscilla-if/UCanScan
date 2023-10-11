@@ -3,6 +3,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -35,25 +42,40 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController) {
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
 
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
+
+            val openDialog = remember { mutableStateOf(false)  }
+
+            TopNavigationBar(
+                navController = navController,
+                stopwatchViewModel = stopwatchViewModel,
+                onGiveUpClick = {
+                    openDialog.value = true
+                },
+                isRaceStartedModel = isRaceStartedModel
+            )
+
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 100.dp),
+                modifier = Modifier.fillMaxSize().padding(top = 90.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
-                    modifier = Modifier.padding(bottom = 70.dp),
+                    modifier = Modifier.padding(bottom = 30.dp),
                     text = stringResource(id = R.string.next_landmark),
                     style = TextStyle(
                         fontSize = 28.sp,
@@ -61,12 +83,10 @@ fun RaceScreen(context: Context,
                     )
                 )
 
-
-
                 Box(
                     modifier = Modifier
                         .size(300.dp)
-                        .background(Color.Gray, shape = CircleShape)
+                        .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
                     Text(
                         text = stringResource(id = R.string.jack_erskine_landmark),
@@ -83,6 +103,8 @@ fun RaceScreen(context: Context,
                     )
                 }
 
+                //increments stopwatch if it is running
+                StopwatchIncrementFunctionality(stopwatchViewModel)
 
 
                 Row(
@@ -108,8 +130,6 @@ fun RaceScreen(context: Context,
                         )
                     }
 
-
-
                     Button(
                         modifier = Modifier
                             .size(100.dp),
@@ -127,12 +147,35 @@ fun RaceScreen(context: Context,
                     }
 
 
+                    //TODO REMOVE THIS I AM JUST USING THIS TO ACCESS THE FINISHED RACE SCREEN!
+                    Button(
+                        modifier = Modifier
+                            .size(100.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        onClick = {
+                            navController.navigate(Screens.FinishedRace.route)
+
+                        },
+                    ) {}
+
+
                 }
-        }}
+            }
+
+            BackHandler {
+                //TODO once everything is linked up don't allow user to go back
+            }
+
+        }
     )}
 
+
+
+/**
+ * Create a button at the bottom of a screen that has a bottom navbar.
+ */
 @Composable
-fun BackToRaceButtonContainer(navController: NavController, innerPadding: PaddingValues) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -146,18 +189,55 @@ fun BackToRaceButtonContainer(navController: NavController, innerPadding: Paddin
 
             Button(
                 onClick = {
-                    navController.navigate(Screens.Race.route)
+                    if (isRaceStarted.value) {
+                        navController.navigate(Screens.Race.route)
+                    } else {
+                        navController.navigate(Screens.MainMenu.route)
+                    }
                 },
                 modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                     .size(width = 200.dp, height = 90.dp)
 
             ) {
                 Text(
-                    text = stringResource(R.string.back_to_race),
+                    text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
         }
+    }
+}
 
+/**
+ * Create a button at the bottom of a screen that doesn't have a bottom navbar.
+ */
+@Composable
+fun BackToRaceButton(navController: NavController) {
+    Button(
+        onClick = {
+            navController.navigate(Screens.Race.route)
+        },
+        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.back_to_race),
+            fontSize = 20.sp //TODO: replace with MaterialTheme styling
+        )
+    }
+}
+
+
+
+@Composable
+fun StopwatchIncrementFunctionality(stopwatchViewModel: StopwatchViewModel) {
+    LaunchedEffect(stopwatchViewModel.isRunning) {
+        while (stopwatchViewModel.isRunning) {
+            withFrameMillis { frameTime ->
+                if (stopwatchViewModel.startTime == 0L) {
+                    stopwatchViewModel.startTime = frameTime
+                }
+                stopwatchViewModel.time = frameTime - stopwatchViewModel.startTime
+            }
+        }
     }
 }

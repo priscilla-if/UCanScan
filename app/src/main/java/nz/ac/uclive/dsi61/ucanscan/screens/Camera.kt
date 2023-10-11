@@ -25,8 +25,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -70,6 +75,7 @@ var qrCodeValue by mutableStateOf<String?>(null)
 @Composable
 fun CameraScreen(context: Context, navController: NavController) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
+    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
 
@@ -91,11 +97,27 @@ fun CameraScreen(context: Context, navController: NavController) {
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 val lifecycleOwner = (context as ComponentActivity)
-                val cameraProvider = ProcessCameraProvider.getInstance(context)
-                cameraProvider.addListener({
+//                val cameraProvider = ProcessCameraProvider.getInstance(context)
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+
+                cameraProviderFuture.addListener({
+
+                    cameraProvider = cameraProviderFuture.get()
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                     val previewUseCase = Preview.Builder().build()
                     val analysisUseCase = ImageAnalysis.Builder().build()
+                    val camera = cameraProvider?.bindToLifecycle(
+                        lifecycleOwner,
+                        cameraSelector,
+                        previewUseCase,
+                        analysisUseCase
+                    )
+
+                    val newPreviewView = PreviewView(context)
+                    newPreviewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                    previewUseCase.setSurfaceProvider(newPreviewView.surfaceProvider)
+
+                    previewView = newPreviewView
 
                     // define the actual functionality of our analysis use case
                     analysisUseCase.setAnalyzer(
@@ -111,18 +133,6 @@ fun CameraScreen(context: Context, navController: NavController) {
                         }
                     }
 
-                    val camera = cameraProvider.get().bindToLifecycle(
-                        lifecycleOwner,
-                        cameraSelector,
-                        previewUseCase,
-                        analysisUseCase
-                    )
-
-                    val newPreviewView = PreviewView(context)
-                    newPreviewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                    previewUseCase.setSurfaceProvider(newPreviewView.surfaceProvider)
-
-                    previewView = newPreviewView
 
                 }, ContextCompat.getMainExecutor(context))
             } else {
@@ -133,6 +143,13 @@ fun CameraScreen(context: Context, navController: NavController) {
 
     LaunchedEffect(requestPermissionLauncher) {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            cameraProvider?.unbindAll()
+            cameraProvider = null
+        }
     }
 
     previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
@@ -199,17 +216,7 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                navController.navigate(Screens.Race.route)
-            },
-            modifier = Modifier.size(width = 200.dp, height = 90.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.back_to_race),
-                fontSize = 20.sp
-            )
-        }
+        BackToRaceButton(navController)
     }
 
 }
