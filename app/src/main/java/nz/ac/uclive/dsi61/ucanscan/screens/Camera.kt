@@ -196,7 +196,7 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
                             // Updating index + past, current and next landmarks
                             landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
                             landmarkViewModel.updateLandmarks()
-                            // Show the Toast message on the main thread
+
                             CoroutineScope(Dispatchers.Main).launch {
                                 navController.navigate(Screens.FoundLandmark.route)
                             }

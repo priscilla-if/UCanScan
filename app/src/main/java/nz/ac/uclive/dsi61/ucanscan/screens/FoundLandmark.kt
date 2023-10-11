@@ -129,7 +129,12 @@ fun FoundLandmarkScreen(context: Context,
 
                         Button(
                             onClick = {
-                                navController.navigate(Screens.Race.route)
+
+                                if (landmarkViewModel.currentLandmark == null) {
+                                    navController.navigate(Screens.FinishedRace.route)
+                                } else {
+                                    navController.navigate(Screens.Race.route)
+                                }
                             },
                             modifier = Modifier.size(width = 200.dp, height = 90.dp)
 

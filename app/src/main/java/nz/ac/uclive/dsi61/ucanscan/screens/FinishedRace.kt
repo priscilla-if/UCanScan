@@ -128,6 +128,7 @@ fun FinishedRaceScreen(context: Context,
 
                     Button(
                         onClick = {
+                                landmarkViewModel.resetLandmarks()
                                 navController.navigate(Screens.MainMenu.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 90.dp)
