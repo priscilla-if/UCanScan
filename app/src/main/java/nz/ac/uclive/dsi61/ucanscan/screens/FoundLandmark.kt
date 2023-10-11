@@ -142,8 +142,7 @@ fun FoundLandmarkScreen(context: Context,
 
                         ) {
                             Text(
-                                // TODO: Add finish race button instead
-                                text = stringResource(R.string.back_to_race),
+                                text = stringResource(if (landmarkViewModel.currentLandmark == null) R.string.finish_race else R.string.back_to_race),
                                 fontSize = 20.sp
                             )
                         }

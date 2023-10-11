@@ -29,4 +29,5 @@
     <string name="give_up_desc">Are you sure you want to give up? Your progress will be lost.</string>
     <string name="back_to_home">Back to Home</string>
     <string name="found_landmark">You found</string>
+    <string name="finish_race">Finish Race</string>
 </resources>
