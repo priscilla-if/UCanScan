@@ -79,11 +79,6 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
     stopwatchViewModel.startTime = 0L
 
-//    val finishTime = mutableStateOf("%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
-//    println("finishTime: $finishTime")
-//    println("finishTime.value: " + finishTime.value)
-
-
 
 
     Scaffold(
@@ -132,9 +127,6 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                         .size(300.dp)
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
-//                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds),
-//                    Text(
-//                        text = finishTime.value,
                     Text(
                         text = convertTimeLongToMinutes(stopwatchViewModel.time),
                         fontSize = 48.sp,
@@ -204,8 +196,8 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                                         Text(
                                             modifier = Modifier.clickable {
                                                 isShareDialogOpen.value = false
-                                                println("finishtime value 2 " + finishTime.value)
-                                                dispatchAction(context, option, finishTime.value)
+                                                println("finishtime value 2 " + convertTimeLongToMinutes(stopwatchViewModel.time))
+                                                dispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
                                             },
 //                                            style = MaterialTheme.typography.body1,
                                             text = option
@@ -226,8 +218,8 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 
+//TODO: bug: when go into share via email then go back to app, time on finish race screen is 0s
 private fun dispatchAction(context: Context, option: String, raceFinishTime: String) {
-//    val raceFinishTimeFormatted = " " + raceFinishTime
     println("finishtime value 3 " + raceFinishTime)
     when (option) {
         "Email" -> {
