@@ -3,6 +3,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -39,15 +42,17 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
+import android.content.Intent
+import androidx.compose.material.*
+import androidx.compose.material3.AlertDialog
+import androidx.core.content.ContextCompat.startActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun FinishedRaceScreen(context: Context,
-                      navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
+fun FinishedRaceScreen(context: Context, navController: NavController,
+                       stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
-
-
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
 
@@ -59,28 +64,37 @@ fun FinishedRaceScreen(context: Context,
 
     stopwatchViewModel.startTime = 0L
 
+    val finishTime = mutableStateOf("%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
+    println("finishTime: $finishTime")
+    println("finishTime.value: " + finishTime.value)
+
+
+
 
     Scaffold(
         containerColor = colorResource(R.color.light_green),
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
-
                 innerPadding ->
 
-            val openDialog = remember { mutableStateOf(false) }
+            val isGiveUpDialogOpen = remember { mutableStateOf(false) }
+            val isShareDialogOpen = remember { mutableStateOf(false) }
+
 
             TopNavigationBar(
                 navController = navController,
                 stopwatchViewModel = stopwatchViewModel,
                 onGiveUpClick = {
-                    openDialog.value = true
+                    isGiveUpDialogOpen.value = true
                 },
                 isRaceStartedModel = isRaceStartedModel
             )
 
             Column(
-                modifier = Modifier.fillMaxSize().padding(top = 90.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 90.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -103,7 +117,9 @@ fun FinishedRaceScreen(context: Context,
                         .size(300.dp)
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
-                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds),
+//                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds),
+                    Text(
+                        text = finishTime.value,
                         fontSize = 48.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -118,7 +134,9 @@ fun FinishedRaceScreen(context: Context,
 
 
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding()),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
@@ -141,8 +159,7 @@ fun FinishedRaceScreen(context: Context,
                             .size(90.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
-                            //TODO sharing functionality
-
+                            isShareDialogOpen.value = true
                         },
                     ) {
                         Icon(
@@ -153,12 +170,66 @@ fun FinishedRaceScreen(context: Context,
                         )
                     }
 
+
+                    if (isShareDialogOpen.value) {
+                        AlertDialog(
+                            title = {
+                                Text(
+//                                    style = MaterialTheme.typography.body1,
+                                    fontWeight = FontWeight.Bold,
+                                    text = "Share to..."
+                                )
+                            },
+                            text = {
+                                val options = listOf("Email", "Text", "Call")
+                                LazyColumn {
+                                    items(options) { option ->
+                                        Text(
+                                            modifier = Modifier.clickable {
+                                                isShareDialogOpen.value = false
+                                                println("finishtime value 2 " + finishTime.value)
+                                                dispatchAction(context, option, finishTime.value)
+                                            },
+//                                            style = MaterialTheme.typography.body1,
+                                            text = option
+                                        )
+                                    }
+                                }
+                            },
+                            onDismissRequest = { isShareDialogOpen.value = false },
+                            confirmButton  = {},
+                            dismissButton = {}
+                        )
+                    }
                 }
             }
-
-
         }
     )
+}
 
 
+
+private fun dispatchAction(context: Context, option: String, raceFinishTime: String) {
+//    val raceFinishTimeFormatted = " " + raceFinishTime
+    println("finishtime value 3 " + raceFinishTime)
+    when (option) {
+        "Email" -> {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+//            intent.putExtra(Intent.EXTRA_EMAIL, "dsi61@uclive.ac.nz")
+            intent.putExtra(Intent.EXTRA_SUBJECT, "I finished a race in UCanScan!")
+            intent.putExtra(Intent.EXTRA_TEXT, "I'm using the UCanScan app and I just finished a race with a time of " + raceFinishTime + "! #UCOpenDay!")
+            startActivity(context, intent, null)
+        }
+        "Text" -> {
+//            val uri = Uri.parse("smsto:${friend.phone}")
+//            val intent = Intent(Intent.ACTION_SEND, uri)
+//            startActivity(context, intent)
+        }
+        "Call" -> {
+//            val uri = Uri.parse("tel:${friend.phone}")
+//            val intent = Intent(Intent.ACTION_DIAL, uri)
+//            startActivity(context, intent)
+        }
+    }
 }
