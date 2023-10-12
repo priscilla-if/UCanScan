@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,11 +36,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 import android.content.Intent
@@ -56,17 +62,26 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
 
-    val seconds = stopwatchViewModel.time / 1000
-    val minutes = seconds / 60
-    val actualSeconds = seconds % 60
-    val hours = minutes / 60
-    val actualMinutes = minutes % 60
+
+    val timeToSave = Times(
+        endTime = stopwatchViewModel.time
+    )
+
+    val application = context.applicationContext as UCanScanApplication
+
+    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
+
+
+    DisposableEffect(Unit) {
+        finishedRaceViewModel.addTimeToDb(timeToSave)
+        onDispose {}
+    }
 
     stopwatchViewModel.startTime = 0L
 
-    val finishTime = mutableStateOf("%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
-    println("finishTime: $finishTime")
-    println("finishTime.value: " + finishTime.value)
+//    val finishTime = mutableStateOf("%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
+//    println("finishTime: $finishTime")
+//    println("finishTime.value: " + finishTime.value)
 
 
 
@@ -101,13 +116,13 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 
-                Text(text = "You finished the race!",
+                Text(text = stringResource(R.string.finished_the_race),
                     fontSize = 28.sp,
                 modifier = Modifier.padding(top = 0.dp))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(text = "Final Time:",
+                Text(text = stringResource(R.string.final_time),
                     fontSize = 28.sp,
                     modifier = Modifier.padding(bottom = 30.dp))
 
@@ -118,8 +133,10 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
 //                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds),
+//                    Text(
+//                        text = finishTime.value,
                     Text(
-                        text = finishTime.value,
+                        text = convertTimeLongToMinutes(stopwatchViewModel.time),
                         fontSize = 48.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

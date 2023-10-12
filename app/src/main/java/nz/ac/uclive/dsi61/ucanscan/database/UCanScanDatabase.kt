@@ -42,15 +42,23 @@ abstract class UCanScanDatabase : RoomDatabase() {
                     // Landmarks
                     // * lat & long only need to be precise to 5dp because this is accurate within 1.1 metres
                     // * keep the description short so it doesn't get cut off :')
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Jack Erskine', 'The CSSE and Maths department building', -43.52256, 172.58119, true, 'code')")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Elsie Locke', 'The Arts department building', -43.52456, 172.58351, true, 'code')")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('UC Rec Centre', 'The campus gym and recreation centre', -43.52698, 172.58451, true, 'code')")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Ernest Rutherford', 'Home of the Science faculty', -43.52257, 172.58268, true, 'code')")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Haere-roa', 'The hub of UC students and the UCSA', -43.52435, 172.58079, true, 'code')")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound, code) VALUES ('Rehua', 'Centre for Education, Health and more', -43.52323, 172.58450, false, 'code')")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Jack Erskine', 'The CSSE and Maths department building', -43.52256, 172.58119, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Elsie Locke', 'The Arts department building', -43.52456, 172.58351, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('UC Rec Centre', 'The campus gym and recreation centre', -43.52698, 172.58451, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Ernest Rutherford', 'Home of the Science faculty', -43.52257, 172.58268, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Haere-roa', 'The hub of UC students and the UCSA', -43.52435, 172.58079, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Rehua', 'Centre for Education, Health and more', -43.52323, 172.58450, false)")
 
                     // Preferences
-                    // TODO: List of preferences
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption2', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('notificationOption3', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('themeOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption1', true, '')")
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('animationOption2', true, '')")
+
+                    db.execSQL("INSERT INTO PREFERENCES (name, state, userName) VALUES ('userName', true, '')")
+
                 }
 
             }).build()

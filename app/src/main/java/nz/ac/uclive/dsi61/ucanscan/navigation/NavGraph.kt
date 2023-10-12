@@ -15,11 +15,12 @@ import nz.ac.uclive.dsi61.ucanscan.screens.MapScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.PreferencesScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.RaceScreen
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 // https://dev.to/jbc7ag/jetpack-compose-navigation-tutorial-9en
 @Composable
-fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
+fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel, preferencesViewModel: PreferencesViewModel) {
 
     NavHost(
         navController = navController,
@@ -28,13 +29,13 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         composable(
             route = Screens.MainMenu.route
         ) { backStackEntry ->
-            MainMenuScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            MainMenuScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, preferencesViewModel)
         }
 
         composable(
             route = Screens.Preferences.route
         ) {backStackEntry ->
-            PreferencesScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel)
+            PreferencesScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, preferencesViewModel)
         }
 
         composable(
