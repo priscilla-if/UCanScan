@@ -2,6 +2,8 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
@@ -48,16 +53,12 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
-import android.content.Intent
-import androidx.compose.material.*
-import androidx.compose.material3.AlertDialog
-import androidx.core.content.ContextCompat.startActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun FinishedRaceScreen(context: Context, navController: NavController,
-                       stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
+                       stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel
 ) {
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
@@ -108,9 +109,6 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-
-
                 Text(text = stringResource(R.string.finished_the_race),
                     fontSize = 28.sp,
                 modifier = Modifier.padding(top = 0.dp))
@@ -186,18 +184,18 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                                 Text(
 //                                    style = MaterialTheme.typography.body1,
                                     fontWeight = FontWeight.Bold,
-                                    text = "Share to..."
+                                    text = stringResource(R.string.share_dialog_title)
                                 )
                             },
                             text = {
-                                val options = listOf("Email", "Text", "Call")
+                                val options = listOf(stringResource(R.string.share_via_email), stringResource(R.string.share_via_text), stringResource(R.string.share_via_phonecall))
                                 LazyColumn {
                                     items(options) { option ->
                                         Text(
                                             modifier = Modifier.clickable {
                                                 isShareDialogOpen.value = false
                                                 println("finishtime value 2 " + convertTimeLongToMinutes(stopwatchViewModel.time))
-                                                dispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
+                                                DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
                                             },
 //                                            style = MaterialTheme.typography.body1,
                                             text = option
@@ -218,27 +216,37 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 
-//TODO: bug: when go into share via email then go back to app, time on finish race screen is 0s
-private fun dispatchAction(context: Context, option: String, raceFinishTime: String) {
+//TODO: bug: when go into share via email, choose an app, then go back to app, time on finish race screen is 0s
+// ...actually i cant replicate this bug anymore...
+fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
     println("finishtime value 3 " + raceFinishTime)
+    // we manually get the strings from the string resource IDs because
+    // using stringResource() to do it would require this function to be composable
+    val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
+    val text = context.resources.getString(R.string.share_via_text)
+    val call = context.resources.getString(R.string.share_via_phonecall)
+    val shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
+    val shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
+    val shareBodyPt2String = context.resources.getString(R.string.share_finished_race_msg_pt2)
+
     when (option) {
-        "Email" -> {
+        email -> {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
-//            intent.putExtra(Intent.EXTRA_EMAIL, "dsi61@uclive.ac.nz")
-            intent.putExtra(Intent.EXTRA_SUBJECT, "I finished a race in UCanScan!")
-            intent.putExtra(Intent.EXTRA_TEXT, "I'm using the UCanScan app and I just finished a race with a time of " + raceFinishTime + "! #UCOpenDay!")
+            intent.putExtra(Intent.EXTRA_SUBJECT, shareTitleString)
+            intent.putExtra(Intent.EXTRA_TEXT, shareBodyPt1String + raceFinishTime + shareBodyPt2String)
             startActivity(context, intent, null)
         }
-        "Text" -> {
-//            val uri = Uri.parse("smsto:${friend.phone}")
-//            val intent = Intent(Intent.ACTION_SEND, uri)
-//            startActivity(context, intent)
+        text -> {
+            val uri = Uri.parse("smsto:")
+            val intent = Intent(Intent.ACTION_SENDTO, uri)
+            intent.putExtra("sms_body", shareBodyPt1String + raceFinishTime + shareBodyPt2String)
+            startActivity(context, intent, null)
         }
-        "Call" -> {
-//            val uri = Uri.parse("tel:${friend.phone}")
-//            val intent = Intent(Intent.ACTION_DIAL, uri)
-//            startActivity(context, intent)
+        call -> {
+            val uri = Uri.parse("tel:")
+            val intent = Intent(Intent.ACTION_DIAL, uri)
+            startActivity(context, intent, null)
         }
     }
 }
