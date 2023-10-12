@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.screens.convertTimeLongToMinutes
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
@@ -57,13 +58,8 @@ fun TopNavigationBar(
                         modifier = Modifier.size(50.dp)
                     )
 
-                    val seconds = stopwatchViewModel.time / 1000
-                    val minutes = seconds / 60
-                    val actualSeconds = seconds % 60
-                    val hours = minutes / 60
-                    val actualMinutes = minutes % 60
 
-                    Text(text = "%02d:%02d:%02d".format(hours, actualMinutes, actualSeconds))
+                    Text(text = convertTimeLongToMinutes(stopwatchViewModel.time))
                 }
             },
             actions = {

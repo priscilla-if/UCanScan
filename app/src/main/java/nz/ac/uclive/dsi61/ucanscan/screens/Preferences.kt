@@ -24,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,7 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,18 +47,21 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 @Composable
 fun PreferencesScreen(context: Context,
                navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
-                      landmarkViewModel: LandmarkViewModel
+                      preferencesViewModel: PreferencesViewModel, landmarkViewModel: LandmarkViewModel
 ) {
+    val notificationOption1State by preferencesViewModel.getPreferenceState("notificationOption1")
+    val notificationOption2State by preferencesViewModel.getPreferenceState("notificationOption2")
+    val notificationOption3State by preferencesViewModel.getPreferenceState("notificationOption3")
+    val themeOption1State by preferencesViewModel.getPreferenceState("themeOption1")
+    val animationOption1State by preferencesViewModel.getPreferenceState("animationOption1")
+    val animationOption2State by preferencesViewModel.getPreferenceState("animationOption2")
 
-    val notificationOption1State = remember { mutableStateOf(true) }
-    val notificationOption2State = remember { mutableStateOf(true) }
-    val notificationOption3State = remember { mutableStateOf(true) }
-    val themeOption1State = remember { mutableStateOf(true) }
-    val animationOption1State = remember { mutableStateOf(true) }
-    val animationOption2State = remember { mutableStateOf(true) }
-    var selectedUserName by remember { mutableStateOf("we have no DB yet") } //TODO: get value from db
+    var selectedUserName by remember { mutableStateOf("") }
+    val userNameState by preferencesViewModel.getUserNameState("userName", initialValue = "")
 
-
+    LaunchedEffect(userNameState) {
+        selectedUserName = userNameState
+    }
     Scaffold( bottomBar={ BottomNavigationBar(navController) },
         content={ innerPadding ->
             val openDialog = remember { mutableStateOf(false)  }
@@ -119,10 +124,11 @@ fun PreferencesScreen(context: Context,
                             modifier = Modifier.weight(1f)
                         )
                         // https://betterprogramming.pub/create-an-android-switch-using-jetpack-compose-351eddbf5828
+
+
                         Switch(
-                            checked = notificationOption1State.value,
-                            onCheckedChange = { notificationOption1State.value = it
-                                saveSetting(context, "Notification Option 1", notificationOption1State.value.toString()) } //TODO: name
+                            checked = notificationOption1State,
+                            onCheckedChange = { saveSetting(context, "notificationOption1", it, preferencesViewModel) }
                         )
                     }
 
@@ -140,10 +146,11 @@ fun PreferencesScreen(context: Context,
                         Spacer(
                             modifier = Modifier.weight(1f)
                         )
+
+
                         Switch(
-                            checked = notificationOption2State.value,
-                            onCheckedChange = { notificationOption2State.value = it
-                                saveSetting(context, "Notification Option 2", notificationOption2State.value.toString()) } //TODO: name
+                            checked = notificationOption2State,
+                            onCheckedChange = { saveSetting(context, "notificationOption2", it, preferencesViewModel) }
                         )
                     }
 
@@ -161,10 +168,11 @@ fun PreferencesScreen(context: Context,
                         Spacer(
                             modifier = Modifier.weight(1f)
                         )
+
+
                         Switch(
-                            checked = notificationOption3State.value,
-                            onCheckedChange = { notificationOption3State.value = it
-                                saveSetting(context, "Notification Option 3", notificationOption3State.value.toString()) } //TODO: name
+                            checked = notificationOption3State,
+                            onCheckedChange = { saveSetting(context, "notificationOption3", it, preferencesViewModel) }
                         )
                     }
 
@@ -192,10 +200,10 @@ fun PreferencesScreen(context: Context,
                         Spacer(
                             modifier = Modifier.weight(1f)
                         )
+
                         Switch(
-                            checked = themeOption1State.value,
-                            onCheckedChange = { themeOption1State.value = it
-                                saveSetting(context, "Theme", themeOption1State.value.toString()) }
+                            checked = themeOption1State,
+                            onCheckedChange = { saveSetting(context, "themeOption1", it, preferencesViewModel) }
                         )
                     }
 
@@ -223,10 +231,11 @@ fun PreferencesScreen(context: Context,
                         Spacer(
                             modifier = Modifier.weight(1f)
                         )
+
                         Switch(
-                            checked = animationOption1State.value,
-                            onCheckedChange = { animationOption1State.value = it
-                                saveSetting(context, "Animation Option 1", animationOption1State.value.toString()) } //TODO: name
+                            checked = animationOption1State,
+                            onCheckedChange = { saveSetting(context, "animationOption1", it, preferencesViewModel)
+                            }
                         )
                     }
 
@@ -244,10 +253,13 @@ fun PreferencesScreen(context: Context,
                         Spacer(
                             modifier = Modifier.weight(1f)
                         )
+
+
                         Switch(
-                            checked = animationOption2State.value,
-                            onCheckedChange = { animationOption2State.value = it
-                                saveSetting(context, "Animation Option 2", animationOption2State.value.toString()) } //TODO: name
+                            checked = animationOption2State,
+                            onCheckedChange = {
+                                saveSetting(context, "animationOption2", it, preferencesViewModel)
+                                 }
                         )
                     }
 
@@ -283,7 +295,7 @@ fun PreferencesScreen(context: Context,
                             modifier = Modifier.weight(1f)
                         )
 
-                        SaveUserNameButton(context, selectedUserName)
+                             SaveUserNameButton(context, selectedUserName, preferencesViewModel)
                     }
                 }
             }
@@ -299,21 +311,23 @@ fun PreferencesScreen(context: Context,
 
 }
 
-fun saveSetting(context: Context, settingName: String, settingValue: String) {
+fun saveSetting(context: Context, settingName: String, settingValue: Boolean, preferencesViewModel: PreferencesViewModel) {
     Toast.makeText(context, "$settingName saved!", Toast.LENGTH_SHORT).show()
-    //TODO: save value to db
+    preferencesViewModel.updatePreferenceState(settingName, settingValue)
 }
 
 
 @Composable
-fun SaveUserNameButton(context: Context, selectedUserName: String) {
+fun SaveUserNameButton(context: Context, selectedUserName: String, preferencesViewModel: PreferencesViewModel) {
     FilledIconButton( // https://semicolonspace.com/jetpack-compose-material3-icon-buttons/#filled
         modifier = Modifier
             .width(50.dp)
             .height(50.dp)
             .aspectRatio(1f), // 1:1 aspect ratio: square button
         onClick = {
-            saveSetting(context, "Name", selectedUserName)
+            Toast.makeText(context, "Username saved!", Toast.LENGTH_SHORT).show()
+
+            preferencesViewModel.updateUserName("userName", selectedUserName)
         }
     ) {
         Icon(

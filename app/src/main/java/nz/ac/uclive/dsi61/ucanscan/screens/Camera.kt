@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.VibrationEffect
+import android.graphics.PointF
 import android.util.Log
 import android.os.Vibrator
 import android.widget.Toast
@@ -16,6 +17,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,8 +38,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
@@ -56,6 +70,7 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import java.util.concurrent.Executors
 
+//TODO: replace all 'barcode' with 'qrcode' before merging
 
 var qrCodeValue by mutableStateOf<String?>(null)
 
@@ -64,10 +79,10 @@ var qrCodeValue by mutableStateOf<String?>(null)
 @Composable
 fun CameraScreen(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
+//    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
     val vibrator = context.getSystemService(Vibrator::class.java)
-
 
     // create BarcodeScanner object
     val options = BarcodeScannerOptions.Builder()
@@ -75,6 +90,11 @@ fun CameraScreen(context: Context, navController: NavController, landmarkViewMod
         .build()
     val barcodeScanner = BarcodeScanning.getClient(options)
 
+    // Barcode corner points: mutable state to store them, & callback function to update them
+    var barcodeCornerPoints by remember { mutableStateOf<List<PointF>?>(null) }
+    val updateCornerPoints: (List<PointF>?) -> Unit = { points ->
+        barcodeCornerPoints = points
+    }
 
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
 
@@ -98,7 +118,10 @@ fun CameraScreen(context: Context, navController: NavController, landmarkViewMod
                         // newSingleThreadExecutor() will let us perform analysis on a single worker thread
                         Executors.newSingleThreadExecutor()
                     ) { imageProxy ->
-                        processImageProxy(barcodeScanner, imageProxy)
+                        processImageProxy(barcodeScanner, imageProxy,
+                            updateCornerPoints = { points ->
+                                updateCornerPoints(points) // if points is null, the canvas will get cleared of the red dots
+                            })
                     }
 
                     val camera = cameraProvider?.bindToLifecycle(
@@ -127,14 +150,20 @@ fun CameraScreen(context: Context, navController: NavController, landmarkViewMod
 
     DisposableEffect(Unit) {
         onDispose {
-
             cameraProvider?.unbindAll()
             cameraProvider = null
         }
     }
 
     previewView?.let { CameraPreview(application, it, navController, qrCodeValue, landmarkViewModel, vibrator) }
+
+    // Draw on the screen to give feedback to user
+    // points don't get transformed, so they don't display in the correct place over the qr code - commenting this out :')
+    //    DrawBarcodePoints(barcodeCornerPoints)
+    DrawBarcodeTextBox()
+
 }
+
 
 
 @Composable
@@ -154,7 +183,6 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Button(
             modifier = Modifier
                 .size(height = 90.dp, width = 90.dp),
@@ -231,7 +259,6 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
         Spacer(modifier = Modifier.height(16.dp))
 
         BackToRaceButton(navController)
-
     }
 
 }
@@ -241,25 +268,29 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
 @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
 // https://beakutis.medium.com/using-googles-mlkit-and-camerax-for-lightweight-barcode-scanning-bb2038164cdc
 private fun processImageProxy(
-    barcodeScanner: BarcodeScanner,
-    imageProxy: ImageProxy
+    barcodeScanner: BarcodeScanner, imageProxy: ImageProxy,
+    updateCornerPoints: (List<PointF>?) -> Unit // Pass in the callback function
 ) {
 
     imageProxy.image?.let { image ->
-        val inputImage =
-            InputImage.fromMediaImage(
-                image,
-                imageProxy.imageInfo.rotationDegrees
-            )
+        val inputImage = InputImage.fromMediaImage(
+            image,
+            imageProxy.imageInfo.rotationDegrees
+        )
 
         barcodeScanner.process(inputImage)
             .addOnSuccessListener { barcodeList ->
                 val barcode = barcodeList.getOrNull(0)
                 // `rawValue` is the decoded value of the barcode
-                barcode?.rawValue?.let { value ->
-                    Log.d("FOO", value)
-                    qrCodeValue = value
+                if (barcode != null && barcode.rawValue?.isNotEmpty() == true) {
+                    qrCodeValue = barcode.rawValue
+                } else {
+                    // when qrCodeValue is null, nothing will get drawn on the canvas when we are not hovering over a qr code
+                    qrCodeValue = null
                 }
+
+                val cornerPoints = processBarcodeCornerPoints(barcode)
+                updateCornerPoints(cornerPoints)
             }
             .addOnFailureListener {
                 // This failure will happen if the barcode scanning model
@@ -272,5 +303,106 @@ private fun processImageProxy(
                 imageProxy.image?.close()
                 imageProxy.close()
             }
+    }
+}
+
+/**
+ * Helper function for processImageProxy() that gets the barcode's corner points
+ * and returns them as a list of PointF. Returns null if there are no corner points found.
+ */
+private fun processBarcodeCornerPoints(barcode: Barcode?): List<PointF>? {
+    val cornerPoints = barcode?.cornerPoints?.map { PointF(it.x.toFloat(), it.y.toFloat()) }
+    if (cornerPoints == null) {
+        Log.d("FOO", "No barcode corner points detected.")
+    }
+    return cornerPoints
+}
+
+
+/**
+ * Draws a QR code's corner points, when the camera is hovering over a QR code.
+ */
+@Composable
+fun DrawBarcodePoints(barcodeCornerPoints: List<PointF>?) {
+    Canvas(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        // Draw circles based on barcodeCornerPoints
+        if (!barcodeCornerPoints.isNullOrEmpty()) {
+            for (point in barcodeCornerPoints) {
+                val radius = 16f
+                drawCircle(
+                    color = Color(204, 0, 17), // UC red (#ucopenday!)
+                    center = Offset(point.x, point.y),
+                    radius = radius
+                )
+            }
+        }
+    }
+}
+
+/**
+ *  Draws a rectangle with text saying the value of the QR code,
+ *  when the camera is hovering over a QR code.
+ *
+ *  Code initially based on: https://developer.android.com/jetpack/compose/graphics/draw/overview#draw-text
+ */
+@Composable
+fun DrawBarcodeTextBox() {
+    val textMeasurer = rememberTextMeasurer()
+    val qrCodeText = qrCodeValue ?: ""
+
+    if(qrCodeText != "") {
+        Spacer(
+            modifier = Modifier
+                .drawWithCache {
+                    val textPadding = 16.dp
+
+                    // Set up the text, and measure it so we can base the rect's dimensions off of it.
+                    val measuredText =
+                        textMeasurer.measure(
+                            AnnotatedString(qrCodeText),
+                            style = TextStyle(fontSize = 32.sp)
+                        )
+
+                    // Set up the rect's size, which is the text's size plus the padding all around.
+                    val rectSizeWithPadding = Size(
+                        measuredText.size.width + 2 * textPadding.toPx(),
+                        measuredText.size.height + 2 * textPadding.toPx()
+                    )
+
+                    // Draw the rect.
+                    onDrawBehind {
+                        val cornerRadius = 16.dp.toPx()
+                        // position the rect 25% of the way down the screen
+                        val rectX = (size.width - rectSizeWithPadding.width) / 4    // size is the screen size
+                        val rectY = (size.height - rectSizeWithPadding.height) / 4
+                        drawRoundRect(
+                            Color(255, 255, 255),
+                            size = rectSizeWithPadding,
+                            topLeft = Offset(rectX, rectY),
+                            cornerRadius = CornerRadius(cornerRadius, cornerRadius)
+                        )
+
+                        // Set up the text. In order to give it a colour we must use textPaint.
+                        drawIntoCanvas { canvas ->
+                            val textColor = Color(0, 128, 255).toArgb()
+                            val textPaint = androidx.compose.ui.graphics
+                                .Paint()
+                                .asFrameworkPaint()
+                                .apply {
+                                    color = textColor
+                                    textSize = 32.sp.toPx()
+                                }
+
+                            // Draw the text, based on the sizes of the text and the rect.
+                            val textX = (size.width - rectSizeWithPadding.width) / 4 + textPadding.toPx()
+                            val textY = (size.height + measuredText.size.height) / 4 - textPaint.fontMetrics.descent + textPadding.toPx() * 2
+                            canvas.nativeCanvas.drawText(qrCodeText, textX, textY, textPaint)
+                        }
+                    }
+                }
+                .fillMaxSize()
+        )
     }
 }

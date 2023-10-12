@@ -73,9 +73,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui:1.5.3")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation:1.5.3") // need for Canvas
     implementation("androidx.compose.material3:material3")
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
 
@@ -96,6 +97,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.maps.android:maps-compose:2.14.0")
 
+
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
 
 
     testImplementation("junit:junit:4.13.2")
