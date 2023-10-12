@@ -196,10 +196,11 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                 onClick = {
 
                     // If the race has ended
-                    if (landmarkViewModel.currentLandmark == null) {
+                    if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) {
                         navController.navigate(Screens.FinishedRace.route)
+                        landmarkViewModel.resetLandmarks()
                     }
-                    else if (isRaceStarted.value) {
+                    else if (isRaceStarted.value && landmarkViewModel.currentLandmark != null) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -210,7 +211,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             ) {
                 Text(
-                    text = stringResource(if (landmarkViewModel.currentLandmark == null) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
