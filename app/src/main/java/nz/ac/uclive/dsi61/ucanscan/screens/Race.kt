@@ -150,20 +150,6 @@ landmarkViewModel: LandmarkViewModel) {
                                 .size(100.dp)
                         )
                     }
-
-
-                    //TODO REMOVE THIS I AM JUST USING THIS TO ACCESS THE FINISHED RACE SCREEN!
-                    Button(
-                        modifier = Modifier
-                            .size(100.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            navController.navigate(Screens.FinishedRace.route)
-
-                        },
-                    ) {}
-
-
                 }
             }
 
