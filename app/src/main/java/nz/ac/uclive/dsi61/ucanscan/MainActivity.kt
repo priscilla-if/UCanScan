@@ -1,19 +1,14 @@
 package nz.ac.uclive.dsi61.ucanscan
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
-import android.widget.TimePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import nz.ac.uclive.dsi61.ucanscan.navigation.NavGraph
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
-import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
     private val AlarmReceiver = AlarmReceiver()
@@ -37,24 +32,26 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             UCanScanTheme(content = {
                 Scaffold(
                 ) {
+//                    val application = applicationContext as UCanScanApplication
+
                     val navController = rememberNavController()
                     val stopwatchViewModel = remember { StopwatchViewModel() }
                     val isRaceStartedModel: IsRaceStartedModel = viewModel()
                     val context = LocalContext.current
-
                     val application = context.applicationContext as UCanScanApplication
-
+                    val repository = application.repository
+                    val landmarkViewModel: LandmarkViewModel = remember { LandmarkViewModel(repository) }
                     val preferencesViewModel: PreferencesViewModel = viewModel(
                         factory = PreferencesViewModelFactory(application.repository)
                     )
+                    NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, preferencesViewModel = preferencesViewModel, landmarkViewModel)
 
-                    NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, preferencesViewModel = preferencesViewModel
-                    )
+
+
                 }
             })
         }

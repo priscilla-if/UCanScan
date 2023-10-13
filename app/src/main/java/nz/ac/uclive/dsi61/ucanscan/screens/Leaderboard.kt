@@ -22,17 +22,20 @@ import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LeaderboardScreen(context: Context,
-                    navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
+                    navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+                      landmarkViewModel: LandmarkViewModel
 ) {
 
     val application = context.applicationContext as UCanScanApplication
@@ -59,7 +62,8 @@ fun LeaderboardScreen(context: Context,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             StopwatchIncrementFunctionality(stopwatchViewModel)
@@ -85,13 +89,13 @@ fun LeaderboardScreen(context: Context,
 
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel)
 
         }
     )
 
     BackHandler {
-        navController.popBackStack()
+        // user has a back to race button so doesn't need going back with system
     }
 
 }
