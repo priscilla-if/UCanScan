@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.AlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
@@ -99,6 +100,7 @@ fun MainMenuScreen(context: Context,
                             navController.navigate(Screens.Race.route)
                             stopwatchViewModel.isRunning = true
                             isRaceStartedModel.setRaceStarted(true)
+                            AlarmReceiver.scheduleHurryUpNotif(context)
 
 
                         },

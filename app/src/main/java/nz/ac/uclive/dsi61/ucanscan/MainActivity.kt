@@ -1,19 +1,13 @@
 package nz.ac.uclive.dsi61.ucanscan
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
-import android.widget.TimePicker
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,14 +69,29 @@ class MainActivity : ComponentActivity() {
         unregisterReceiver(AlarmReceiver)
     }
 
+
     private fun createNotificationChannel() {
         Log.d("FOO", "MainActivity createNotificationChannel!")
         val importance = NotificationManager.IMPORTANCE_DEFAULT //TODO: change?
-        val channel = NotificationChannel(Notification.CATEGORY_REMINDER, "UC Fact of the Day", importance).apply {
+        val factChannel = NotificationChannel(
+            "fact_channel",
+            "UC Fact of the Day",
+            importance
+        ).apply {
             description = "Daily facts and tips about UC"
         }
+
+        val hurryUpChannel = NotificationChannel(
+            "hurryup_channel",
+            "Hurry Up Notification",
+            importance
+        ).apply {
+            description = "Hurry Up Reminder"
+        }
+
         val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(factChannel)
+        notificationManager.createNotificationChannel(hurryUpChannel)
     }
 
 

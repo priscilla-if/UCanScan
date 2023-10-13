@@ -41,29 +41,73 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("FOO", "AlarmReceiver onReceive!")
 
-        // Open the app when the notification is tapped
-        val activityIntent = Intent(context, MainActivity::class.java).let {
-            PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+
+        if (intent.action == "HURRY_UP_NOTIF") {
+            sendHurryUpNotification(context)
+            Log.d("testing", "hurry up notif")
+
+        } else {
+            Log.d("testing", "fun fact notif")
+
+            // Open the app when the notification is tapped
+            val activityIntent = Intent(context, MainActivity::class.java).let {
+                PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+            }
+
+            // Create the notification with a randomly selected fact about UC
+            val factText = factsOfTheDay.random()
+            val notification = Notification.Builder(context, "fact_channel").run {
+                setSmallIcon(R.drawable.camera) //TODO: change image to main app icon
+                setContentTitle("UC Fact of the Day")
+                setContentText(factText)    // this is the text when the notif is minimised
+                    .style = Notification.BigTextStyle() // make the notification take up multiple lines
+                    .bigText(factText)      // this is the text when the notif is expanded
+                setContentIntent(activityIntent)
+                setAutoCancel(true)
+                build()
+            }
+
+            scheduleReminder(context)
+
+            // Send the notification
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.notify(0, notification)
         }
 
-        // Create the notification with a randomly selected fact about UC
-        val factText = factsOfTheDay.random()
-        val notification = Notification.Builder(context, Notification.CATEGORY_REMINDER).run {
-            setSmallIcon(R.drawable.camera) //TODO: change image to main app icon
-            setContentTitle("UC Fact of the Day")
-            setContentText(factText)    // this is the text when the notif is minimised
-                .style = Notification.BigTextStyle() // make the notification take up multiple lines
-                .bigText(factText)      // this is the text when the notif is expanded
-            setContentIntent(activityIntent)
+
+    }
+
+
+    private fun sendHurryUpNotification(context: Context) {
+        val notification = Notification.Builder(context, "hurryup_channel").run {
+            setSmallIcon(R.drawable.camera)
+            setContentTitle("Hurry up!")
+            setContentText("Hurry up or give up now! (this is a wip)")
             setAutoCancel(true)
             build()
         }
 
-        scheduleReminder(context)
-
-        // Send the notification
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(0, notification)
+        manager.notify(1, notification)
+    }
+
+    companion object {
+
+        fun scheduleHurryUpNotif(context: Context) {
+            Log.d("testing", "SCHEDULED HURRY UP REMINDER")
+
+
+            val broadcastIntent = Intent(context, AlarmReceiver::class.java).apply {
+                action = "HURRY_UP_NOTIF"
+            }.let {
+                PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+
+            }
+
+            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1 * 60 * 1000, broadcastIntent)
+            //set to 1 min for testing purposes bc i am not waiting 30 mins :D
+        }
     }
 
 
