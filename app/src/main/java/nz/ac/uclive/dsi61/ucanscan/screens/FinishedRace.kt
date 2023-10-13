@@ -135,9 +135,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                             .align(Alignment.Center),
                         style = TextStyle(fontWeight = FontWeight.Bold)
                     )
-
                 }
-
 
 
                 Row(
@@ -182,7 +180,6 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                         AlertDialog(
                             title = {
                                 Text(
-//                                    style = MaterialTheme.typography.body1,
                                     fontWeight = FontWeight.Bold,
                                     text = stringResource(R.string.share_dialog_title)
                                 )
@@ -192,12 +189,13 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                                 LazyColumn {
                                     items(options) { option ->
                                         Text(
-                                            modifier = Modifier.clickable {
-                                                isShareDialogOpen.value = false
-                                                println("finishtime value 2 " + convertTimeLongToMinutes(stopwatchViewModel.time))
-                                                DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
-                                            },
-//                                            style = MaterialTheme.typography.body1,
+                                            modifier = Modifier
+                                                .clickable {
+                                                    isShareDialogOpen.value = false
+                                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
+                                                }
+                                                .padding(vertical = 16.dp),
+                                            style = TextStyle(fontSize = 18.sp),
                                             text = option
                                         )
                                     }
@@ -216,10 +214,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 
-//TODO: bug: when go into share via email, choose an app, then go back to app, time on finish race screen is 0s
-// ...actually i cant replicate this bug anymore...
 fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
-    println("finishtime value 3 " + raceFinishTime)
     // we manually get the strings from the string resource IDs because
     // using stringResource() to do it would require this function to be composable
     val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
