@@ -103,7 +103,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 @Composable
 fun FoundLandmarksList(context: Context, landmarks: List<Landmark>, isLandscape: Boolean) {
     val PADDING_BETWEEN_ROWS = if(isLandscape) {0.dp} else {16.dp} // if landscape, thr btn is on the left so don't need padding above the btn
-    val BACK_TO_RACE_BTN_HEIGHT = if(isLandscape) {0.dp} else {90.dp} // if landscape, the btn is on the left: don't have space given for it
+    val BACK_TO_RACE_BTN_HEIGHT = if(isLandscape) {0.dp} else {Constants.MEDIUM_BTN_HEIGHT} // if landscape, the btn is on the left: don't have space given for it
 
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
     LazyColumn(

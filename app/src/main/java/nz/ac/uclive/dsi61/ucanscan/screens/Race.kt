@@ -39,6 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
@@ -207,7 +208,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController,
                     }
                 },
                 modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
-                    .size(width = 200.dp, height = 90.dp)
+                    .size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
             ) {
                 Text(
                     text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
@@ -227,7 +228,7 @@ fun BackToRaceButton(navController: NavController) {
         onClick = {
             navController.navigate(Screens.Race.route)
         },
-        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+        modifier = Modifier.size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
     ) {
         Text(
             text = stringResource(R.string.back_to_race),

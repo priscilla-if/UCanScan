@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
@@ -146,7 +147,7 @@ fun FinishedRaceScreen(context: Context,
                         onClick = {
                                 navController.navigate(Screens.MainMenu.route)
                         },
-                        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+                        modifier = Modifier.size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
 
                     ) {
                         Text(
@@ -157,7 +158,7 @@ fun FinishedRaceScreen(context: Context,
 
                     Button(
                         modifier = Modifier
-                            .size(90.dp),
+                            .size(Constants.MEDIUM_BTN_HEIGHT),
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
                             //TODO sharing functionality
