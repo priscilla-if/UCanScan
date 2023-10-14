@@ -239,29 +239,29 @@ fun PreferencesScreen(context: Context,
                         )
                     }
 
-                    // option 2
-                    Row(
-                        //
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = stringResource(R.string.prefs_animations_opt2)
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier.weight(1f)
-                        )
-
-
-                        Switch(
-                            checked = animationOption2State,
-                            onCheckedChange = {
-                                saveSetting(context, "animationOption2", it, preferencesViewModel)
-                                 }
-                        )
-                    }
+                    // option 2 // TODO: Not sure if we're planning on adding any other animations so commenting this out for now.
+//                    Row(
+//                        //
+//                    ) {
+//                        Column(
+//                            horizontalAlignment = Alignment.Start
+//                        ) {
+//                            Text(
+//                                text = stringResource(R.string.prefs_animations_opt2)
+//                            )
+//                        }
+//                        Spacer(
+//                            modifier = Modifier.weight(1f)
+//                        )
+//
+//
+//                        Switch(
+//                            checked = animationOption2State,
+//                            onCheckedChange = {
+//                                saveSetting(context, "animationOption2", it, preferencesViewModel)
+//                                 }
+//                        )
+//                    }
 
 
                     // NAME SECTION
