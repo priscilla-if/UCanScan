@@ -175,16 +175,27 @@ fun RaceScreen(context: Context,
  * Create a button at the bottom of a screen that has a bottom navbar.
  */
 @Composable
-fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController,
+    innerPadding: PaddingValues, isRaceStarted: State<Boolean>, isLandscape: Boolean
+) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth() // helps centre the button horizontally
+                .fillMaxWidth() // helps center the button horizontally
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(bottom = 16.dp)
+                .padding(horizontal = if (isLandscape) {
+                    16.dp // add padding to the right of the btn if landscape
+                } else {
+                    0.dp
+                }),
+            horizontalAlignment = if (isLandscape) {
+                Alignment.End // push btn to the right of the screen if landscape
+            } else {
+                Alignment.CenterHorizontally
+            }
         ) {
 
             Button(
@@ -197,7 +208,6 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                 },
                 modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
                     .size(width = 200.dp, height = 90.dp)
-
             ) {
                 Text(
                     text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),

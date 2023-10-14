@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +38,9 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 fun LandmarksFoundScreen(context: Context, navController: NavController,
                          stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
 ) {
+    val configuration = LocalConfiguration.current
+    val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     // Here is how we can get stuff from our DB to display on a screen - ideally we have
     // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
     val application = context.applicationContext as UCanScanApplication
@@ -80,10 +85,10 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                     modifier = Modifier.height(16.dp)
                 )
 
-                FoundLandmarksList(context, landmarks)
+                FoundLandmarksList(context, landmarks, IS_LANDSCAPE)
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, IS_LANDSCAPE)
 
             BackHandler {
                 navController.popBackStack()
@@ -95,9 +100,9 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 
 @SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
-fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
-    val PADDING_BETWEEN_ROWS = 16.dp
-    val BACK_TO_RACE_BTN_HEIGHT = 90.dp
+fun FoundLandmarksList(context: Context, landmarks: List<Landmark>, isLandscape: Boolean) {
+    val PADDING_BETWEEN_ROWS = if(isLandscape) {0.dp} else {16.dp} // if landscape, thr btn is on the left so don't need padding above the btn
+    val BACK_TO_RACE_BTN_HEIGHT = if(isLandscape) {0.dp} else {90.dp} // if landscape, the btn is on the left: don't have space given for it
     val BOTTOM_NAVBAR_HEIGHT = 97.dp    // hard-coded value gotten from trial&error: would change if you change the sizes of content in the navbar
 
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
@@ -138,7 +143,7 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
                         Image(
                             painter = painterResource(id = drawableId),
                             contentDescription = null,
-                            modifier = Modifier.size(128.dp)
+                            modifier = Modifier.size(if(isLandscape) {96.dp} else {128.dp})
                         )
                     }
                 }
