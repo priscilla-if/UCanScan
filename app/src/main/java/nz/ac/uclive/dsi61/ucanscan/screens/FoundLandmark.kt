@@ -49,6 +49,7 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 import java.util.concurrent.TimeUnit
 
@@ -57,7 +58,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun FoundLandmarkScreen(context: Context,
                         navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
-                        landmarkViewModel: LandmarkViewModel
+                        landmarkViewModel: LandmarkViewModel, preferencesViewModel: PreferencesViewModel
 ) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -91,10 +92,12 @@ fun FoundLandmarkScreen(context: Context,
 
         val openDialog = remember { mutableStateOf(false) }
 
-        KonfettiView(
-            modifier = Modifier.fillMaxSize(),
-            parties = listOf(party)
-        )
+        if (preferencesViewModel.getPreferenceState(preferenceName = "animationOption1").value) {
+            KonfettiView(
+                modifier = Modifier.fillMaxSize(),
+                parties = listOf(party)
+            )
+        }
 
         TopNavigationBar(
             navController = navController,
