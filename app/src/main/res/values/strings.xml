@@ -12,7 +12,7 @@
     <string name="prefs_theme">Theme</string>
     <string name="prefs_theme_opt1">Dark mode</string>
     <string name="prefs_animations">Animations</string>
-    <string name="prefs_animations_opt1">Animations when ABC</string>
+    <string name="prefs_animations_opt1">Animation when finding a landmark</string>
     <string name="prefs_animations_opt2">Animations when XYZ</string>
     <string name="prefs_name_opt1">How should we greet you?</string>
     <string name="next_landmark">Next Landmark</string>
