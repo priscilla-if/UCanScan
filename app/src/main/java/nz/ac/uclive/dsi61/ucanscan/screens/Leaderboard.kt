@@ -25,7 +25,6 @@ import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
-import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
@@ -116,7 +115,7 @@ fun TimesDisplay(allTimes: List<Times>, isLandscape: Boolean) {
                 else -> R.drawable.medal_all
             }
 
-            Row(modifier = Modifier.padding(top =10.dp),
+            Row(modifier = Modifier.padding(top = 10.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Icon(
@@ -129,7 +128,7 @@ fun TimesDisplay(allTimes: List<Times>, isLandscape: Boolean) {
                 Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}",
                     modifier = Modifier.padding(top = 14.dp))
 
-                IconButton(onClick = { //TODO: SHARING FUNCTIONALITY
+                IconButton(onClick = {
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.share),
