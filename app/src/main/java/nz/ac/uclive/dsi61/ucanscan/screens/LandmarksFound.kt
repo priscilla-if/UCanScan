@@ -73,7 +73,8 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 90.dp)           // provide space for the top app bar
+                    .padding(top = Constants.TOP_NAVBAR_HEIGHT) // provide space for the top app
+                    .padding(bottom = Constants.BOTTOM_NAVBAR_HEIGHT)
                     .padding(horizontal = 16.dp),   // provide padding all around the content: left & right
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

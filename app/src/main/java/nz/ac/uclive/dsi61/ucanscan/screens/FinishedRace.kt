@@ -98,7 +98,8 @@ fun FinishedRaceScreen(context: Context,
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 90.dp),
+                    .padding(top = Constants.TOP_NAVBAR_HEIGHT)
+                    .padding(bottom = Constants.BOTTOM_NAVBAR_HEIGHT),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
