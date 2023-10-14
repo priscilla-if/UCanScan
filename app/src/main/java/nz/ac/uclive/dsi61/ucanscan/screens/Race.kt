@@ -81,19 +81,27 @@ fun RaceScreen(context: Context, navController: NavController,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
+                    StopwatchIncrementFunctionality(stopwatchViewModel)
+
                     Column(
                         modifier = Modifier
                             .padding(32.dp)
+                            .weight(0.33f)
                     ) {
                         RaceTitle()
                     }
 
-                    RaceCircle()
-
-                    StopwatchIncrementFunctionality(stopwatchViewModel)
+                    Column(
+                        modifier = Modifier
+                            .weight(0.33f)
+                    ) {
+                        RaceCircle()
+                    }
 
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(0.33f),
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -186,7 +194,7 @@ fun RaceCircle() {
 fun RaceSquareButton(navController: NavController, route: String, iconId: Int) {
     Button(
         modifier = Modifier
-            .size(100.dp),
+            .size(Constants.MEDIUM_BTN_HEIGHT),
         shape = RoundedCornerShape(16.dp),
         onClick = {
             navController.navigate(route)
