@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +60,15 @@ fun FinishedRaceScreen(context: Context,
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
 
+    // Media player should play sound when screen is created
+    val mMediaPlayer = remember { MediaPlayer.create(context, R.raw.finish_race_sound) }
+    val soundPlayed = remember { mutableStateOf(false) }
+
+    if (!soundPlayed.value) {
+        mMediaPlayer.start()
+        soundPlayed.value = true
+    }
+
 
     val timeToSave = Times(
         endTime = stopwatchViewModel.time
@@ -71,7 +81,7 @@ fun FinishedRaceScreen(context: Context,
 
     DisposableEffect(Unit) {
         finishedRaceViewModel.addTimeToDb(timeToSave)
-        onDispose {}
+        onDispose {mMediaPlayer.release()}
     }
 
     stopwatchViewModel.startTime = 0L
