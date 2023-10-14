@@ -99,7 +99,7 @@ fun RaceScreen(context: Context, navController: NavController,
                         modifier = Modifier
                             .weight(0.33f)
                     ) {
-                        RaceCircle()
+                        RaceCircle(landmarkViewModel)
                     }
 
                     Column(
@@ -124,7 +124,7 @@ fun RaceScreen(context: Context, navController: NavController,
                 ) {
                     RaceTitle()
 
-                    RaceCircle()
+                    RaceCircle(landmarkViewModel)
 
                     StopwatchIncrementFunctionality(stopwatchViewModel)
 
@@ -171,7 +171,7 @@ fun RaceTitle() {
 
 
 @Composable
-fun RaceCircle() {
+fun RaceCircle(landmarkViewModel: LandmarkViewModel) {
     Box(
         modifier = Modifier
             .size(300.dp)

@@ -31,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -153,7 +154,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        FinishedRaceButtons(navController)
+                        FinishedRaceButtons(context, navController, stopwatchViewModel, landmarkViewModel, isShareDialogOpen)
                     }
                 }
             } else {
@@ -175,7 +176,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        FinishedRaceButtons(navController)
+                        FinishedRaceButtons(context, navController, stopwatchViewModel, landmarkViewModel, isShareDialogOpen)
                     }
                 }
             }
@@ -232,7 +233,9 @@ fun FinishedRaceCircle(stopwatchViewModel: StopwatchViewModel) {
 
 
 @Composable
-fun FinishedRaceButtons(navController: NavController) {
+fun FinishedRaceButtons(context: Context, navController: NavController,
+                        stopwatchViewModel: StopwatchViewModel, landmarkViewModel: LandmarkViewModel,
+                        isShareDialogOpen: MutableState<Boolean>) {
     Button(
         onClick = {
             landmarkViewModel.resetLandmarks()
@@ -299,7 +302,8 @@ fun FinishedRaceButtons(navController: NavController) {
 fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
     // we manually get the strings from the string resource IDs because
     // using stringResource() to do it would require this function to be composable
-    val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
+    val email =
+        context.resources.getString(R.string.share_via_email) // get string value given resource id
     val text = context.resources.getString(R.string.share_via_text)
     val call = context.resources.getString(R.string.share_via_phonecall)
     val shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
@@ -311,18 +315,24 @@ fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_SUBJECT, shareTitleString)
-            intent.putExtra(Intent.EXTRA_TEXT, shareBodyPt1String + raceFinishTime + shareBodyPt2String)
+            intent.putExtra(
+                Intent.EXTRA_TEXT,
+                shareBodyPt1String + raceFinishTime + shareBodyPt2String
+            )
             startActivity(context, intent, null)
         }
+
         text -> {
             val uri = Uri.parse("smsto:")
             val intent = Intent(Intent.ACTION_SENDTO, uri)
             intent.putExtra("sms_body", shareBodyPt1String + raceFinishTime + shareBodyPt2String)
             startActivity(context, intent, null)
         }
+
         call -> {
             val uri = Uri.parse("tel:")
             val intent = Intent(Intent.ACTION_DIAL, uri)
             startActivity(context, intent, null)
         }
     }
+}
