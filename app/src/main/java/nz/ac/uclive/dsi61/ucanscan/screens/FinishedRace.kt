@@ -2,8 +2,11 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.media.MediaPlayer
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
@@ -51,12 +59,10 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun FinishedRaceScreen(context: Context,
-                      navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+fun FinishedRaceScreen(context: Context, navController: NavController,
+                       stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel,
                        landmarkViewModel: LandmarkViewModel
 ) {
-
-
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
 
@@ -87,21 +93,23 @@ fun FinishedRaceScreen(context: Context,
     stopwatchViewModel.startTime = 0L
 
 
+
     Scaffold(
         containerColor = colorResource(R.color.light_green),
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
-
                 innerPadding ->
 
-            val openDialog = remember { mutableStateOf(false) }
+            val isGiveUpDialogOpen = remember { mutableStateOf(false) }
+            val isShareDialogOpen = remember { mutableStateOf(false) }
+
 
             TopNavigationBar(
                 navController = navController,
                 stopwatchViewModel = stopwatchViewModel,
                 onGiveUpClick = {
-                    openDialog.value = true
+                    isGiveUpDialogOpen.value = true
                 },
                 isRaceStartedModel = isRaceStartedModel,
                 landmarkViewModel = landmarkViewModel
@@ -114,9 +122,6 @@ fun FinishedRaceScreen(context: Context,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-
-
                 Text(text = stringResource(R.string.finished_the_race),
                     fontSize = 28.sp,
                 modifier = Modifier.padding(top = 0.dp))
@@ -133,7 +138,8 @@ fun FinishedRaceScreen(context: Context,
                         .size(300.dp)
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
-                    Text(text = convertTimeLongToMinutes(stopwatchViewModel.time),
+                    Text(
+                        text = convertTimeLongToMinutes(stopwatchViewModel.time),
                         fontSize = 48.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -142,9 +148,7 @@ fun FinishedRaceScreen(context: Context,
                             .align(Alignment.Center),
                         style = TextStyle(fontWeight = FontWeight.Bold)
                     )
-
                 }
-
 
 
                 Row(
@@ -174,8 +178,7 @@ fun FinishedRaceScreen(context: Context,
                             .size(90.dp),
                         shape = RoundedCornerShape(16.dp),
                         onClick = {
-                            //TODO sharing functionality
-
+                            isShareDialogOpen.value = true
                         },
                     ) {
                         Icon(
@@ -186,12 +189,73 @@ fun FinishedRaceScreen(context: Context,
                         )
                     }
 
+
+                    if (isShareDialogOpen.value) {
+                        AlertDialog(
+                            title = {
+                                Text(
+                                    fontWeight = FontWeight.Bold,
+                                    text = stringResource(R.string.share_dialog_title)
+                                )
+                            },
+                            text = {
+                                val options = listOf(stringResource(R.string.share_via_email), stringResource(R.string.share_via_text), stringResource(R.string.share_via_phonecall))
+                                LazyColumn {
+                                    items(options) { option ->
+                                        Text(
+                                            modifier = Modifier
+                                                .clickable {
+                                                    isShareDialogOpen.value = false
+                                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
+                                                }
+                                                .padding(vertical = 16.dp),
+                                            style = TextStyle(fontSize = 18.sp),
+                                            text = option
+                                        )
+                                    }
+                                }
+                            },
+                            onDismissRequest = { isShareDialogOpen.value = false },
+                            confirmButton  = {},
+                            dismissButton = {}
+                        )
+                    }
                 }
             }
-
-
         }
     )
+}
 
 
+
+fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
+    // we manually get the strings from the string resource IDs because
+    // using stringResource() to do it would require this function to be composable
+    val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
+    val text = context.resources.getString(R.string.share_via_text)
+    val call = context.resources.getString(R.string.share_via_phonecall)
+    val shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
+    val shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
+    val shareBodyPt2String = context.resources.getString(R.string.share_finished_race_msg_pt2)
+
+    when (option) {
+        email -> {
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_SUBJECT, shareTitleString)
+            intent.putExtra(Intent.EXTRA_TEXT, shareBodyPt1String + raceFinishTime + shareBodyPt2String)
+            startActivity(context, intent, null)
+        }
+        text -> {
+            val uri = Uri.parse("smsto:")
+            val intent = Intent(Intent.ACTION_SENDTO, uri)
+            intent.putExtra("sms_body", shareBodyPt1String + raceFinishTime + shareBodyPt2String)
+            startActivity(context, intent, null)
+        }
+        call -> {
+            val uri = Uri.parse("tel:")
+            val intent = Intent(Intent.ACTION_DIAL, uri)
+            startActivity(context, intent, null)
+        }
+    }
 }
