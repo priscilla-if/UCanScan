@@ -48,6 +48,11 @@ class MainActivity : ComponentActivity() {
                     )
                     NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, preferencesViewModel = preferencesViewModel, landmarkViewModel)
 
+                    if (isRaceStartedModel.isRaceStarted.value) {
+                        Log.d("notifications", "race started")
+
+                        scheduleHurryUpReminder(context)
+                    }
 
 
                 }
@@ -104,11 +109,13 @@ class MainActivity : ComponentActivity() {
 
 
 
-/*    private fun scheduleHurryUpReminder(context: Context) {
+    private fun scheduleHurryUpReminder(context: Context) {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val raceReminderIntent = Intent(this, HurryUpAlarmReceiver::class.java).let { intent ->
             PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
         }
+
+
 
         val triggerTime = System.currentTimeMillis() + 30 * 60 * 1000
         alarmManager.set(
@@ -116,7 +123,7 @@ class MainActivity : ComponentActivity() {
             triggerTime,
             raceReminderIntent
         )
-    }*/
+    }
 
 
 

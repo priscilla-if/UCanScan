@@ -19,7 +19,6 @@ class HurryUpAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("notifications", "Received race reminder")
-
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.WAKE_LOCK
@@ -38,33 +37,32 @@ class HurryUpAlarmReceiver : BroadcastReceiver() {
     private fun showHurryUpNotification(context: Context) {
         Log.d("notifications", "showing notification!")
 
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WAKE_LOCK
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(Manifest.permission.WAKE_LOCK),
-                AlarmReceiver.MY_PERMISSIONS_REQUEST_WAKE_LOCK
-            )
-            return
-        }
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.WAKE_LOCK
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    arrayOf(Manifest.permission.WAKE_LOCK),
+                    AlarmReceiver.MY_PERMISSIONS_REQUEST_WAKE_LOCK
+                )
+                return
+            }
 
-        createNotificationChannel(context)
+            createNotificationChannel(context)
 
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.camera) //TODO change this to app icon
-            .setContentTitle("Hurry up!")
-            .setContentText("Time is ticking")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.camera) //TODO change this to app icon
+                .setContentTitle("Hurry up!")
+                .setContentText("You're still in the race, keep going and find the next landmark!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+            with(NotificationManagerCompat.from(context)) {
+                notify(NOTIFICATION_ID, notification.build())
+            }
 
 
-
-
-        with(NotificationManagerCompat.from(context)) {
-            notify(NOTIFICATION_ID, notification.build())
-        }
     }
 
 
