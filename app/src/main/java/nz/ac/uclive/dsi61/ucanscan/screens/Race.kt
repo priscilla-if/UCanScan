@@ -135,15 +135,6 @@ fun RaceScreen(context: Context, navController: NavController,
                     ) {
                         RaceSquareButton(navController, Screens.Camera.route, R.drawable.camera)
                         RaceSquareButton(navController, Screens.Map.route, R.drawable.map)
-                        //TODO REMOVE THIS I AM JUST USING THIS TO ACCESS THE FINISHED RACE SCREEN!
-                        Button(
-                            modifier = Modifier
-                                .size(100.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            onClick = {
-                                navController.navigate(Screens.FinishedRace.route)
-                            },
-                        ) {}
                     }
                 }
             }
