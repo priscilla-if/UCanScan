@@ -107,7 +107,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
-                innerPadding ->
+            innerPadding ->
 
             val isGiveUpDialogOpen = remember { mutableStateOf(false) }
             val isShareDialogOpen = remember { mutableStateOf(false) }
