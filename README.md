@@ -1,6 +1,6 @@
 # SENG440 Assignment 2
 
-
+Credits for sound resources: https://www.zapsplat.com/basic-member-home/
 
 ## Getting started
 

@@ -79,6 +79,7 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.5.3") // need for Canvas
     implementation("androidx.compose.material3:material3")
     implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("nl.dionsegijn:konfetti-compose:2.0.3")
 
 
     // navigation
