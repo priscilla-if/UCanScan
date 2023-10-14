@@ -104,7 +104,7 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>, isLandscape:
         modifier = Modifier
             // Reserve space for the Back To Race button, in its own section below the lazycolumn,
             // so that the button doesn't overlap the last image.
-            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + Constants.BOTTOM_NAVBAR_HEIGHT)
+            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT)
     ) {
         items(landmarks) { landmark ->
             Row(
