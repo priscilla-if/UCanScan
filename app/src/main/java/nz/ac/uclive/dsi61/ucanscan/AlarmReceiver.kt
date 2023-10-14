@@ -1,14 +1,18 @@
 package nz.ac.uclive.dsi61.ucanscan
-
-import android.app.AlarmManager
-import android.app.Notification
+import android.Manifest
+import android.app.Activity
+import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
-import java.util.Calendar
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -38,57 +42,68 @@ class AlarmReceiver : BroadcastReceiver() {
         "The heaters in the Macmillan Brown discussion rooms are filled with asbestos: don't open them!",
     )
 
+
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("FOO", "AlarmReceiver onReceive!")
+        Log.d("notifications", "received alarm")
 
-        // Open the app when the notification is tapped
-        val activityIntent = Intent(context, MainActivity::class.java).let {
-            PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        // Show a notification with the desired text
+        showNotification(context, "hello hi fun fact")
+    }
+
+    private fun showNotification(context: Context, text: String) {
+        Log.d("notifications", "showing notification!")
+
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WAKE_LOCK
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(Manifest.permission.WAKE_LOCK),
+                MY_PERMISSIONS_REQUEST_WAKE_LOCK
+            )
+            return
         }
 
-        // Create the notification with a randomly selected fact about UC
+        createNotificationChannel(context)
         val factText = factsOfTheDay.random()
-        val notification = Notification.Builder(context, Notification.CATEGORY_REMINDER).run {
-            setSmallIcon(R.drawable.camera) //TODO: change image to main app icon
-            setContentTitle("UC Fact of the Day")
-            setContentText(factText)    // this is the text when the notif is minimised
-                .style = Notification.BigTextStyle() // make the notification take up multiple lines
-                .bigText(factText)      // this is the text when the notif is expanded
-            setContentIntent(activityIntent)
-            setAutoCancel(true)
-            build()
+
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.camera) //TODO change this to app icon
+            .setContentTitle("UC Fact of the Day")
+            .setContentText(factText)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+
+
+
+        with(NotificationManagerCompat.from(context)) {
+            notify(NOTIFICATION_ID, notification.build())
         }
-
-        scheduleReminder(context)
-
-        // Send the notification
-        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.notify(0, notification)
     }
 
+    private fun createNotificationChannel(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Daily Notification Channel"
+            val descriptionText = "Channel for daily notifications"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
 
-    /**
-     * Schedules a notification for the next day at noon.
-     * This method is almost the same as the one in the SENG440 Backlog tutorial.
-     */
-    private fun scheduleReminder(context: Context) {
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 12)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            add(Calendar.DAY_OF_YEAR, 1) // Add 1 day to get the next day
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
-
-        val broadcastIntent = Intent(context, AlarmReceiver::class.java).let {
-            PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
-        }
-
-        // Schedule the next alarm for the next day
-        // Exact repeating requires a permission, and we won't need it just for sending daily notifications
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, broadcastIntent)
     }
 
-
+    companion object {
+        private const val CHANNEL_ID = "DailyNotificationChannel"
+        private const val NOTIFICATION_ID = 1
+        const val MY_PERMISSIONS_REQUEST_WAKE_LOCK = 456
+    }
 }
+
+
+
