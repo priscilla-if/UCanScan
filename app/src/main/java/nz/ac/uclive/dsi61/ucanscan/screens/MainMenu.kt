@@ -97,7 +97,6 @@ fun MainMenuScreen(context: Context, navController: NavController,
                                 navController, stopwatchViewModel, isRaceStartedModel)
                             Spacer(modifier = Modifier.width(16.dp)) // horizontal space between buttons
                             MainButton(stringResource(R.string.my_times), false,
-                            MainButton(stringResource(R.string.my_times), false,
                                 navController, stopwatchViewModel, isRaceStartedModel)
                         }
                     }
