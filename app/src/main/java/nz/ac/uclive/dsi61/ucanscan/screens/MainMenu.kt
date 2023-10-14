@@ -1,8 +1,11 @@
 package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.res.Configuration
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -33,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.HurryUpAlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
@@ -92,6 +96,7 @@ fun MainMenuScreen(context: Context, navController: NavController,
                             MainButton(stringResource(R.string.start_race), true,
                                 navController, stopwatchViewModel, isRaceStartedModel)
                             Spacer(modifier = Modifier.width(16.dp)) // horizontal space between buttons
+                            MainButton(stringResource(R.string.my_times), false,
                             MainButton(stringResource(R.string.my_times), false,
                                 navController, stopwatchViewModel, isRaceStartedModel)
                         }
@@ -169,6 +174,7 @@ fun MainButton(text: String, isStartButton: Boolean, navController: NavControlle
                 navController.navigate(Screens.Race.route)
                 stopwatchViewModel.isRunning = true
                 isRaceStartedModel.setRaceStarted(true)
+                //scheduleHurryUpReminder()
             } else {
                 navController.navigate(Screens.Leaderboard.route)
             }
