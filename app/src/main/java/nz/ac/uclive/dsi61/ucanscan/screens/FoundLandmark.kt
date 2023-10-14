@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,7 +33,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -119,7 +122,7 @@ fun FoundLandmarkScreen(context: Context,
                         .padding(32.dp)
                         .weight(0.33f)
                 ) {
-                    FoundLandmarkTitle(landmarkViewModel)
+                    FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
                 }
 
                 Column(
@@ -148,12 +151,13 @@ fun FoundLandmarkScreen(context: Context,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                FoundLandmarkTitle(landmarkViewModel)
+                FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
 
                 FoundLandmarkCircle(context, landmarkViewModel)
 
                 Row(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
@@ -167,11 +171,15 @@ fun FoundLandmarkScreen(context: Context,
 
 
 @Composable
-fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel) {
+fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean) {
     Text(
-        text = "You found",
-        fontSize = 28.sp,
-        modifier = Modifier.padding(top = 0.dp)
+        text = stringResource(R.string.you_found),
+        style = TextStyle(
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(16.dp))
@@ -179,9 +187,14 @@ fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel) {
     landmarkViewModel.pastLandmark?.let {
         Text(
             text = it.name,
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 30.dp)
+            style = TextStyle(
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(if(!isLandscape) {30.dp} else {0.dp})
         )
     }
 }

@@ -137,14 +137,14 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                             .padding(32.dp)
                             .weight(0.33f)
                     ) {
-                        FinishedRaceTitle()
+                        FinishedRaceTitle(IS_LANDSCAPE)
                     }
 
                     Column(
                         modifier = Modifier
                             .weight(0.33f)
                     ) {
-                        FinishedRaceCircle(stopwatchViewModel)
+                        FinishedRaceCircle(stopwatchViewModel, IS_LANDSCAPE)
                     }
 
                     Column(
@@ -166,9 +166,9 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FinishedRaceTitle()
+                    FinishedRaceTitle(IS_LANDSCAPE)
 
-                    FinishedRaceCircle(stopwatchViewModel)
+                    FinishedRaceCircle(stopwatchViewModel, IS_LANDSCAPE)
 
                     Row(
                         modifier = Modifier
@@ -186,33 +186,37 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 @Composable
-fun FinishedRaceTitle() {
+fun FinishedRaceTitle(isLandscape: Boolean) {
     Text(
-        modifier = Modifier
-            .padding(top = 0.dp)
-            .fillMaxWidth(),
         text = stringResource(R.string.finished_the_race),
         style = TextStyle(
             fontSize = 28.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
-        )
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
     )
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Text(text = stringResource(R.string.final_time),
-        fontSize = 28.sp,
-        textAlign = TextAlign.Center,
+    Text(
+        text = stringResource(R.string.final_time),
+        style = TextStyle(
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center,
+        ),
         modifier = Modifier
-            .padding(bottom = 30.dp)
             .fillMaxWidth()
+            .padding(if(!isLandscape) {30.dp} else {0.dp})
     )
 }
 
 
 @Composable
-fun FinishedRaceCircle(stopwatchViewModel: StopwatchViewModel) {
+fun FinishedRaceCircle(stopwatchViewModel: StopwatchViewModel, isLandscape: Boolean) {
+    // when in landscape, the size of the circle shrinks, so the position of the text must change
+    val textPadding = if(isLandscape) {80.dp} else {120.dp}
     Box(
         modifier = Modifier
             .size(300.dp)
@@ -224,7 +228,7 @@ fun FinishedRaceCircle(stopwatchViewModel: StopwatchViewModel) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 120.dp)
+                .padding(top = textPadding)
                 .align(Alignment.Center),
             style = TextStyle(fontWeight = FontWeight.Bold)
         )

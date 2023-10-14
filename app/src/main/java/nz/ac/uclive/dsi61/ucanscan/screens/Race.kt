@@ -92,14 +92,14 @@ fun RaceScreen(context: Context, navController: NavController,
                             .padding(32.dp)
                             .weight(0.33f)
                     ) {
-                        RaceTitle()
+                        RaceTitle(IS_LANDSCAPE)
                     }
 
                     Column(
                         modifier = Modifier
                             .weight(0.33f)
                     ) {
-                        RaceCircle(landmarkViewModel)
+                        RaceCircle(landmarkViewModel, IS_LANDSCAPE)
                     }
 
                     Column(
@@ -122,9 +122,9 @@ fun RaceScreen(context: Context, navController: NavController,
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    RaceTitle()
+                    RaceTitle(IS_LANDSCAPE)
 
-                    RaceCircle(landmarkViewModel)
+                    RaceCircle(landmarkViewModel, IS_LANDSCAPE)
 
                     StopwatchIncrementFunctionality(stopwatchViewModel)
 
@@ -149,20 +149,26 @@ fun RaceScreen(context: Context, navController: NavController,
 
 
 @Composable
-fun RaceTitle() {
+fun RaceTitle(isLandscape: Boolean) {
     Text(
-        modifier = Modifier.padding(bottom = 30.dp),
         text = stringResource(id = R.string.next_landmark),
         style = TextStyle(
             fontSize = 28.sp,
+            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
-        )
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            // if landscape, then the text gets centred anyway, so don't add padding
+            .padding(if(!isLandscape) {30.dp} else {0.dp})
     )
 }
 
 
 @Composable
-fun RaceCircle(landmarkViewModel: LandmarkViewModel) {
+fun RaceCircle(landmarkViewModel: LandmarkViewModel,isLandscape: Boolean) {
+    // when in landscape, the size of the circle shrinks, so the position of the text must change
+    val textPadding = if(isLandscape) {90.dp} else {130.dp}
     Box(
         modifier = Modifier
             .size(300.dp)
@@ -175,7 +181,7 @@ fun RaceCircle(landmarkViewModel: LandmarkViewModel) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(vertical = 130.dp)
+                .padding(top = textPadding)
                 .align(Alignment.Center),
             style = TextStyle(
                 fontWeight = FontWeight.Bold
