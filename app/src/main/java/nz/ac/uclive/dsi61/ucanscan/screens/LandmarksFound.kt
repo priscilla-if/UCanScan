@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
@@ -103,14 +104,13 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 fun FoundLandmarksList(context: Context, landmarks: List<Landmark>, isLandscape: Boolean) {
     val PADDING_BETWEEN_ROWS = if(isLandscape) {0.dp} else {16.dp} // if landscape, thr btn is on the left so don't need padding above the btn
     val BACK_TO_RACE_BTN_HEIGHT = if(isLandscape) {0.dp} else {90.dp} // if landscape, the btn is on the left: don't have space given for it
-    val BOTTOM_NAVBAR_HEIGHT = 97.dp    // hard-coded value gotten from trial&error: would change if you change the sizes of content in the navbar
 
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
     LazyColumn(
         modifier = Modifier
             // Reserve space for the Back To Race button, in its own section below the lazycolumn,
             // so that the button doesn't overlap the last image.
-            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + BOTTOM_NAVBAR_HEIGHT)
+            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + Constants.BOTTOM_NAVBAR_HEIGHT)
     ) {
         items(landmarks) { landmark ->
             Row(
