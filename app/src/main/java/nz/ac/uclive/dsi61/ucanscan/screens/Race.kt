@@ -44,14 +44,17 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context,
-               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+landmarkViewModel: LandmarkViewModel) {
 
+    landmarkViewModel.updateLandmarks()
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
@@ -65,7 +68,8 @@ fun RaceScreen(context: Context,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             Column(
@@ -89,7 +93,8 @@ fun RaceScreen(context: Context,
                         .background(colorResource(R.color.light_grey), shape = CircleShape)
                 ) {
                     Text(
-                        text = stringResource(id = R.string.jack_erskine_landmark),
+
+                        text = landmarkViewModel.currentLandmark?.name.toString(),
                         color = Color.Black,
                         fontSize = 28.sp,
                         textAlign = TextAlign.Center,
@@ -145,20 +150,6 @@ fun RaceScreen(context: Context,
                                 .size(100.dp)
                         )
                     }
-
-
-                    //TODO REMOVE THIS I AM JUST USING THIS TO ACCESS THE FINISHED RACE SCREEN!
-                    Button(
-                        modifier = Modifier
-                            .size(100.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            navController.navigate(Screens.FinishedRace.route)
-
-                        },
-                    ) {}
-
-
                 }
             }
 
@@ -175,7 +166,7 @@ fun RaceScreen(context: Context,
  * Create a button at the bottom of a screen that has a bottom navbar.
  */
 @Composable
-fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -189,7 +180,13 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             Button(
                 onClick = {
-                    if (isRaceStarted.value) {
+
+                    // If the race has ended
+                    if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) {
+                        navController.navigate(Screens.FinishedRace.route)
+                        landmarkViewModel.resetLandmarks()
+                    }
+                    else if (isRaceStarted.value && landmarkViewModel.currentLandmark != null) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -200,7 +197,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
 
             ) {
                 Text(
-                    text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }

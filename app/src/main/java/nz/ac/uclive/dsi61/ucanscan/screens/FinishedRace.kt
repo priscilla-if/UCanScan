@@ -52,13 +52,15 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun FinishedRaceScreen(context: Context, navController: NavController,
-                       stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel
+                       stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel,
+                       landmarkViewModel: LandmarkViewModel
 ) {
     stopwatchViewModel.isRunning = false
     isRaceStartedModel.setRaceStarted(false)
@@ -99,7 +101,8 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                 onGiveUpClick = {
                     isGiveUpDialogOpen.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             Column(
@@ -148,6 +151,7 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
                     Button(
                         onClick = {
+                                landmarkViewModel.resetLandmarks()
                                 navController.navigate(Screens.MainMenu.route)
                         },
                         modifier = Modifier.size(width = 200.dp, height = 90.dp)

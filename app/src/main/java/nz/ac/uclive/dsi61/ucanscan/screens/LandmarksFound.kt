@@ -18,30 +18,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
-import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun LandmarksFoundScreen(context: Context, navController: NavController,
-                         stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel
+                         stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+                         landmarkViewModel: LandmarkViewModel
 ) {
-    // Here is how we can get stuff from our DB to display on a screen - ideally we have
-    // different viewModels depending on the logic we are working with. I made the LandmarkViewModel for now
-    val application = context.applicationContext as UCanScanApplication
-    val viewModel: LandmarkViewModel =
-        viewModel(factory = LandmarkViewModelFactory(application.repository))
-    val landmarks by viewModel.getLandmarks().collectAsState(initial = emptyList<Landmark>())
+
+    val landmarks by landmarkViewModel.landmarks.collectAsState(emptyList<Landmark>())
 
     Scaffold(
         bottomBar = {
@@ -57,8 +51,8 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
-
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             StopwatchIncrementFunctionality(stopwatchViewModel)
@@ -80,13 +74,13 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                     modifier = Modifier.height(16.dp)
                 )
 
-                FoundLandmarksList(context, landmarks)
+                FoundLandmarksList(context, landmarkViewModel.foundLandmarks)
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel)
 
             BackHandler {
-                navController.popBackStack()
+                // user has a back to race button so doesn't need going back with system
             }
         })
 }
