@@ -234,7 +234,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = animationOption1State,
-                            onCheckedChange = { saveSetting(context, "animationOption1", it, preferencesViewModel)
+                            onCheckedChange = { saveSetting(context, "Found landmark animation option", it, preferencesViewModel)
                             }
                         )
                     }
