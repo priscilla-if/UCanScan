@@ -28,8 +28,16 @@
     <string name="keep_racing">Keep Racing</string>
     <string name="give_up_desc">Are you sure you want to give up? Your progress will be lost.</string>
     <string name="back_to_home">Back to Home</string>
+    <string name="found_landmark">You found</string>
+    <string name="finish_race">Finish Race</string>
     <string name="finished_the_race">You finished the race!</string>
     <string name="final_time">Final Time:</string>
     <string name="personal_bests">Personal Bests</string>
-
+    <string name="share_dialog_title">Share to…</string>
+    <string name="share_via_email">📧 Email</string>
+    <string name="share_via_text">📱 Text</string>
+    <string name="share_via_phonecall">📞 Call</string>
+    <string name="share_finished_race_email_subject">"I finished a race in UCanScan!"</string>
+    <string name="share_finished_race_msg_pt1">"I'm using the UCanScan app and I just finished a race with a time of "</string>
+    <string name="share_finished_race_msg_pt2">"! #UCOpenDay!"</string>
 </resources>

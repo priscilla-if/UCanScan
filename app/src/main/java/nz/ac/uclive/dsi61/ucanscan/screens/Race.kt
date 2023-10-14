@@ -47,16 +47,19 @@ import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun RaceScreen(context: Context, navController: NavController,
-               stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel) {
+               stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+               landmarkViewModel: LandmarkViewModel) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    landmarkViewModel.updateLandmarks()
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
@@ -69,7 +72,8 @@ fun RaceScreen(context: Context, navController: NavController,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             if(IS_LANDSCAPE) {
@@ -174,7 +178,7 @@ fun RaceCircle() {
             .background(colorResource(R.color.light_grey), shape = CircleShape)
     ) {
         Text(
-            text = stringResource(id = R.string.jack_erskine_landmark),
+            text = landmarkViewModel.currentLandmark?.name.toString(),
             color = Color.Black,
             fontSize = 28.sp,
             textAlign = TextAlign.Center,
@@ -216,9 +220,9 @@ fun RaceSquareButton(navController: NavController, route: String, iconId: Int) {
  * Create a button at the bottom of a screen that has a bottom navbar.
  */
 @Composable
-fun BackToRaceOrHomeButtonContainer(navController: NavController,
-    innerPadding: PaddingValues, isRaceStarted: State<Boolean>, isLandscape: Boolean
-) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues,
+                                    isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel,
+                                    isLandscape: Boolean) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -243,7 +247,13 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController,
 
             Button(
                 onClick = {
-                    if (isRaceStarted.value) {
+
+                    // If the race has ended
+                    if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) {
+                        navController.navigate(Screens.FinishedRace.route)
+                        landmarkViewModel.resetLandmarks()
+                    }
+                    else if (isRaceStarted.value && landmarkViewModel.currentLandmark != null) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -254,7 +264,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController,
                     .size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
             ) {
                 Text(
-                    text = stringResource(if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }

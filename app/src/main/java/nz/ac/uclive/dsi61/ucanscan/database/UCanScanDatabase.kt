@@ -26,7 +26,6 @@ abstract class UCanScanDatabase : RoomDatabase() {
     fun getDatabase(context: Context): UCanScanDatabase {
         // if the INSTANCE is not null, then return it,
         // if it is, then create the database
-        println(context)
         return INSTANCE ?: synchronized(this) {
             val instance = Room.databaseBuilder(
                 context.applicationContext,
@@ -42,11 +41,11 @@ abstract class UCanScanDatabase : RoomDatabase() {
                     // Landmarks
                     // * lat & long only need to be precise to 5dp because this is accurate within 1.1 metres
                     // * keep the description short so it doesn't get cut off :')
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Jack Erskine', 'The CSSE and Maths department building', -43.52256, 172.58119, true)")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Elsie Locke', 'The Arts department building', -43.52456, 172.58351, true)")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('UC Rec Centre', 'The campus gym and recreation centre', -43.52698, 172.58451, true)")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Ernest Rutherford', 'Home of the Science faculty', -43.52257, 172.58268, true)")
-                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Haere-roa', 'The hub of UC students and the UCSA', -43.52435, 172.58079, true)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Jack Erskine', 'The CSSE and Maths department building', -43.52256, 172.58119, false)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Elsie Locke', 'The Arts department building', -43.52456, 172.58351, false)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('UC Rec Centre', 'The campus gym and recreation centre', -43.52698, 172.58451, false)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Ernest Rutherford', 'Home of the Science faculty', -43.52257, 172.58268, false)")
+                    db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Haere-roa', 'The hub of UC students and the UCSA', -43.52435, 172.58079, false)")
                     db.execSQL("INSERT INTO LANDMARK (name, description, latitude, longitude, isFound) VALUES ('Rehua', 'Centre for Education, Health and more', -43.52323, 172.58450, false)")
 
                     // Preferences

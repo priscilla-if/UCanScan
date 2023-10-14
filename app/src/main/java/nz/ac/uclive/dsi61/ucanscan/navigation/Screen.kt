@@ -19,5 +19,7 @@ sealed class Screens(val route: String, @StringRes val resourceId: Int) {
 
     object FinishedRace: Screens("finished_race", R.string.finished_race_screen)
 
+    object FoundLandmark: Screens("found_landmark", R.string.found_landmark)
+
 
 }

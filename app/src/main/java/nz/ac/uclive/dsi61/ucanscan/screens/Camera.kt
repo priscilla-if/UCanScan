@@ -3,8 +3,11 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.VibrationEffect
 import android.graphics.PointF
 import android.util.Log
+import android.os.Vibrator
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,6 +68,7 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import java.util.concurrent.Executors
 
 //TODO: replace all 'barcode' with 'qrcode' before merging
@@ -74,11 +78,12 @@ var qrCodeValue by mutableStateOf<String?>(null)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun CameraScreen(context: Context, navController: NavController) {
+fun CameraScreen(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel) {
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
-    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
+//    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
     val cameraExecutor = Executors.newSingleThreadExecutor()
     val application = context.applicationContext as UCanScanApplication
+    val vibrator = context.getSystemService(Vibrator::class.java)
 
     // create BarcodeScanner object
     val options = BarcodeScannerOptions.Builder()
@@ -92,21 +97,34 @@ fun CameraScreen(context: Context, navController: NavController) {
         barcodeCornerPoints = points
     }
 
+    var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
 
     val requestPermissionLauncher =
         //Gets camera permissions
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 val lifecycleOwner = (context as ComponentActivity)
-//                val cameraProvider = ProcessCameraProvider.getInstance(context)
+
                 val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
 
                 cameraProviderFuture.addListener({
 
                     cameraProvider = cameraProviderFuture.get()
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                     val previewUseCase = Preview.Builder().build()
                     val analysisUseCase = ImageAnalysis.Builder().build()
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                    // define the actual functionality of our analysis use case
+                    analysisUseCase.setAnalyzer(
+                        // newSingleThreadExecutor() will let us perform analysis on a single worker thread
+                        Executors.newSingleThreadExecutor()
+                    ) { imageProxy ->
+                        processImageProxy(barcodeScanner, imageProxy,
+                            updateCornerPoints = { points ->
+                                updateCornerPoints(points) // if points is null, the canvas will get cleared of the red dots
+                            })
+                    }
+
                     val camera = cameraProvider?.bindToLifecycle(
                         lifecycleOwner,
                         cameraSelector,
@@ -119,21 +137,6 @@ fun CameraScreen(context: Context, navController: NavController) {
                     previewUseCase.setSurfaceProvider(newPreviewView.surfaceProvider)
 
                     previewView = newPreviewView
-
-                    // define the actual functionality of our analysis use case
-                    analysisUseCase.setAnalyzer(
-                        // newSingleThreadExecutor() will let us perform analysis on a single worker thread
-                        Executors.newSingleThreadExecutor()
-                    ) { imageProxy ->
-                        previewView?.let {
-                            processImageProxy(barcodeScanner, imageProxy,
-                                updateCornerPoints = { points ->
-                                    updateCornerPoints(points) // if points is null, the canvas will get cleared of the red dots
-                                }
-                            )
-                        }
-                    }
-
 
                 }, ContextCompat.getMainExecutor(context))
             } else {
@@ -153,12 +156,11 @@ fun CameraScreen(context: Context, navController: NavController) {
         }
     }
 
-    previewView?.let { CameraPreview(application, it, navController, qrCodeValue) }
-
+    previewView?.let { CameraPreview(application, it, navController, qrCodeValue, landmarkViewModel, vibrator) }
 
     // Draw on the screen to give feedback to user
     // points don't get transformed, so they don't display in the correct place over the qr code - commenting this out :')
-//    DrawBarcodePoints(barcodeCornerPoints)
+    //    DrawBarcodePoints(barcodeCornerPoints)
     DrawBarcodeTextBox()
 
 }
@@ -166,9 +168,10 @@ fun CameraScreen(context: Context, navController: NavController) {
 
 
 @Composable
-fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
-                  navController: NavController, qrCodeValue: String?) {
+fun CameraPreview(application: UCanScanApplication, previewView: PreviewView, navController: NavController, qrCodeValue: String?,
+landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
     val scope = rememberCoroutineScope()
+
 
     AndroidView(
         factory = { previewView },
@@ -190,20 +193,60 @@ fun CameraPreview(application: UCanScanApplication, previewView: PreviewView,
                     val landmark: Landmark? = qrCodeValue?.let {
                             application.repository.getLandmarkByName(it)
                         }
-
+                    // If what's scanned matches one of the landmarks in our DB
                     if (landmark != null) {
                         if(landmark.isFound) {
-                            Log.d("FOO", ":O landmark already scanned!")
-                        } else {
-                            Log.d("FOO", ":D adding landmark to DB!")
+                            // Previously scanned landmark
+                            Log.d("Scanning Feedback:", "Landmark already scanned.")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(application, "You have already scanned this! You " +
+                                        "are looking for ${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_SHORT).show()
+                                // light vibrating
+                                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                            }
+                        } else if (landmarkViewModel.currentLandmark?.name != landmark.name)  {
+                            // Scanning a valid landmark in the wrong order
+                            Log.d("Scanning Feedback:", "Scanning out of race course order.")
+                            CoroutineScope(Dispatchers.Main).launch {
+                                Toast.makeText(application, "This is not the landmark you are looking for! You are looking for " +
+                                        "${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_LONG).show()
+                                // light vibrating
+                                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
+                            }
+                        }
+                        else {
+                            // Scanning the correct landmark
+                            Log.d("Scanning Feedback:", "Correct landmark - adding to DB.")
 
+                            // Update the viewmodel and the DB
                             scope.launch {
                                 landmark.isFound = true
                                 application.repository.updateLandmark(landmark)
+                                landmarkViewModel.markLandmarkAsFound(landmark)
                             }
+
+                            // Updating index + past, current landmarks
+                            landmarkViewModel.updateCurrentIndex(landmarkViewModel.currentIndex + 1)
+                            landmarkViewModel.updateLandmarks()
+
+                            // Navigate to the found landmark screen
+                            CoroutineScope(Dispatchers.Main).launch {
+                                navController.navigate(Screens.FoundLandmark.route)
+                            }
+
                         }
+                    } else {
+                        // Scanning a random QR code that is not one of our landmarks
+                        Log.d("Scanning Feedback:", "Invalid QR code scanned.")
+                        CoroutineScope(Dispatchers.Main).launch {
+                            Toast.makeText(application, "This is not one of our QR codes! " +
+                                    "You are looking for ${landmarkViewModel.currentLandmark?.name}.", Toast.LENGTH_LONG).show()
+                            // light vibrating
+                            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK))
                     }
                 }
+                }
+
             },
             ) {
             Icon(

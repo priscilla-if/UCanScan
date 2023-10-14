@@ -42,6 +42,7 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
@@ -49,7 +50,8 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun PreferencesScreen(context: Context,
-               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel, preferencesViewModel: PreferencesViewModel
+               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+                      preferencesViewModel: PreferencesViewModel, landmarkViewModel: LandmarkViewModel
 ) {
     val notificationOption1State by preferencesViewModel.getPreferenceState("notificationOption1")
     val notificationOption2State by preferencesViewModel.getPreferenceState("notificationOption2")
@@ -74,7 +76,8 @@ fun PreferencesScreen(context: Context,
                 onGiveUpClick = {
                     openDialog.value = true
                 },
-                isRaceStartedModel = isRaceStartedModel
+                isRaceStartedModel = isRaceStartedModel,
+                landmarkViewModel = landmarkViewModel
             )
 
             StopwatchIncrementFunctionality(stopwatchViewModel)
@@ -291,13 +294,11 @@ fun PreferencesScreen(context: Context,
                     }
                 }
             }
-
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, false)
-
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, false)
     })
 
     BackHandler {
-        navController.popBackStack()
+        // user has a back to race button so doesn't need going back with system
     }
 
 }
