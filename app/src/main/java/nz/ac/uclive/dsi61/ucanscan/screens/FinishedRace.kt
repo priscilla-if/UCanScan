@@ -3,8 +3,8 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.media.MediaPlayer
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,7 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
@@ -206,8 +206,8 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
                                             modifier = Modifier
                                                 .clickable {
                                                     isShareDialogOpen.value = false
-                                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time))
-                                                }
+                                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time),
+                                                    true)}
                                                 .padding(vertical = 16.dp),
                                             style = TextStyle(fontSize = 18.sp),
                                             text = option
@@ -228,34 +228,45 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
 
 
 
-fun DispatchAction(context: Context, option: String, raceFinishTime: String) {
+fun DispatchAction(context: Context, option: String, timeOrLandmark: String, raceFinished: Boolean) {
     // we manually get the strings from the string resource IDs because
     // using stringResource() to do it would require this function to be composable
     val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
     val text = context.resources.getString(R.string.share_via_text)
     val call = context.resources.getString(R.string.share_via_phonecall)
-    val shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
-    val shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
-    val shareBodyPt2String = context.resources.getString(R.string.share_finished_race_msg_pt2)
+    var shareTitleString = ""
+    var shareBodyPt1String = ""
+    var shareBodyPt2String = ""
+
+    if (!raceFinished) {
+        shareTitleString =
+            context.resources.getString(R.string.share_found_landmark_email_subject)
+        shareBodyPt1String = context.resources.getString(R.string.just_found_landmark_msg_pt1)
+        shareBodyPt2String = context.resources.getString(R.string.just_found_landmark_msg_pt2)
+    } else {
+        shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
+        shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
+        shareBodyPt2String = context.resources.getString(R.string.share_finished_race_msg_pt2)
+    }
 
     when (option) {
         email -> {
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
             intent.putExtra(Intent.EXTRA_SUBJECT, shareTitleString)
-            intent.putExtra(Intent.EXTRA_TEXT, shareBodyPt1String + raceFinishTime + shareBodyPt2String)
-            startActivity(context, intent, null)
+            intent.putExtra(Intent.EXTRA_TEXT, shareBodyPt1String + timeOrLandmark + shareBodyPt2String)
+            ContextCompat.startActivity(context, intent, null)
         }
         text -> {
             val uri = Uri.parse("smsto:")
             val intent = Intent(Intent.ACTION_SENDTO, uri)
-            intent.putExtra("sms_body", shareBodyPt1String + raceFinishTime + shareBodyPt2String)
-            startActivity(context, intent, null)
+            intent.putExtra("sms_body", shareBodyPt1String + timeOrLandmark + shareBodyPt2String)
+            ContextCompat.startActivity(context, intent, null)
         }
         call -> {
             val uri = Uri.parse("tel:")
             val intent = Intent(Intent.ACTION_DIAL, uri)
-            startActivity(context, intent, null)
+            ContextCompat.startActivity(context, intent, null)
         }
     }
 }
