@@ -4,6 +4,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
@@ -59,7 +63,14 @@ fun RaceScreen(context: Context, navController: NavController,
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+
     landmarkViewModel.updateLandmarks()
+
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
+
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
@@ -99,7 +110,7 @@ fun RaceScreen(context: Context, navController: NavController,
                         modifier = Modifier
                             .weight(0.33f)
                     ) {
-                        RaceCircle(landmarkViewModel, IS_LANDSCAPE)
+                        RaceCircle(landmarkViewModel, IS_LANDSCAPE, currentLandmark)
                     }
 
                     Column(
@@ -124,7 +135,7 @@ fun RaceScreen(context: Context, navController: NavController,
                 ) {
                     RaceTitle(IS_LANDSCAPE)
 
-                    RaceCircle(landmarkViewModel, IS_LANDSCAPE)
+                    RaceCircle(landmarkViewModel, IS_LANDSCAPE, currentLandmark)
 
                     StopwatchIncrementFunctionality(stopwatchViewModel)
 
@@ -166,7 +177,7 @@ fun RaceTitle(isLandscape: Boolean) {
 
 
 @Composable
-fun RaceCircle(landmarkViewModel: LandmarkViewModel,isLandscape: Boolean) {
+fun RaceCircle(landmarkViewModel: LandmarkViewModel,isLandscape: Boolean, currentLandmark: Landmark?) {
     // when in landscape, the size of the circle shrinks, so the position of the text must change
     val textPadding = if(isLandscape) {90.dp} else {130.dp}
     Box(
@@ -175,7 +186,7 @@ fun RaceCircle(landmarkViewModel: LandmarkViewModel,isLandscape: Boolean) {
             .background(colorResource(R.color.light_grey), shape = CircleShape)
     ) {
         Text(
-            text = landmarkViewModel.currentLandmark?.name.toString(),
+            text = currentLandmark?.name.toString(),
             color = Color.Black,
             fontSize = 28.sp,
             textAlign = TextAlign.Center,
@@ -219,7 +230,7 @@ fun RaceSquareButton(navController: NavController, route: String, iconId: Int) {
 @Composable
 fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues,
                                     isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel,
-                                    isLandscape: Boolean) {
+                                    isLandscape: Boolean, currentLandmark: Landmark) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -246,11 +257,11 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                 onClick = {
 
                     // If the race has ended
-                    if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) {
+                    if (currentLandmark == null && isRaceStarted.value) {
                         navController.navigate(Screens.FinishedRace.route)
                         landmarkViewModel.resetLandmarks()
                     }
-                    else if (isRaceStarted.value && landmarkViewModel.currentLandmark != null) {
+                    else if (isRaceStarted.value && currentLandmark != null) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -261,7 +272,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                     .size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
             ) {
                 Text(
-                    text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }
