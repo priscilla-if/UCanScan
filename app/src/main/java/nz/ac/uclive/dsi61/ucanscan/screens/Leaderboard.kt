@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -84,7 +89,9 @@ fun LeaderboardScreen(context: Context,
                     fontSize = 24.sp)
 
 
-                TimesDisplay(allTimes = allTimes, IS_LANDSCAPE)
+                TimesDisplay(allTimes = allTimes, context, stopwatchViewModel, IS_LANDSCAPE)
+
+
             }
 
             BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE)
@@ -100,7 +107,9 @@ fun LeaderboardScreen(context: Context,
 
 
 @Composable
-fun TimesDisplay(allTimes: List<Times>, isLandscape: Boolean) {
+fun TimesDisplay(allTimes: List<Times>, context:Context, stopwatchViewModel: StopwatchViewModel, isLandscape: Boolean) {
+    val isShareDialogOpen = remember { mutableStateOf(false) }
+
     LazyColumn (
         modifier = Modifier
             .padding(top = 19.dp)
@@ -128,13 +137,45 @@ fun TimesDisplay(allTimes: List<Times>, isLandscape: Boolean) {
                 Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}",
                     modifier = Modifier.padding(top = 14.dp))
 
-                IconButton(onClick = {
+                IconButton(onClick = { isShareDialogOpen.value = true
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.share),
                         contentDescription = "Share"
                     )
                 }
+
+                if (isShareDialogOpen.value) {
+                    AlertDialog(
+                        title = {
+                            Text(
+                                fontWeight = FontWeight.Bold,
+                                text = stringResource(R.string.share_dialog_title)
+                            )
+                        },
+                        text = {
+                            val options = listOf(stringResource(R.string.share_via_email), stringResource(R.string.share_via_text), stringResource(R.string.share_via_phonecall))
+                            LazyColumn {
+                                items(options) { option ->
+                                    Text(
+                                        modifier = Modifier
+                                            .clickable {
+                                                isShareDialogOpen.value = false
+                                                DispatchAction(context, option, convertTimeLongToMinutes(time.endTime) + " on " + time.dateAchieved, "leaderboard")
+                                            }
+                                            .padding(vertical = 16.dp),
+                                        style = TextStyle(fontSize = 18.sp),
+                                        text = option
+                                    )
+                                }
+                            }
+                        },
+                        onDismissRequest = { isShareDialogOpen.value = false },
+                        confirmButton  = {},
+                        dismissButton = {}
+                    )
+                }
+
             }
         }
     }

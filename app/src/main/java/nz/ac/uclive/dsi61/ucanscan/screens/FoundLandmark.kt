@@ -3,8 +3,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.media.MediaPlayer
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +17,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,12 +29,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -39,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
@@ -46,10 +54,13 @@ import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
@@ -73,6 +84,10 @@ fun FoundLandmarkScreen(context: Context,
     val party = Party(
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
     )
+    val isShareDialogOpen = remember { mutableStateOf(false) }
+    val application = context.applicationContext as UCanScanApplication
+    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
+
 
     // Media player should play sound when screen is created
     val mMediaPlayer = remember { MediaPlayer.create(context, R.raw.achievement_sound) }
@@ -149,7 +164,9 @@ fun FoundLandmarkScreen(context: Context,
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel)
+                    FoundLandmarkButtons(context, navController,
+                        landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
+                        isShareDialogOpen, IS_LANDSCAPE)
                 }
             }
         } else {
@@ -167,12 +184,14 @@ fun FoundLandmarkScreen(context: Context,
 
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = innerPadding.calculateBottomPadding()),
+                        .fillMaxSize(),
+//                        .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel)
+                    FoundLandmarkButtons(context, navController,
+                        landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
+                        isShareDialogOpen, IS_LANDSCAPE)
                 }
             }
         }
@@ -236,15 +255,20 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel, 
             painter = painterResource(id = drawableId),
             contentDescription = null,
             modifier = Modifier
-                .size(300.dp)
-                .clip(CircleShape)
+                .fillMaxSize()
+                .clip(CircleShape),
+            // stretches the image instead of leaving empty space when in landscape (not ideal solution)
+            contentScale = ContentScale.FillBounds
         )
     }
 }
 
 
 @Composable
-fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: LandmarkViewModel) {
+fun FoundLandmarkButtons(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel,
+                         stopwatchViewModel: StopwatchViewModel, finishedRaceViewModel: FinishedRaceViewModel,
+                         isShareDialogOpen: MutableState<Boolean>,
+                         isLandscape: Boolean) {
     Button(
         onClick = {
             // If the current landmark we are searching for is now null
@@ -252,6 +276,10 @@ fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: Landma
             // we should go to the finished race screen.
             if (landmarkViewModel.currentLandmark == null) {
                 navController.navigate(Screens.FinishedRace.route)
+                val timeToSave = Times(
+                    endTime = stopwatchViewModel.time
+                )
+                finishedRaceViewModel.addTimeToDb(timeToSave)
             } else {
                 navController.navigate(Screens.Race.route)
             }
@@ -270,7 +298,7 @@ fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: Landma
             .size(Constants.MEDIUM_BTN_HEIGHT),
         shape = RoundedCornerShape(16.dp),
         onClick = {
-            //TODO sharing functionality
+            isShareDialogOpen.value = true
         },
     ) {
         Icon(
@@ -280,7 +308,43 @@ fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: Landma
                 .size(100.dp)
         )
     }
+
+    if (isShareDialogOpen.value) {
+        AlertDialog(
+            title = {
+                Text(
+                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.share_dialog_title)
+                )
+            },
+            text = {
+                val options = listOf(
+                    stringResource(R.string.share_via_email),
+                    stringResource(R.string.share_via_text),
+                    stringResource(R.string.share_via_phonecall)
+                )
+                LazyColumn {
+                    items(options) { option ->
+                        Text(
+                            modifier = Modifier
+                                .clickable {
+                                    isShareDialogOpen.value = false
+                                    landmarkViewModel.pastLandmark?.let {
+                                        DispatchAction(context,
+                                            option, it.name, "landmark"
+                                        )
+                                    }
+                                }
+                                .padding(vertical = 16.dp),
+                            style = TextStyle(fontSize = 18.sp),
+                            text = option
+                        )
+                    }
+                }
+            },
+            onDismissRequest = { isShareDialogOpen.value = false },
+            confirmButton = {},
+            dismissButton = {}
+        )
+    }
 }
-
-
-

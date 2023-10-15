@@ -6,8 +6,8 @@
     <string name="preferences">Settings</string>
     <string name="prefs_notifications">Notifications</string>
     <string name="prefs_name">Your Name</string>
-    <string name="prefs_notifications_opt1">Reminders when lorem ipsum</string>
-    <string name="prefs_notifications_opt2">Notify when dolar sit amit</string>
+    <string name="prefs_notifications_opt1">Remind me to hurry up 30m into a race</string>
+    <string name="prefs_notifications_opt2">Receive fun facts about UC daily at 12pm</string>
     <string name="prefs_notifications_opt3">Alert when cogito ergo sum</string>
     <string name="prefs_theme">Theme</string>
     <string name="prefs_theme_opt1">Dark mode</string>
@@ -37,8 +37,14 @@
     <string name="share_via_email">📧 Email</string>
     <string name="share_via_text">📱 Text</string>
     <string name="share_via_phonecall">📞 Call</string>
+    <string name="share_found_landmark_email_subject">"I found a UC landmark in UCanScan!"</string>
+    <string name="share_found_landmark_msg_pt1">"I just found landmark "</string>
+    <string name="share_found_landmark_msg_pt2">" using the UCanScan app! #UCOpenDay!"</string>
     <string name="share_finished_race_email_subject">"I finished a race in UCanScan!"</string>
     <string name="share_finished_race_msg_pt1">"I'm using the UCanScan app and I just finished a race with a time of "</string>
     <string name="share_finished_race_msg_pt2">"! #UCOpenDay!"</string>
+    <string name="share_leaderboard_stat_email_subject">"I finished a race in UCanScan and it's on the leaderboard!"</string>
+    <string name="share_leaderboard_stat_pt1">"I finished a race with a time of "</string>
+    <string name="share_leaderboard_stat_pt2">" using the UCanScan app! #UCOpenDay!"</string>
     <string name="you_found">"You found"</string>
 </resources>

@@ -1,11 +1,8 @@
 package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.res.Configuration
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,18 +33,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import nz.ac.uclive.dsi61.ucanscan.HurryUpAlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun MainMenuScreen(context: Context, navController: NavController,
-    stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel, preferencesViewModel: PreferencesViewModel
+fun MainMenuScreen(context: Context,
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel,
+                   isRaceStartedModel: IsRaceStartedModel, preferencesViewModel : PreferencesViewModel,
+                   landmarkViewModel: LandmarkViewModel
 ) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -65,7 +64,6 @@ fun MainMenuScreen(context: Context, navController: NavController,
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            // TODO placeholder cherry blossom image at the moment, we can change to something else once we decide on a better design?
             painter = painterResource(R.drawable.cherry_blossoms),
             contentDescription = "background_image",
             contentScale = ContentScale.Crop,
@@ -82,31 +80,28 @@ fun MainMenuScreen(context: Context, navController: NavController,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        modifier = Modifier
-                            .size(150.dp)
-                            .clip(CircleShape)
-                            .border(width = 2.dp, color = Color.White, shape = CircleShape),
-                        painter = painterResource(id = R.drawable.cat_one),
-                        contentDescription = "Placeholder Logo"
+                        modifier = Modifier.size(size = 150.dp),
+                        painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                        contentDescription = "App Logo"
                     )
                     Greeting(selectedUserName)
 
                     if (IS_LANDSCAPE) {
                         Row() {
                             MainButton(stringResource(R.string.start_race), true,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                             Spacer(modifier = Modifier.width(16.dp)) // horizontal space between buttons
                             MainButton(stringResource(R.string.my_times), false,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel,landmarkViewModel)
                         }
                     }
 
                     if (!IS_LANDSCAPE) {
                         Column() {
                             MainButton(stringResource(R.string.start_race), true,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                             MainButton(stringResource(R.string.my_times), false,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                         }
                     }
                 }
@@ -149,7 +144,6 @@ fun MainMenuScreen(context: Context, navController: NavController,
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-
     val welcomeText = if (name.isEmpty()) {
         "Welcome!"
     } else {
@@ -158,14 +152,15 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
     Text(
         text = welcomeText,
-        modifier = modifier,
+        modifier = modifier.padding(16.dp),
         fontSize = 30.sp
-
     )
 }
 
 @Composable
-fun MainButton(text: String, isStartButton: Boolean, navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel) {
+fun MainButton(text: String, isStartButton: Boolean, navController: NavController,
+               stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel,
+               landmarkViewModel: LandmarkViewModel) {
     Spacer(modifier = Modifier.height(16.dp))
     Button(
         onClick = {
@@ -174,6 +169,7 @@ fun MainButton(text: String, isStartButton: Boolean, navController: NavControlle
                 stopwatchViewModel.isRunning = true
                 isRaceStartedModel.setRaceStarted(true)
                 //scheduleHurryUpReminder()
+                landmarkViewModel.resetLandmarks()
             } else {
                 navController.navigate(Screens.Leaderboard.route)
             }
