@@ -42,6 +42,12 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 
     val landmarks by landmarkViewModel.landmarks.collectAsState(emptyList<Landmark>())
 
+    var foundLandmarks by remember { mutableStateOf(landmarkViewModel.foundLandmarks) }
+
+    LaunchedEffect(foundLandmarks) {
+        landmarkViewModel.foundLandmarks = foundLandmarks.toMutableList()
+    }
+
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
