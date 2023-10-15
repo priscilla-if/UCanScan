@@ -230,7 +230,7 @@ fun RaceSquareButton(navController: NavController, route: String, iconId: Int) {
 @Composable
 fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues,
                                     isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel,
-                                    isLandscape: Boolean) {
+                                    isLandscape: Boolean, currentLandmark: Landmark) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -257,11 +257,11 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                 onClick = {
 
                     // If the race has ended
-                    if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) {
+                    if (currentLandmark == null && isRaceStarted.value) {
                         navController.navigate(Screens.FinishedRace.route)
                         landmarkViewModel.resetLandmarks()
                     }
-                    else if (isRaceStarted.value && landmarkViewModel.currentLandmark != null) {
+                    else if (isRaceStarted.value && currentLandmark != null) {
                         navController.navigate(Screens.Race.route)
                     } else {
                         navController.navigate(Screens.MainMenu.route)
@@ -272,7 +272,7 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                     .size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
             ) {
                 Text(
-                    text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
+                    text = stringResource(if (currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
                     fontSize = 20.sp
                 )
             }

@@ -12,6 +12,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
@@ -41,6 +43,10 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val landmarks by landmarkViewModel.landmarks.collectAsState(emptyList<Landmark>())
+
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
 
     var foundLandmarks by remember { mutableStateOf(landmarkViewModel.foundLandmarks) }
 
@@ -89,7 +95,7 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                 FoundLandmarksList(context, landmarkViewModel.foundLandmarks, IS_LANDSCAPE)
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE, currentLandmark)
 
             BackHandler {
                 // user has a back to race button so doesn't need going back with system

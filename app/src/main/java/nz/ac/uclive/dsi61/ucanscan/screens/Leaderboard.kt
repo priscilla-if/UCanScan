@@ -16,6 +16,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -27,8 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
@@ -55,6 +58,9 @@ fun LeaderboardScreen(context: Context,
     val isRaceStarted by isRaceStartedModel.isRaceStarted
     val allTimes by finishedRaceViewModel.allTimes.collectAsState(emptyList())
 
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
 
     Scaffold(
         bottomBar = {
@@ -94,7 +100,7 @@ fun LeaderboardScreen(context: Context,
 
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE, currentLandmark)
 
         }
     )
