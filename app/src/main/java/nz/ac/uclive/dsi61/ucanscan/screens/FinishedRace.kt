@@ -271,7 +271,7 @@ fun FinishedRaceButtons(context: Context, navController: NavController,
                             modifier = Modifier
                                 .clickable {
                                     isShareDialogOpen.value = false
-                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time),
+                                    dispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time),
                                         "finished-race")
                                 }
                                 .padding(vertical = 16.dp),
@@ -289,7 +289,7 @@ fun FinishedRaceButtons(context: Context, navController: NavController,
 }
 
 
-fun DispatchAction(context: Context, option: String, timeOrLandmark: String, case: String) {
+fun dispatchAction(context: Context, option: String, timeOrLandmark: String, case: String) {
     // we manually get the strings from the string resource IDs because
     // using stringResource() to do it would require this function to be composable
     val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
@@ -312,8 +312,8 @@ fun DispatchAction(context: Context, option: String, timeOrLandmark: String, cas
         }
         "landmark" -> {
             shareTitleString = context.resources.getString(R.string.share_found_landmark_email_subject)
-            shareBodyPt1String = context.resources.getString(R.string.share_just_found_landmark_msg_pt1)
-            shareBodyPt2String = context.resources.getString(R.string.share_just_found_landmark_msg_pt2)
+            shareBodyPt1String = context.resources.getString(R.string.share_found_landmark_msg_pt1)
+            shareBodyPt2String = context.resources.getString(R.string.share_found_landmark_msg_pt2)
         }
     }
 
