@@ -271,7 +271,8 @@ fun FinishedRaceButtons(context: Context, navController: NavController,
                             modifier = Modifier
                                 .clickable {
                                     isShareDialogOpen.value = false
-                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time), true)
+                                    DispatchAction(context, option, convertTimeLongToMinutes(stopwatchViewModel.time),
+                                        "finished-race")
                                 }
                                 .padding(vertical = 16.dp),
                             style = TextStyle(fontSize = 18.sp),
@@ -288,7 +289,7 @@ fun FinishedRaceButtons(context: Context, navController: NavController,
 }
 
 
-fun DispatchAction(context: Context, option: String, timeOrLandmark: String, raceFinished: Boolean) {
+fun DispatchAction(context: Context, option: String, timeOrLandmark: String, case: String) {
     // we manually get the strings from the string resource IDs because
     // using stringResource() to do it would require this function to be composable
     val email = context.resources.getString(R.string.share_via_email) // get string value given resource id
@@ -298,15 +299,22 @@ fun DispatchAction(context: Context, option: String, timeOrLandmark: String, rac
     var shareBodyPt1String = ""
     var shareBodyPt2String = ""
 
-    if (!raceFinished) {
-        shareTitleString =
-            context.resources.getString(R.string.share_found_landmark_email_subject)
-        shareBodyPt1String = context.resources.getString(R.string.share_just_found_landmark_msg_pt1)
-        shareBodyPt2String = context.resources.getString(R.string.share_just_found_landmark_msg_pt2)
-    } else {
-        shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
-        shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
-        shareBodyPt2String = context.resources.getString(R.string.share_finished_race_msg_pt2)
+    when (case) {
+        "finished-race" -> {
+            shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
+            shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
+            shareBodyPt2String = context . resources . getString (R.string.share_finished_race_msg_pt2)
+        }
+        "leaderboard" -> {
+            shareTitleString = context.resources.getString(R.string.share_leaderboard_stat_email_subject)
+            shareBodyPt1String = context.resources.getString(R.string.share_leaderboard_stat_pt1)
+            shareBodyPt2String = context . resources . getString (R.string.share_leaderboard_stat_pt2)
+        }
+        "landmark" -> {
+            shareTitleString = context.resources.getString(R.string.share_found_landmark_email_subject)
+            shareBodyPt1String = context.resources.getString(R.string.share_just_found_landmark_msg_pt1)
+            shareBodyPt2String = context.resources.getString(R.string.share_just_found_landmark_msg_pt2)
+        }
     }
 
     when (option) {

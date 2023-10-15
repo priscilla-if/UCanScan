@@ -323,11 +323,8 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
                                 .clickable {
                                     isShareDialogOpen.value = false
                                     landmarkViewModel.pastLandmark?.let {
-                                        DispatchAction(
-                                            context,
-                                            option,
-                                            it.name,
-                                            false
+                                        DispatchAction(context,
+                                            option, it.name, "landmark"
                                         )
                                     }
                                 }
@@ -344,6 +341,3 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
         )
     }
 }
-
-
-

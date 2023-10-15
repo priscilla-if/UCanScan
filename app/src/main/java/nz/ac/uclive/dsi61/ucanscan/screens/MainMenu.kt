@@ -80,12 +80,9 @@ fun MainMenuScreen(context: Context,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        modifier = Modifier
-                            .size(150.dp)
-                            .clip(CircleShape)
-                            .border(width = 2.dp, color = Color.White, shape = CircleShape),
-                        painter = painterResource(id = R.drawable.cat_one),
-                        contentDescription = "Placeholder Logo"
+                        modifier = Modifier.size(size = 150.dp),
+                        painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                        contentDescription = "App Logo"
                     )
                     Greeting(selectedUserName)
 
@@ -147,7 +144,6 @@ fun MainMenuScreen(context: Context,
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
-
     val welcomeText = if (name.isEmpty()) {
         "Welcome!"
     } else {
@@ -156,9 +152,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
     Text(
         text = welcomeText,
-        modifier = modifier,
+        modifier = modifier.padding(16.dp),
         fontSize = 30.sp
-
     )
 }
 
