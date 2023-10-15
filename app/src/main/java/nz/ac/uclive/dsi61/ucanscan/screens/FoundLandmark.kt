@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -229,8 +230,10 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) 
             painter = painterResource(id = drawableId),
             contentDescription = null,
             modifier = Modifier
-                .size(300.dp)
-                .clip(CircleShape)
+                .fillMaxSize()
+                .clip(CircleShape),
+            // stretches the image instead of leaving empty space when in landscape (not ideal solution)
+            contentScale = ContentScale.FillBounds
         )
     }
 }
