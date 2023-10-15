@@ -2,8 +2,10 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +15,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,17 +35,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
@@ -58,6 +68,10 @@ fun FoundLandmarkScreen(context: Context,
     val party = Party(
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
     )
+    val isShareDialogOpen = remember { mutableStateOf(false) }
+    val application = context.applicationContext as UCanScanApplication
+    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
+
 
     // Media player should play sound when screen is created
     val mMediaPlayer = remember { MediaPlayer.create(context, R.raw.achievement_sound) }
@@ -74,9 +88,9 @@ fun FoundLandmarkScreen(context: Context,
     }
 
     Scaffold(
-            bottomBar = {
-                BottomNavigationBar(navController)
-            }
+        bottomBar = {
+            BottomNavigationBar(navController)
+        }
 
     ) {
 
@@ -174,6 +188,10 @@ fun FoundLandmarkScreen(context: Context,
                         // we should go to the finished race screen.
                         if (landmarkViewModel.currentLandmark == null) {
                             navController.navigate(Screens.FinishedRace.route)
+                            val timeToSave = Times(
+                                endTime = stopwatchViewModel.time
+                            )
+                            finishedRaceViewModel.addTimeToDb(timeToSave)
                         } else {
                             navController.navigate(Screens.Race.route)
                         }
@@ -192,7 +210,7 @@ fun FoundLandmarkScreen(context: Context,
                         .size(90.dp),
                     shape = RoundedCornerShape(16.dp),
                     onClick = {
-                        //TODO sharing functionality
+                        isShareDialogOpen.value = true
 
                     },
                 ) {
@@ -204,12 +222,58 @@ fun FoundLandmarkScreen(context: Context,
                     )
                 }
 
+                if (isShareDialogOpen.value) {
+                    AlertDialog(
+                        title = {
+                            Text(
+                                fontWeight = FontWeight.Bold,
+                                text = stringResource(R.string.share_dialog_title)
+                            )
+                        },
+                        text = {
+                            val options = listOf(
+                                stringResource(R.string.share_via_email),
+                                stringResource(R.string.share_via_text),
+                                stringResource(R.string.share_via_phonecall)
+                            )
+                            LazyColumn {
+                                items(options) { option ->
+                                    Text(
+                                        modifier = Modifier
+                                            .clickable {
+                                                isShareDialogOpen.value = false
+                                                landmarkViewModel.pastLandmark?.let {
+                                                    DispatchAction(
+                                                        context,
+                                                        option,
+                                                        it.name,
+                                                        false
+                                                    )
+                                                }
+                                            }
+                                            .padding(vertical = 16.dp),
+                                        style = TextStyle(fontSize = 18.sp),
+                                        text = option
+                                    )
+                                }
+                            }
+                        },
+                        onDismissRequest = { isShareDialogOpen.value = false },
+                        confirmButton = {},
+                        dismissButton = {}
+                    )
+                }
+
             }
         }
-
     }
-
 }
+
+
+
+
+
+
 
 
 

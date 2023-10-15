@@ -127,7 +127,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = notificationOption1State,
-                            onCheckedChange = { saveSetting(context, "notificationOption1", it, preferencesViewModel) }
+                            onCheckedChange = { saveSetting(context, "","notificationOption1", it, preferencesViewModel) }
                         )
                     }
 
@@ -149,7 +149,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = notificationOption2State,
-                            onCheckedChange = { saveSetting(context, "notificationOption2", it, preferencesViewModel) }
+                            onCheckedChange = { saveSetting(context, "", "notificationOption2",  it, preferencesViewModel) }
                         )
                     }
 
@@ -179,7 +179,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = themeOption1State,
-                            onCheckedChange = { saveSetting(context, "themeOption1", it, preferencesViewModel) }
+                            onCheckedChange = { saveSetting(context, "", "themeOption1", it, preferencesViewModel) }
                         )
                     }
 
@@ -210,7 +210,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = animationOption1State,
-                            onCheckedChange = { saveSetting(context, "Found landmark animation option", it, preferencesViewModel)
+                            onCheckedChange = { saveSetting(context, "Found landmark animation option", "animationOption1", it, preferencesViewModel)
                             }
                         )
                     }
@@ -287,8 +287,8 @@ fun PreferencesScreen(context: Context,
 
 }
 
-fun saveSetting(context: Context, settingName: String, settingValue: Boolean, preferencesViewModel: PreferencesViewModel) {
-    Toast.makeText(context, "Setting saved!", Toast.LENGTH_SHORT).show()
+fun saveSetting(context: Context, settingDisplayName: String, settingName: String, settingValue: Boolean, preferencesViewModel: PreferencesViewModel) {
+    Toast.makeText(context, "$settingDisplayName saved!", Toast.LENGTH_SHORT).show()
     preferencesViewModel.updatePreferenceState(settingName, settingValue)
 }
 
