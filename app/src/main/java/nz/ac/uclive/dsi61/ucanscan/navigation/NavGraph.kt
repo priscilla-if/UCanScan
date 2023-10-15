@@ -31,7 +31,7 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         composable(
             route = Screens.MainMenu.route
         ) { backStackEntry ->
-            MainMenuScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, preferencesViewModel)
+            MainMenuScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, preferencesViewModel, landmarkViewModel)
         }
 
         composable(
@@ -79,7 +79,7 @@ fun NavGraph (navController: NavHostController,  stopwatchViewModel: StopwatchVi
         composable(
             route = Screens.FoundLandmark.route
         ) {backStackEntry ->
-            FoundLandmarkScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
+            FoundLandmarkScreen(LocalContext.current, navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel, preferencesViewModel)
         }
 
     }
