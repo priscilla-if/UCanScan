@@ -158,35 +158,6 @@ fun PreferencesScreen(context: Context,
                         )
                     }
 
-                    // THEME SECTION
-                    Row(
-                        horizontalArrangement = Arrangement.Start
-                    ) {
-                        Text(
-                            text = stringResource(R.string.prefs_theme).uppercase(),
-                        )
-                    }
-
-                    // option 1
-                    Row() {
-                        Column(
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = stringResource(R.string.prefs_theme_opt1)
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Switch(
-                            checked = themeOption1State,
-                            onCheckedChange = { saveSetting(context, "", "themeOption1", it, preferencesViewModel) }
-                        )
-                    }
-
-
                     // ANIMATIONS SECTION
                     Row(
                         horizontalArrangement = Arrangement.Start
