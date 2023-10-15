@@ -12,9 +12,6 @@ QR Codes are available at this link: https://www.canva.com/design/DAFw0-k8hZA/bR
 - Nirhjah Selvarajah
 - Priscilla Ishida-Foale
 
-## License
-
-
 ## Attributions
 - <a href="https://www.flaticon.com/free-icons/building" title="building icons">Building icon created by Freepik - Flaticon</a>
 
