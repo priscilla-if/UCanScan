@@ -10,9 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import nz.ac.uclive.dsi61.ucanscan.ui.theme.Purple40
 
 @Composable
 fun BottomNavigationBar(
@@ -38,7 +40,9 @@ fun BottomNavigationBar(
         items.forEach { screen ->
             NavigationBarItem(
                 icon = { Icon(icons[index], contentDescription = null) },
-                label = { Text(stringResource(screen.resourceId)) },
+                label = { Text(text=stringResource(screen.resourceId),
+                style = TextStyle(color = Purple40))
+                },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {
