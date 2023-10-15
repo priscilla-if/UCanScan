@@ -139,7 +139,7 @@ fun FoundLandmarkScreen(context: Context,
                     modifier = Modifier
                         .weight(0.33f)
                 ) {
-                    FoundLandmarkCircle(context, landmarkViewModel)
+                    FoundLandmarkCircle(context, landmarkViewModel, pastLandmark)
                 }
 
                 Column(
@@ -163,7 +163,7 @@ fun FoundLandmarkScreen(context: Context,
             ) {
                 FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE, pastLandmark)
 
-                FoundLandmarkCircle(context, landmarkViewModel)
+                FoundLandmarkCircle(context, landmarkViewModel, pastLandmark)
 
                 Row(
                     modifier = Modifier
@@ -211,13 +211,13 @@ fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolea
 
 
 @Composable
-fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) {
+fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel, pastLandmark : Landmark) {
     Box(
         modifier = Modifier
             .size(300.dp)
             .background(colorResource(R.color.light_grey), shape = CircleShape)
     ) {
-        val fileNameParts = landmarkViewModel.pastLandmark?.name?.split(" ", "-")
+        val fileNameParts = pastLandmark?.name?.split(" ", "-")
         val fileName = fileNameParts?.joinToString("_")?.lowercase()
         // Create a resource ID for a named image in the "drawable" directory
         val resourceId = context.resources.getIdentifier(
