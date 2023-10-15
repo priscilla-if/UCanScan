@@ -75,18 +75,8 @@ fun FinishedRaceScreen(context: Context, navController: NavController,
         soundPlayed.value = true
     }
 
-
-    val timeToSave = Times(
-        endTime = stopwatchViewModel.time
-    )
-
-    val application = context.applicationContext as UCanScanApplication
-
-    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
-
-
     DisposableEffect(Unit) {
-        finishedRaceViewModel.addTimeToDb(timeToSave)
+
         onDispose {mMediaPlayer.release()}
     }
 

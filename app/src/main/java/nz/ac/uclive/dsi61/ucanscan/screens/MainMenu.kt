@@ -46,6 +46,7 @@ import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
@@ -53,7 +54,9 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
 fun MainMenuScreen(context: Context,
-                   navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel, preferencesViewModel : PreferencesViewModel
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel,
+                   isRaceStartedModel: IsRaceStartedModel, preferencesViewModel : PreferencesViewModel,
+                   landmarkViewModel: LandmarkViewModel
 ) {
     var selectedUserName by remember { mutableStateOf("") }
     val userNameState by preferencesViewModel.getUserNameState("userName", initialValue = "")
@@ -99,8 +102,7 @@ fun MainMenuScreen(context: Context,
                             navController.navigate(Screens.Race.route)
                             stopwatchViewModel.isRunning = true
                             isRaceStartedModel.setRaceStarted(true)
-
-
+                            landmarkViewModel.resetLandmarks()
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
                     ) {

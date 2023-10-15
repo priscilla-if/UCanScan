@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
+import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,14 +39,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
@@ -63,6 +68,9 @@ fun FoundLandmarkScreen(context: Context,
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
     )
     val isShareDialogOpen = remember { mutableStateOf(false) }
+    val application = context.applicationContext as UCanScanApplication
+    val finishedRaceViewModel: FinishedRaceViewModel = viewModel(factory = FinishedRaceViewModelFactory(application.repository))
+
 
     // Media player should play sound when screen is created
     val mMediaPlayer = remember { MediaPlayer.create(context, R.raw.achievement_sound) }
@@ -174,6 +182,10 @@ fun FoundLandmarkScreen(context: Context,
                         // we should go to the finished race screen.
                         if (landmarkViewModel.currentLandmark == null) {
                             navController.navigate(Screens.FinishedRace.route)
+                            val timeToSave = Times(
+                                endTime = stopwatchViewModel.time
+                            )
+                            finishedRaceViewModel.addTimeToDb(timeToSave)
                         } else {
                             navController.navigate(Screens.Race.route)
                         }
