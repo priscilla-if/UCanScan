@@ -42,16 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
-import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
-import nz.ac.uclive.dsi61.ucanscan.entity.Times
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
-import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
@@ -231,8 +226,8 @@ fun DispatchAction(context: Context, option: String, timeOrLandmark: String, rac
     if (!raceFinished) {
         shareTitleString =
             context.resources.getString(R.string.share_found_landmark_email_subject)
-        shareBodyPt1String = context.resources.getString(R.string.just_found_landmark_msg_pt1)
-        shareBodyPt2String = context.resources.getString(R.string.just_found_landmark_msg_pt2)
+        shareBodyPt1String = context.resources.getString(R.string.share_just_found_landmark_msg_pt1)
+        shareBodyPt2String = context.resources.getString(R.string.share_just_found_landmark_msg_pt2)
     } else {
         shareTitleString = context.resources.getString(R.string.share_finished_race_email_subject)
         shareBodyPt1String = context.resources.getString(R.string.share_finished_race_msg_pt1)
