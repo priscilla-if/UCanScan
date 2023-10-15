@@ -247,7 +247,7 @@ fun FoundLandmarkScreen(context: Context,
                                                         context,
                                                         option,
                                                         it.name,
-                                                        false
+                                                        "landmark"
                                                     )
                                                 }
                                             }

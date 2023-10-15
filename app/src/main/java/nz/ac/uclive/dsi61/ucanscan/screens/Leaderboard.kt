@@ -157,7 +157,7 @@ fun TimesDisplay(allTimes: List<Times>, context: Context, stopwatchViewModel: St
                                         modifier = Modifier
                                             .clickable {
                                                 isShareDialogOpen.value = false
-                                                DispatchAction(context, option, convertTimeLongToMinutes(time.endTime) + " on " + time.dateAchieved)
+                                                DispatchAction(context, option, convertTimeLongToMinutes(time.endTime) + " on " + time.dateAchieved, "leaderboard")
                                             }
                                             .padding(vertical = 16.dp),
                                         style = TextStyle(fontSize = 18.sp),
