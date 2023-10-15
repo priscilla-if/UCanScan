@@ -70,7 +70,6 @@ fun RaceScreen(context: Context, navController: NavController,
         landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
     }
 
-    Log.d("NIRHJAH", "this is currl andmark: $currentLandmark")
 
     Scaffold(
         bottomBar = {
