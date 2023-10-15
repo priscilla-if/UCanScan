@@ -143,7 +143,7 @@ fun FoundLandmarkScreen(context: Context,
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel)
+                    FoundLandmarkButtons(navController, landmarkViewModel, IS_LANDSCAPE)
                 }
             }
         } else {
@@ -161,12 +161,12 @@ fun FoundLandmarkScreen(context: Context,
 
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = innerPadding.calculateBottomPadding()),
+                        .fillMaxSize(),
+//                        .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel)
+                    FoundLandmarkButtons(navController, landmarkViewModel, IS_LANDSCAPE)
                 }
             }
         }
@@ -240,7 +240,8 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) 
 
 
 @Composable
-fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: LandmarkViewModel) {
+fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: LandmarkViewModel,
+                         isLandscape: Boolean) {
     Button(
         onClick = {
             // If the current landmark we are searching for is now null
