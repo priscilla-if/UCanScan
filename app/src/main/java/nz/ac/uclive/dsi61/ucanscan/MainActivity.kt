@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,12 +49,11 @@ class MainActivity : ComponentActivity() {
                     )
                     NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, preferencesViewModel = preferencesViewModel, landmarkViewModel)
 
-                    if (isRaceStartedModel.isRaceStarted.value) {
-                        Log.d("notifications", "race started")
+                    val hurryUpNotifsEnabled = preferencesViewModel.getPreferenceState(preferenceName = "notificationOption1").value
 
+                    if (isRaceStartedModel.isRaceStarted.value && hurryUpNotifsEnabled) {
                         scheduleHurryUpReminder(context)
                     }
-
 
                 }
             })

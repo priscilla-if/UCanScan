@@ -312,7 +312,7 @@ fun PreferencesScreen(context: Context,
 }
 
 fun saveSetting(context: Context, settingName: String, settingValue: Boolean, preferencesViewModel: PreferencesViewModel) {
-    Toast.makeText(context, "$settingName saved!", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "Setting saved!", Toast.LENGTH_SHORT).show()
     preferencesViewModel.updatePreferenceState(settingName, settingValue)
 }
 
