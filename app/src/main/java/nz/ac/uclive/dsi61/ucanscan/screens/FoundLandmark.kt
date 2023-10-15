@@ -10,13 +10,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -177,41 +175,30 @@ fun FoundLandmarkScreen(context: Context,
 
 @Composable
 fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean) {
-    Box(
+    Text(
+        text = stringResource(R.string.you_found),
+        style = TextStyle(
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center
+        ),
         modifier = Modifier
-            .fillMaxSize()
-    ) {
-        Column(
+            .fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    landmarkViewModel.pastLandmark?.let {
+        Text(
+            text = it.name,
+            style = TextStyle(
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(R.string.you_found),
-                style = TextStyle(
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            landmarkViewModel.pastLandmark?.let {
-                Text(
-                    text = it.name,
-                    style = TextStyle(
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    modifier = Modifier
-                        .padding(if(!isLandscape) {30.dp} else {0.dp})
-                )
-            }
-        }
+                .padding(if(!isLandscape) {30.dp} else {0.dp})
+        )
     }
 }
 
