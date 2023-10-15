@@ -127,7 +127,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = notificationOption1State,
-                            onCheckedChange = { saveSetting(context, "","notificationOption1", it, preferencesViewModel) }
+                            onCheckedChange = { saveSetting(context, "Race reminder option","notificationOption1", it, preferencesViewModel) }
                         )
                     }
 
@@ -149,7 +149,7 @@ fun PreferencesScreen(context: Context,
 
                         Switch(
                             checked = notificationOption2State,
-                            onCheckedChange = { saveSetting(context, "", "notificationOption2",  it, preferencesViewModel) }
+                            onCheckedChange = { saveSetting(context, "Daily Fun Facts Option", "notificationOption2",  it, preferencesViewModel) }
                         )
                     }
 
