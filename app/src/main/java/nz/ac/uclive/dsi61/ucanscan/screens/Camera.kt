@@ -63,6 +63,7 @@ import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
@@ -185,7 +186,7 @@ landmarkViewModel: LandmarkViewModel, vibrator: Vibrator) {
     ) {
         Button(
             modifier = Modifier
-                .size(height = 90.dp, width = 90.dp),
+                .size(Constants.MEDIUM_BTN_HEIGHT),
             shape = RoundedCornerShape(16.dp),
             onClick = {
                 CoroutineScope(Dispatchers.IO).launch {

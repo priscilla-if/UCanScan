@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import nz.ac.uclive.dsi61.ucanscan.screens.CameraScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.FinishedRaceScreen
+import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.FoundLandmarkScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.LandmarksFoundScreen
 import nz.ac.uclive.dsi61.ucanscan.screens.LeaderboardScreen

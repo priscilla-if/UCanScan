@@ -3,6 +3,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
@@ -50,16 +53,17 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun RaceScreen(context: Context,
-               navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
-landmarkViewModel: LandmarkViewModel) {
+fun RaceScreen(context: Context, navController: NavController,
+               stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
+               landmarkViewModel: LandmarkViewModel) {
+    val configuration = LocalConfiguration.current
+    val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     landmarkViewModel.updateLandmarks()
     Scaffold(
         bottomBar = {
             BottomNavigationBar(navController)
         }, content = {
-
             val openDialog = remember { mutableStateOf(false)  }
 
             TopNavigationBar(
@@ -72,83 +76,65 @@ landmarkViewModel: LandmarkViewModel) {
                 landmarkViewModel = landmarkViewModel
             )
 
-            Column(
-                modifier = Modifier.fillMaxSize().padding(top = 90.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    modifier = Modifier.padding(bottom = 30.dp),
-                    text = stringResource(id = R.string.next_landmark),
-                    style = TextStyle(
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(300.dp)
-                        .background(colorResource(R.color.light_grey), shape = CircleShape)
-                ) {
-                    Text(
-
-                        text = landmarkViewModel.currentLandmark?.name.toString(),
-                        color = Color.Black,
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 130.dp)
-                            .align(Alignment.Center),
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                }
-
-                //increments stopwatch if it is running
-                StopwatchIncrementFunctionality(stopwatchViewModel)
-
-
+            if(IS_LANDSCAPE) {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = Constants.TOP_NAVBAR_HEIGHT)
+                        .padding(bottom = Constants.BOTTOM_NAVBAR_HEIGHT),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.Center
                 ) {
+                    StopwatchIncrementFunctionality(stopwatchViewModel)
 
-                    Button(
+                    Column(
                         modifier = Modifier
-                            .size(100.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            navController.navigate(Screens.Camera.route)
-
-                        },
+                            .padding(32.dp)
+                            .weight(0.33f)
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.camera),
-                            contentDescription = "Camera",
-                            modifier = Modifier
-                                .size(100.dp)
-                        )
+                        RaceTitle(IS_LANDSCAPE)
                     }
 
-                    Button(
+                    Column(
                         modifier = Modifier
-                            .size(100.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        onClick = {
-                            navController.navigate(Screens.Map.route)
-                        },
+                            .weight(0.33f)
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.map),
-                            contentDescription = "Map",
-                            modifier = Modifier
-                                .size(100.dp)
-                        )
+                        RaceCircle(landmarkViewModel, IS_LANDSCAPE)
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(0.33f),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        RaceSquareButton(navController, Screens.Camera.route, R.drawable.camera)
+                        RaceSquareButton(navController, Screens.Map.route, R.drawable.map)
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = Constants.TOP_NAVBAR_HEIGHT)
+                        .padding(bottom = Constants.BOTTOM_NAVBAR_HEIGHT),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    RaceTitle(IS_LANDSCAPE)
+
+                    RaceCircle(landmarkViewModel, IS_LANDSCAPE)
+
+                    StopwatchIncrementFunctionality(stopwatchViewModel)
+
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        RaceSquareButton(navController, Screens.Camera.route, R.drawable.camera)
+                        RaceSquareButton(navController, Screens.Map.route, R.drawable.map)
                     }
                 }
             }
@@ -162,20 +148,98 @@ landmarkViewModel: LandmarkViewModel) {
 
 
 
+@Composable
+fun RaceTitle(isLandscape: Boolean) {
+    Text(
+        text = stringResource(id = R.string.next_landmark),
+        style = TextStyle(
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            // if landscape, then the text gets centred anyway, so don't add padding
+            .padding(if(!isLandscape) {30.dp} else {0.dp})
+    )
+}
+
+
+@Composable
+fun RaceCircle(landmarkViewModel: LandmarkViewModel,isLandscape: Boolean) {
+    // when in landscape, the size of the circle shrinks, so the position of the text must change
+    val textPadding = if(isLandscape) {90.dp} else {130.dp}
+    Box(
+        modifier = Modifier
+            .size(300.dp)
+            .background(colorResource(R.color.light_grey), shape = CircleShape)
+    ) {
+        Text(
+            text = landmarkViewModel.currentLandmark?.name.toString(),
+            color = Color.Black,
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = textPadding)
+                .align(Alignment.Center),
+            style = TextStyle(
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+}
+
+
+@Composable
+fun RaceSquareButton(navController: NavController, route: String, iconId: Int) {
+    Button(
+        modifier = Modifier
+            .size(Constants.MEDIUM_BTN_HEIGHT),
+        shape = RoundedCornerShape(16.dp),
+        onClick = {
+            navController.navigate(route)
+        },
+    ) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null,
+            modifier = Modifier
+                .size(100.dp)
+        )
+    }
+}
+
+
+
+
 /**
  * Create a button at the bottom of a screen that has a bottom navbar.
  */
 @Composable
-fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues, isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel) {
+fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: PaddingValues,
+                                    isRaceStarted: State<Boolean>, landmarkViewModel: LandmarkViewModel,
+                                    isLandscape: Boolean) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth() // helps centre the button horizontally
+                .fillMaxWidth() // helps center the button horizontally
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(bottom = 16.dp)
+                .padding(
+                    horizontal = if (isLandscape) {
+                        16.dp // add padding to the right of the btn if landscape
+                    } else {
+                        0.dp
+                    }
+                ),
+            horizontalAlignment = if (isLandscape) {
+                Alignment.End // push btn to the right of the screen if landscape
+            } else {
+                Alignment.CenterHorizontally
+            }
         ) {
 
             Button(
@@ -192,9 +256,9 @@ fun BackToRaceOrHomeButtonContainer(navController: NavController, innerPadding: 
                         navController.navigate(Screens.MainMenu.route)
                     }
                 },
-                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
-                    .size(width = 200.dp, height = 90.dp)
-
+                modifier = Modifier
+                    .padding(bottom = innerPadding.calculateBottomPadding())
+                    .size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
             ) {
                 Text(
                     text = stringResource(if (landmarkViewModel.currentLandmark == null && isRaceStarted.value) R.string.finish_race else if (isRaceStarted.value) R.string.back_to_race else R.string.back_to_home),
@@ -214,7 +278,7 @@ fun BackToRaceButton(navController: NavController) {
         onClick = {
             navController.navigate(Screens.Race.route)
         },
-        modifier = Modifier.size(width = 200.dp, height = 90.dp)
+        modifier = Modifier.size(width = 200.dp, height = Constants.MEDIUM_BTN_HEIGHT)
     ) {
         Text(
             text = stringResource(R.string.back_to_race),
@@ -225,6 +289,10 @@ fun BackToRaceButton(navController: NavController) {
 
 
 
+
+/**
+ * Increments the stopwatch if it is running.
+ */
 @Composable
 fun StopwatchIncrementFunctionality(stopwatchViewModel: StopwatchViewModel) {
     LaunchedEffect(stopwatchViewModel.isRunning) {

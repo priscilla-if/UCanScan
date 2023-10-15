@@ -2,6 +2,7 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -13,12 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.Constants
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
@@ -34,6 +37,8 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                          stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
                          landmarkViewModel: LandmarkViewModel
 ) {
+    val configuration = LocalConfiguration.current
+    val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val landmarks by landmarkViewModel.landmarks.collectAsState(emptyList<Landmark>())
 
@@ -61,7 +66,8 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 90.dp)           // provide space for the top app bar
+                    .padding(top = Constants.TOP_NAVBAR_HEIGHT) // provide space for the top app
+                    .padding(bottom = Constants.BOTTOM_NAVBAR_HEIGHT)
                     .padding(horizontal = 16.dp),   // provide padding all around the content: left & right
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -74,10 +80,10 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
                     modifier = Modifier.height(16.dp)
                 )
 
-                FoundLandmarksList(context, landmarkViewModel.foundLandmarks)
+                FoundLandmarksList(context, landmarkViewModel.foundLandmarks, IS_LANDSCAPE)
             }
 
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, IS_LANDSCAPE)
 
             BackHandler {
                 // user has a back to race button so doesn't need going back with system
@@ -89,17 +95,16 @@ fun LandmarksFoundScreen(context: Context, navController: NavController,
 
 @SuppressLint("DiscouragedApi") // getIdentifier(): getting a resource ID given a string
 @Composable
-fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
-    val PADDING_BETWEEN_ROWS = 16.dp
-    val BACK_TO_RACE_BTN_HEIGHT = 90.dp
-    val BOTTOM_NAVBAR_HEIGHT = 97.dp    // hard-coded value gotten from trial&error: would change if you change the sizes of content in the navbar
+fun FoundLandmarksList(context: Context, landmarks: List<Landmark>, isLandscape: Boolean) {
+    val PADDING_BETWEEN_ROWS = if(isLandscape) {0.dp} else {16.dp} // if landscape, thr btn is on the left so don't need padding above the btn
+    val BACK_TO_RACE_BTN_HEIGHT = if(isLandscape) {0.dp} else {Constants.MEDIUM_BTN_HEIGHT} // if landscape, the btn is on the left: don't have space given for it
 
     // The lazycolumn is scrollable & allows the "landmarks found" title text to stick to the screen
     LazyColumn(
         modifier = Modifier
             // Reserve space for the Back To Race button, in its own section below the lazycolumn,
             // so that the button doesn't overlap the last image.
-            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT + BOTTOM_NAVBAR_HEIGHT)
+            .padding(bottom = PADDING_BETWEEN_ROWS + BACK_TO_RACE_BTN_HEIGHT)
     ) {
         items(landmarks) { landmark ->
             Row(
@@ -132,7 +137,7 @@ fun FoundLandmarksList(context: Context, landmarks: List<Landmark>) {
                         Image(
                             painter = painterResource(id = drawableId),
                             contentDescription = null,
-                            modifier = Modifier.size(128.dp)
+                            modifier = Modifier.size(if(isLandscape) {96.dp} else {128.dp})
                         )
                     }
                 }
