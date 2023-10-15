@@ -1,7 +1,10 @@
 package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -42,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nz.ac.uclive.dsi61.ucanscan.HurryUpAlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.UCanScanTheme
@@ -102,6 +106,7 @@ fun MainMenuScreen(context: Context,
                             navController.navigate(Screens.Race.route)
                             stopwatchViewModel.isRunning = true
                             isRaceStartedModel.setRaceStarted(true)
+                            //scheduleHurryUpReminder()
                             landmarkViewModel.resetLandmarks()
                         },
                         modifier = Modifier.size(width = 200.dp, height = 130.dp)
@@ -159,7 +164,10 @@ fun MainMenuScreen(context: Context,
     BackHandler {
         // Stop user from going back to Race screen
     }
+
 }
+
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

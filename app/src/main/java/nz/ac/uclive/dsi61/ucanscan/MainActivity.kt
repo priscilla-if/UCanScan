@@ -1,12 +1,11 @@
 package nz.ac.uclive.dsi61.ucanscan
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
+
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -24,9 +23,9 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
+import java.util.Calendar
 
 class MainActivity : ComponentActivity() {
-    private val AlarmReceiver = AlarmReceiver()
 
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -36,7 +35,6 @@ class MainActivity : ComponentActivity() {
             UCanScanTheme(content = {
                 Scaffold(
                 ) {
-//                    val application = applicationContext as UCanScanApplication
 
                     val navController = rememberNavController()
                     val stopwatchViewModel = remember { StopwatchViewModel() }
@@ -50,37 +48,83 @@ class MainActivity : ComponentActivity() {
                     )
                     NavGraph(navController = navController, stopwatchViewModel = stopwatchViewModel, isRaceStartedModel = isRaceStartedModel, preferencesViewModel = preferencesViewModel, landmarkViewModel)
 
+                    if (isRaceStartedModel.isRaceStarted.value) {
+                        Log.d("notifications", "race started")
+
+                        scheduleHurryUpReminder(context)
+                    }
 
 
                 }
             })
         }
 
-        createNotificationChannel()
     }
 
 
     override fun onStart() {
         super.onStart()
         Log.d("FOO", "MainActivity started!")
-        registerReceiver(AlarmReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        scheduleReminder()
     }
 
     override fun onStop() {
         super.onStop()
         Log.d("FOO", "MainActivity stopped!")
-        unregisterReceiver(AlarmReceiver)
     }
 
-    private fun createNotificationChannel() {
-        Log.d("FOO", "MainActivity createNotificationChannel!")
-        val importance = NotificationManager.IMPORTANCE_DEFAULT //TODO: change?
-        val channel = NotificationChannel(Notification.CATEGORY_REMINDER, "UC Fact of the Day", importance).apply {
-            description = "Daily facts and tips about UC"
+
+    private fun scheduleReminder() {
+
+        Log.d("notifications", "setting up alarm")
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         }
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+
+        //test notifs for 30 seconds from now (not exactly 30 seconds though)
+    /*    alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            30 * 1000,  // 30 seconds in milliseconds
+            alarmIntent
+        )*/
+
+
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 12)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            alarmIntent
+        )
     }
+
+
+
+    private fun scheduleHurryUpReminder(context: Context) {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val raceReminderIntent = Intent(this, HurryUpAlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+
+
+        val triggerTime = System.currentTimeMillis() + 30 * 60 * 1000
+        alarmManager.set(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            raceReminderIntent
+        )
+    }
+
 
 
 }

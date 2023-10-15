@@ -53,6 +53,7 @@ import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModelFactory
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 import java.util.concurrent.TimeUnit
 
@@ -61,7 +62,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun FoundLandmarkScreen(context: Context,
                         navController: NavController, stopwatchViewModel : StopwatchViewModel, isRaceStartedModel : IsRaceStartedModel,
-                        landmarkViewModel: LandmarkViewModel
+                        landmarkViewModel: LandmarkViewModel, preferencesViewModel: PreferencesViewModel
 ) {
 
     val party = Party(
@@ -97,10 +98,12 @@ fun FoundLandmarkScreen(context: Context,
 
         val openDialog = remember { mutableStateOf(false) }
 
-        KonfettiView(
-            modifier = Modifier.fillMaxSize(),
-            parties = listOf(party)
-        )
+        if (preferencesViewModel.getPreferenceState(preferenceName = "animationOption1").value) {
+            KonfettiView(
+                modifier = Modifier.fillMaxSize(),
+                parties = listOf(party)
+            )
+        }
 
         TopNavigationBar(
             navController = navController,
@@ -115,7 +118,9 @@ fun FoundLandmarkScreen(context: Context,
         StopwatchIncrementFunctionality(stopwatchViewModel)
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 90.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 90.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -168,7 +173,8 @@ fun FoundLandmarkScreen(context: Context,
             }
 
             Row(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(bottom = innerPadding.calculateBottomPadding()),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
