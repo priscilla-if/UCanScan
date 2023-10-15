@@ -1,11 +1,8 @@
 package nz.ac.uclive.dsi61.ucanscan.screens
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.res.Configuration
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -36,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import nz.ac.uclive.dsi61.ucanscan.HurryUpAlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
@@ -96,19 +92,19 @@ fun MainMenuScreen(context: Context,
                     if (IS_LANDSCAPE) {
                         Row() {
                             MainButton(stringResource(R.string.start_race), true,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                             Spacer(modifier = Modifier.width(16.dp)) // horizontal space between buttons
                             MainButton(stringResource(R.string.my_times), false,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel,landmarkViewModel)
                         }
                     }
 
                     if (!IS_LANDSCAPE) {
                         Column() {
                             MainButton(stringResource(R.string.start_race), true,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                             MainButton(stringResource(R.string.my_times), false,
-                                navController, stopwatchViewModel, isRaceStartedModel)
+                                navController, stopwatchViewModel, isRaceStartedModel, landmarkViewModel)
                         }
                     }
                 }
@@ -167,7 +163,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun MainButton(text: String, isStartButton: Boolean, navController: NavController, stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel) {
+fun MainButton(text: String, isStartButton: Boolean, navController: NavController,
+               stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel,
+               landmarkViewModel: LandmarkViewModel) {
     Spacer(modifier = Modifier.height(16.dp))
     Button(
         onClick = {

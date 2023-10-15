@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -156,7 +157,9 @@ fun FoundLandmarkScreen(context: Context,
                     verticalArrangement = Arrangement.SpaceEvenly,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel, IS_LANDSCAPE)
+                    FoundLandmarkButtons(context, navController,
+                        landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
+                        isShareDialogOpen, IS_LANDSCAPE)
                 }
             }
         } else {
@@ -179,7 +182,9 @@ fun FoundLandmarkScreen(context: Context,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    FoundLandmarkButtons(navController, landmarkViewModel, IS_LANDSCAPE)
+                    FoundLandmarkButtons(context, navController,
+                        landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
+                        isShareDialogOpen, IS_LANDSCAPE)
                 }
             }
         }
@@ -253,7 +258,9 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) 
 
 
 @Composable
-fun FoundLandmarkButtons(navController: NavController, landmarkViewModel: LandmarkViewModel,
+fun FoundLandmarkButtons(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel,
+                         stopwatchViewModel: StopwatchViewModel, finishedRaceViewModel: FinishedRaceViewModel,
+                         isShareDialogOpen: MutableState<Boolean>,
                          isLandscape: Boolean) {
     Button(
         onClick = {
