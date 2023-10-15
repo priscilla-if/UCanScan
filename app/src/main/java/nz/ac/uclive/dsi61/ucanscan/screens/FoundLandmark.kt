@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +44,9 @@ import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
@@ -62,6 +65,10 @@ fun FoundLandmarkScreen(context: Context,
 ) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    val pastLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.pastLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
 
     val party = Party(
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
@@ -125,7 +132,7 @@ fun FoundLandmarkScreen(context: Context,
                         .padding(32.dp)
                         .weight(0.33f)
                 ) {
-                    FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
+                    FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE, pastLandmark)
                 }
 
                 Column(
@@ -154,7 +161,7 @@ fun FoundLandmarkScreen(context: Context,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
+                FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE, pastLandmark)
 
                 FoundLandmarkCircle(context, landmarkViewModel)
 
@@ -174,7 +181,7 @@ fun FoundLandmarkScreen(context: Context,
 
 
 @Composable
-fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean) {
+fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean, pastLandmark: Landmark) {
     Text(
         text = stringResource(R.string.you_found),
         style = TextStyle(
@@ -187,7 +194,7 @@ fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolea
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    landmarkViewModel.pastLandmark?.let {
+    pastLandmark?.let {
         Text(
             text = it.name,
             style = TextStyle(
