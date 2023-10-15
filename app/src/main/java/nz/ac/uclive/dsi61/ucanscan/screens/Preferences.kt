@@ -32,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.ui.theme.TopBar
@@ -61,6 +64,10 @@ fun PreferencesScreen(context: Context,
     val themeOption1State by preferencesViewModel.getPreferenceState("themeOption1")
     val animationOption1State by preferencesViewModel.getPreferenceState("animationOption1")
     val animationOption2State by preferencesViewModel.getPreferenceState("animationOption2")
+
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
 
     var selectedUserName by remember { mutableStateOf("") }
     val userNameState by preferencesViewModel.getUserNameState("userName", initialValue = "")
@@ -248,7 +255,7 @@ fun PreferencesScreen(context: Context,
                     }
                 }
             }
-            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, false)
+            BackToRaceOrHomeButtonContainer(navController, innerPadding, isRaceStartedModel.isRaceStarted, landmarkViewModel, false, currentLandmark)
     })
 
     BackHandler {

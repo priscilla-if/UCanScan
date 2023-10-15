@@ -32,6 +32,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,8 +52,10 @@ import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import nz.ac.uclive.dsi61.ucanscan.Constants
+import nz.ac.uclive.dsi61.ucanscan.LandmarkSaver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
+import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
@@ -73,6 +76,14 @@ fun FoundLandmarkScreen(context: Context,
 ) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    val pastLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.pastLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
+
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
 
     val party = Party(
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
@@ -140,14 +151,14 @@ fun FoundLandmarkScreen(context: Context,
                         .padding(32.dp)
                         .weight(0.33f)
                 ) {
-                    FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
+                    FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE, pastLandmark)
                 }
 
                 Column(
                     modifier = Modifier
                         .weight(0.33f)
                 ) {
-                    FoundLandmarkCircle(context, landmarkViewModel)
+                    FoundLandmarkCircle(context, landmarkViewModel, pastLandmark)
                 }
 
                 Column(
@@ -159,7 +170,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark, currentLandmark)
                 }
             }
         } else {
@@ -171,9 +182,9 @@ fun FoundLandmarkScreen(context: Context,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE)
+                FoundLandmarkTitle(landmarkViewModel, IS_LANDSCAPE, pastLandmark)
 
-                FoundLandmarkCircle(context, landmarkViewModel)
+                FoundLandmarkCircle(context, landmarkViewModel, pastLandmark)
 
                 Row(
                     modifier = Modifier
@@ -184,7 +195,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark, currentLandmark)
                 }
             }
         }
@@ -193,7 +204,7 @@ fun FoundLandmarkScreen(context: Context,
 
 
 @Composable
-fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean) {
+fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolean, pastLandmark: Landmark) {
     Text(
         text = stringResource(R.string.you_found),
         style = TextStyle(
@@ -206,7 +217,7 @@ fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolea
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    landmarkViewModel.pastLandmark?.let {
+    pastLandmark?.let {
         Text(
             text = it.name,
             style = TextStyle(
@@ -223,13 +234,13 @@ fun FoundLandmarkTitle(landmarkViewModel: LandmarkViewModel, isLandscape: Boolea
 
 
 @Composable
-fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) {
+fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel, pastLandmark : Landmark) {
     Box(
         modifier = Modifier
             .size(300.dp)
             .background(colorResource(R.color.light_grey), shape = CircleShape)
     ) {
-        val fileNameParts = landmarkViewModel.pastLandmark?.name?.split(" ", "-")
+        val fileNameParts = pastLandmark?.name?.split(" ", "-")
         val fileName = fileNameParts?.joinToString("_")?.lowercase()
         // Create a resource ID for a named image in the "drawable" directory
         val resourceId = context.resources.getIdentifier(
@@ -261,7 +272,7 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel) 
 fun FoundLandmarkButtons(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel,
                          stopwatchViewModel: StopwatchViewModel, finishedRaceViewModel: FinishedRaceViewModel,
                          isShareDialogOpen: MutableState<Boolean>,
-                         isLandscape: Boolean) {
+                         isLandscape: Boolean, pastLandmark: Landmark, currentLandmark: Landmark) {
     Button(
         onClick = {
             // If the current landmark we are searching for is now null
@@ -281,7 +292,7 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
 
     ) {
         Text(
-            text = stringResource(if (landmarkViewModel.currentLandmark == null) R.string.finish_race else R.string.back_to_race),
+            text = stringResource(if (currentLandmark == null) R.string.finish_race else R.string.back_to_race),
             fontSize = 20.sp
         )
     }
@@ -322,7 +333,7 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
                             modifier = Modifier
                                 .clickable {
                                     isShareDialogOpen.value = false
-                                    landmarkViewModel.pastLandmark?.let {
+                                    pastLandmark?.let {
                                         dispatchAction(context,
                                             option, it.name, "landmark"
                                         )
