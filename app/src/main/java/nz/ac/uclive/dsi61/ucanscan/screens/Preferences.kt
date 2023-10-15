@@ -51,7 +51,6 @@ fun PreferencesScreen(context: Context,
 ) {
     val notificationOption1State by preferencesViewModel.getPreferenceState("notificationOption1")
     val notificationOption2State by preferencesViewModel.getPreferenceState("notificationOption2")
-    val notificationOption3State by preferencesViewModel.getPreferenceState("notificationOption3")
     val themeOption1State by preferencesViewModel.getPreferenceState("themeOption1")
     val animationOption1State by preferencesViewModel.getPreferenceState("animationOption1")
     val animationOption2State by preferencesViewModel.getPreferenceState("animationOption2")
@@ -153,29 +152,6 @@ fun PreferencesScreen(context: Context,
                             onCheckedChange = { saveSetting(context, "notificationOption2", it, preferencesViewModel) }
                         )
                     }
-
-                    // option 3
-                    Row(
-                        //
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = stringResource(R.string.prefs_notifications_opt3)
-                            )
-                        }
-                        Spacer(
-                            modifier = Modifier.weight(1f)
-                        )
-
-
-                        Switch(
-                            checked = notificationOption3State,
-                            onCheckedChange = { saveSetting(context, "notificationOption3", it, preferencesViewModel) }
-                        )
-                    }
-
 
                     // THEME SECTION
                     Row(
