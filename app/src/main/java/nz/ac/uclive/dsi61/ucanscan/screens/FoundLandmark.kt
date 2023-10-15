@@ -166,7 +166,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark)
                 }
             }
         } else {
@@ -191,7 +191,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark)
                 }
             }
         }
@@ -268,7 +268,7 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel, 
 fun FoundLandmarkButtons(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel,
                          stopwatchViewModel: StopwatchViewModel, finishedRaceViewModel: FinishedRaceViewModel,
                          isShareDialogOpen: MutableState<Boolean>,
-                         isLandscape: Boolean) {
+                         isLandscape: Boolean, pastLandmark: Landmark) {
     Button(
         onClick = {
             // If the current landmark we are searching for is now null
@@ -329,8 +329,8 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
                             modifier = Modifier
                                 .clickable {
                                     isShareDialogOpen.value = false
-                                    landmarkViewModel.pastLandmark?.let {
-                                        DispatchAction(context,
+                                    pastLandmark?.let {
+                                        dispatchAction(context,
                                             option, it.name, "landmark"
                                         )
                                     }
