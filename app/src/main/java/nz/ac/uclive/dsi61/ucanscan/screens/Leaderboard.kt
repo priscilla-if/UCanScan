@@ -3,9 +3,12 @@ package nz.ac.uclive.dsi61.ucanscan.screens
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,13 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.UCanScanApplication
 import nz.ac.uclive.dsi61.ucanscan.entity.Times
-import nz.ac.uclive.dsi61.ucanscan.entity.Landmark
 import nz.ac.uclive.dsi61.ucanscan.navigation.BottomNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.navigation.TopNavigationBar
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.FinishedRaceViewModel
@@ -84,7 +88,7 @@ fun LeaderboardScreen(context: Context,
                     fontSize = 24.sp)
 
 
-                TimesDisplay(allTimes = allTimes)
+                TimesDisplay(allTimes = allTimes, context, stopwatchViewModel)
 
 
             }
@@ -102,9 +106,9 @@ fun LeaderboardScreen(context: Context,
 
 
 @Composable
-fun TimesDisplay(allTimes: List<Times>) {
+fun TimesDisplay(allTimes: List<Times>, context: Context, stopwatchViewModel: StopwatchViewModel) {
 
-
+    val isShareDialogOpen = remember { mutableStateOf(false) }
 
     LazyColumn (modifier = Modifier.padding(bottom = 180.dp, top = 19.dp)) {
         itemsIndexed(allTimes) { index, time ->
@@ -129,11 +133,42 @@ fun TimesDisplay(allTimes: List<Times>) {
                 Text(text = "${time.dateAchieved}          ${convertTimeLongToMinutes(time.endTime)}",
                     modifier = Modifier.padding(top = 14.dp))
 
-                IconButton(onClick = { //TODO: SHARING FUNCTIONALITY
+                IconButton(onClick = { isShareDialogOpen.value = true
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.share),
                         contentDescription = "Share"
+                    )
+                }
+
+                if (isShareDialogOpen.value) {
+                    AlertDialog(
+                        title = {
+                            Text(
+                                fontWeight = FontWeight.Bold,
+                                text = stringResource(R.string.share_dialog_title)
+                            )
+                        },
+                        text = {
+                            val options = listOf(stringResource(R.string.share_via_email), stringResource(R.string.share_via_text), stringResource(R.string.share_via_phonecall))
+                            LazyColumn {
+                                items(options) { option ->
+                                    Text(
+                                        modifier = Modifier
+                                            .clickable {
+                                                isShareDialogOpen.value = false
+                                                DispatchAction(context, option, convertTimeLongToMinutes(time.endTime) + " on " + time.dateAchieved, "leaderboard")
+                                            }
+                                            .padding(vertical = 16.dp),
+                                        style = TextStyle(fontSize = 18.sp),
+                                        text = option
+                                    )
+                                }
+                            }
+                        },
+                        onDismissRequest = { isShareDialogOpen.value = false },
+                        confirmButton  = {},
+                        dismissButton = {}
                     )
                 }
 
