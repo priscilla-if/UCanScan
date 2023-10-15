@@ -154,7 +154,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = welcomeText,
         modifier = modifier.padding(16.dp),
         fontWeight = FontWeight.Bold,
-        fontSize = 50.sp
+        fontSize = 30.sp
     )
 }
 
