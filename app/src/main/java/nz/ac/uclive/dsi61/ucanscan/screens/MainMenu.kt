@@ -40,14 +40,17 @@ import nz.ac.uclive.dsi61.ucanscan.HurryUpAlarmReceiver
 import nz.ac.uclive.dsi61.ucanscan.R
 import nz.ac.uclive.dsi61.ucanscan.navigation.Screens
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.IsRaceStartedModel
+import nz.ac.uclive.dsi61.ucanscan.viewmodel.LandmarkViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.PreferencesViewModel
 import nz.ac.uclive.dsi61.ucanscan.viewmodel.StopwatchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @Composable
-fun MainMenuScreen(context: Context, navController: NavController,
-    stopwatchViewModel: StopwatchViewModel, isRaceStartedModel: IsRaceStartedModel, preferencesViewModel: PreferencesViewModel
+fun MainMenuScreen(context: Context,
+                   navController: NavController, stopwatchViewModel: StopwatchViewModel,
+                   isRaceStartedModel: IsRaceStartedModel, preferencesViewModel : PreferencesViewModel,
+                   landmarkViewModel: LandmarkViewModel
 ) {
     val configuration = LocalConfiguration.current
     val IS_LANDSCAPE = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -65,7 +68,6 @@ fun MainMenuScreen(context: Context, navController: NavController,
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            // TODO placeholder cherry blossom image at the moment, we can change to something else once we decide on a better design?
             painter = painterResource(R.drawable.cherry_blossoms),
             contentDescription = "background_image",
             contentScale = ContentScale.Crop,
@@ -174,6 +176,7 @@ fun MainButton(text: String, isStartButton: Boolean, navController: NavControlle
                 stopwatchViewModel.isRunning = true
                 isRaceStartedModel.setRaceStarted(true)
                 //scheduleHurryUpReminder()
+                landmarkViewModel.resetLandmarks()
             } else {
                 navController.navigate(Screens.Leaderboard.route)
             }
