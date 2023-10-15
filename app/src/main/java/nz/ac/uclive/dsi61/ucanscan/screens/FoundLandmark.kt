@@ -81,6 +81,10 @@ fun FoundLandmarkScreen(context: Context,
         landmarkViewModel.pastLandmark ?: Landmark("", "", 0.0, 0.0, false)
     }
 
+    val currentLandmark = rememberSaveable(saver = LandmarkSaver()) {
+        landmarkViewModel.currentLandmark ?: Landmark("", "", 0.0, 0.0, false)
+    }
+
     val party = Party(
         emitter = Emitter(duration = 5, TimeUnit.SECONDS).perSecond(30)
     )
@@ -166,7 +170,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark, currentLandmark)
                 }
             }
         } else {
@@ -191,7 +195,7 @@ fun FoundLandmarkScreen(context: Context,
                 ) {
                     FoundLandmarkButtons(context, navController,
                         landmarkViewModel, stopwatchViewModel, finishedRaceViewModel,
-                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark)
+                        isShareDialogOpen, IS_LANDSCAPE, pastLandmark, currentLandmark)
                 }
             }
         }
@@ -268,7 +272,7 @@ fun FoundLandmarkCircle(context: Context, landmarkViewModel: LandmarkViewModel, 
 fun FoundLandmarkButtons(context: Context, navController: NavController, landmarkViewModel: LandmarkViewModel,
                          stopwatchViewModel: StopwatchViewModel, finishedRaceViewModel: FinishedRaceViewModel,
                          isShareDialogOpen: MutableState<Boolean>,
-                         isLandscape: Boolean, pastLandmark: Landmark) {
+                         isLandscape: Boolean, pastLandmark: Landmark, currentLandmark: Landmark) {
     Button(
         onClick = {
             // If the current landmark we are searching for is now null
@@ -288,7 +292,7 @@ fun FoundLandmarkButtons(context: Context, navController: NavController, landmar
 
     ) {
         Text(
-            text = stringResource(if (landmarkViewModel.currentLandmark == null) R.string.finish_race else R.string.back_to_race),
+            text = stringResource(if (currentLandmark == null) R.string.finish_race else R.string.back_to_race),
             fontSize = 20.sp
         )
     }
